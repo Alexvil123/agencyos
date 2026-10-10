@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import {useRouter,useSearchParams} from 'next/navigation';
 import { useEffect, useLayoutEffect, useRef, useState, useTransition } from 'react';
-import { Activity, ArrowDownLeft, ArrowRight, ArrowUpRight, Bell, Building2, ChevronDown, CircleHelp, Clock3, Command, FileBarChart2, Globe, Library, Layers3, LayoutDashboard, LockKeyhole, Menu, MessageSquare, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, Target, Users, Wallet, X, Zap } from 'lucide-react';
+import { Activity, ArrowDownLeft, CalendarDays, ArrowRight, ArrowUpRight, Bell, Building2, ChevronDown, CircleHelp, Clock3, Command, FileBarChart2, Globe, Library, Layers3, LayoutDashboard, LockKeyhole, Menu, MessageSquare, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, Target, Users, Wallet, X, Zap } from 'lucide-react';
 import type { WorkspaceContext } from '@/lib/access';
 import type { WorkspaceData } from '@/lib/data';
 import { modules, moduleFor, policyDecisions } from '@/lib/modules';
@@ -18,6 +18,7 @@ import { JiraConnection } from './jira-connection';
 import {WorkPanel} from './work-panel';
 import {WorkSettings} from './work-settings';
 import {TimePanel} from './time-panel';
+import {CalendarPanel} from './calendar-panel';
 import {OverviewTime} from './overview-time';
 import {EmployeeSelfService} from './employee-self-service';
 import {SalesPanel} from './sales-panel';
@@ -28,7 +29,7 @@ import {TeamChat} from './team-chat';
 import {useChatNotifications,ChatToasts} from './chat-notifications';
 import {ClientErrorReporter} from './client-error-reporter';
 
-const icons = { dashboard: LayoutDashboard, sales: Target, clients: Building2, work: Layers3, source: Library, attendance: Clock3, chat: MessageSquare, campaigns: Globe, analytics: Activity, finance: Wallet, team: Users, reports: FileBarChart2, settings: Settings2 };
+const icons = { calendar: CalendarDays, dashboard: LayoutDashboard, sales: Target, clients: Building2, work: Layers3, source: Library, attendance: Clock3, chat: MessageSquare, campaigns: Globe, analytics: Activity, finance: Wallet, team: Users, reports: FileBarChart2, settings: Settings2 };
 type Modal = 'search' | 'create' | 'employee' | 'department' | 'invite' | 'notifications' | 'help' | null;
 export function Workspace({ context: ctx, data, moduleKey }: { context: WorkspaceContext; data: WorkspaceData; moduleKey: string }) {
   const announcements=useAnnouncements(ctx.preview);
@@ -84,6 +85,7 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
       <main className="main-content">
         <div className="page-heading"><div><div className="eyebrow">{moduleKey ? current.group.toUpperCase() : 'YOUR AGENCY AT A GLANCE'}</div><h1>{moduleKey ? current.name : `Good morning${ctx.name === 'Alex' ? ', Alex' : `, ${ctx.name.split(' ')[0]}`}`}<span className="heading-dot">.</span></h1><p>{moduleKey ? current.description : 'Let’s build something great today.'}</p></div><div className="heading-actions">{moduleKey === 'team' && manage ? <button className="primary" onClick={() => open('employee')}><Plus size={16}/> Add employee</button> : <span className="workspace-state"><span className="status-dot green"/>{ctx.preview ? 'Ready for setup' : 'Workspace connected'}</span>}</div></div>
         {moduleKey === 'work' && <WorkPanel preview={ctx.preview}/>}
+        {moduleKey === 'calendar' && <CalendarPanel preview={ctx.preview}/>}
         {moduleKey === 'sales' && <SalesPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview} employees={data.employees}/>}
         {moduleKey === 'source' && <WorkPanel preview={ctx.preview} sourceRecords/>}
         {moduleKey === 'settings' && settingsTab === 'integrations' && <section className="panel settings-panel"><JiraConnection owner={ctx.roles.includes('Owner')} preview={ctx.preview}/><WorkSettings owner={!ctx.preview&&ctx.roles.includes('Owner')}/><SalesConversionPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview}/></section>}

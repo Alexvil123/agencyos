@@ -12,6 +12,7 @@ import './globals.css';
 import './workspace-polish.css';
 import './workspace-colour.css';
 import './employee-workspace.css';
+import './calendar.css';
 export const metadata: Metadata = { title: 'Agency OS · Your agency, connected', description: 'An agency operations workspace for people, clients and production.' };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html lang="en"><body>{children}</body></html>;

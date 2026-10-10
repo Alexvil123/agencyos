@@ -1,0 +1,54 @@
+import type {TimeTask} from './time-types';
+// Pure calendar helpers. All days are India calendar days written as YYYY-MM-DD.
+export type CalendarView='month'|'week';
+export type CalendarTone='done'|'progress'|'hold'|'overdue'|'todo';
+const DAY=86400000;
+const utc=(iso:string)=>Date.parse(`${iso}T00:00:00Z`);
+const iso=(ms:number)=>new Date(ms).toISOString().slice(0,10);
+export function validIsoDate(value:string){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(utc(value))&&iso(utc(value))===value;}
+export function istDay(value:string|Date){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(typeof value==='string'?new Date(value):value);}
+export function addDays(day:string,days:number){return iso(utc(day)+days*DAY);}
+export function weekStart(day:string){return addDays(day,-((new Date(utc(day)).getUTCDay()+6)%7));}
+export function weekDays(day:string){const start=weekStart(day);return Array.from({length:7},(_,i)=>addDays(start,i));}
+export function monthStart(day:string){return `${day.slice(0,8)}01`;}
+export function monthEnd(day:string){const d=new Date(utc(monthStart(day)));return iso(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0));}
+// Whole weeks (Monday first) that cover the month containing `day`.
+export function monthDays(day:string){const start=weekStart(monthStart(day)),end=monthEnd(day),weeks=Math.ceil(((utc(end)-utc(start))/DAY+1)/7);return Array.from({length:weeks*7},(_,i)=>addDays(start,i));}
+export function shiftAnchor(day:string,view:CalendarView,delta:number){
+  if(view==='week')return addDays(day,delta*7);
+  const d=new Date(utc(monthStart(day)));return iso(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+delta,1));
+}
+export function rangeLabel(day:string,view:CalendarView){
+  const f=(value:string,options:Intl.DateTimeFormatOptions)=>new Intl.DateTimeFormat('en-IN',{timeZone:'UTC',...options}).format(new Date(utc(value)));
+  if(view==='month')return f(day,{month:'long',year:'numeric'});
+  const days=weekDays(day);return `${f(days[0],{day:'numeric',month:'short'})} – ${f(days[6],{day:'numeric',month:'short',year:'numeric'})}`;
+}
+export function dayLabel(day:string){return new Intl.DateTimeFormat('en-IN',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(utc(day)));}
+// Jira tasks sit on their Jira due date; manual CRM tasks on their work date (or due date).
+export function taskDay(task:Pick<TimeTask,'source'|'due_at'|'work_date'>):string|null{
+  if(task.source==='jira')return task.due_at?istDay(task.due_at):null;
+  return task.work_date||(task.due_at?istDay(task.due_at):null);
+}
+const isDone=(task:TimeTask)=>task.source==='jira'?task.jira_status_category==='done':['completed','cancelled'].includes(task.work_status||'pending');
+export function taskTone(task:TimeTask,today:string):CalendarTone{
+  if(isDone(task))return 'done';
+  const day=taskDay(task);if(day&&day<today)return 'overdue';
+  if(task.source==='jira'?task.jira_status_category==='indeterminate':task.work_status==='in_progress')return 'progress';
+  if(task.work_status==='on_hold')return 'hold';
+  return 'todo';
+}
+export type CalendarFilters={employee:string;project:string;state:'all'|'open'|'done'};
+export function calendarTasks(tasks:TimeTask[],filters:CalendarFilters,today:string){
+  return tasks.filter(task=>task.jira_available!==false&&task.jira_project!=='SOURCE'
+    &&(filters.employee==='all'||task.membership_id===filters.employee)
+    &&(filters.project==='all'||(filters.project==='manual'?task.source!=='jira':task.jira_project===filters.project))
+    &&(filters.state==='all'||(filters.state==='done')===(taskTone(task,today)==='done')));
+}
+export function tasksByDay(tasks:TimeTask[]){
+  const days=new Map<string,TimeTask[]>();
+  for(const task of tasks){const day=taskDay(task);if(!day)continue;const list=days.get(day);if(list)list.push(task);else days.set(day,[task]);}
+  for(const list of days.values())list.sort((a,b)=>(a.jira_key||a.title).localeCompare(b.jira_key||b.title,undefined,{numeric:true}));
+  return days;
+}
+// Open Jira tasks with no due date can be dragged onto a day to schedule them.
+export function unscheduledTasks(tasks:TimeTask[],today:string){return tasks.filter(t=>t.source==='jira'&&!taskDay(t)&&taskTone(t,today)!=='done');}
