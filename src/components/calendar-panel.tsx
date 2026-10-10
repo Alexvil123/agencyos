@@ -48,8 +48,8 @@ export function CalendarPanel({preview}:{preview:boolean}){
   const unscheduled=useMemo(()=>unscheduledTasks(visible,today),[visible,today]);
   const labels=useMemo(()=>[...new Set((data?.tasks||[]).flatMap(t=>t.jira_labels||[]))].sort((a,b)=>a.localeCompare(b)),[data]);
   const name=(id:string)=>data?.people.find(p=>p.id===id)?.display_name||'Unassigned';
-  if(preview)return <section className="panel"><h2>Calendar</h2><p>Sign in to see your tasks on the calendar.</p></section>;
-  if(!data||!anchor)return <section className="panel" role="status"><h2>Calendar</h2><p>{error||'Loading your calendar…'}</p>{error&&<button className="secondary" onClick={()=>void reload()}>Retry</button>}</section>;
+  if(preview)return <section className="panel time-panel"><h2>Calendar</h2><p>Sign in to see your tasks on the calendar.</p></section>;
+  if(!data||!anchor)return <section className="panel time-panel" role="status"><h2>Calendar</h2><p>{error||'Loading your calendar…'}</p>{error&&<button className="secondary" onClick={()=>void reload()}>Retry</button>}</section>;
 
   const days=view==='month'?monthDays(anchor):weekDays(anchor);
   const monthKey=anchor.slice(0,7);
