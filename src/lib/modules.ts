@@ -7,24 +7,19 @@ export const modules = [
   { key: 'source', name: 'Source', group: 'Workspace', icon: 'source', description: 'Jira SOURCE records, separate from work tasks and timers.' },
   { key: 'me', name: 'My account & time', group: 'Workspace', icon: 'team', description: 'Your attendance, timesheets, corrections and account.' },
   { key: 'attendance', name: 'Attendance', group: 'Workspace', icon: 'attendance', description: 'Attendance, breaks, task timers, timesheets, and corrections.' },
-  { key: 'communication', name: 'Announcements', group: 'Workspace', icon: 'chat', description: 'Company announcements for all team members.', pending: true },
+  { key: 'communication', name: 'Announcements', group: 'Workspace', icon: 'chat', description: 'Company announcements for all team members.' },
   { key: 'chat', name: 'Team Chat', group: 'Workspace', icon: 'chat', description: 'Personal conversations and employee group chats.' },
-  { key: 'campaigns', name: 'Campaigns', group: 'Management', icon: 'campaigns', description: 'Meta, Google, and other campaigns.', pending: true },
-  { key: 'analytics', name: 'Analytics', group: 'Management', icon: 'analytics', description: 'Operational trends with transparent metric definitions.', pending: true },
-  { key: 'finance', name: 'Finance', group: 'Management', icon: 'finance', description: 'Invoices, payments, and outstanding balances.', pending: true },
+  { key: 'campaigns', name: 'Campaigns', group: 'Management', icon: 'campaigns', description: 'Meta Ads and Google Ads spend and results. Owner only.' },
+  { key: 'analytics', name: 'Analytics', group: 'Management', icon: 'analytics', description: 'Tracked hours, completed work and open work, with transparent definitions.' },
+  { key: 'finance', name: 'Finance', group: 'Management', icon: 'finance', description: 'Invoices, payments, and outstanding balances. Owner and Finance roles.' },
   { key: 'team', name: 'Team', group: 'Management', icon: 'team', description: 'Your people and departments.' },
   { key: 'reports', name: 'Reports', group: 'Management', icon: 'reports', description: 'Team attendance, task time, client time, overtime, and deadlines.' },
   { key: 'settings', name: 'Settings', group: 'System', icon: 'settings', description: 'Company, users, permissions, integrations, and audit history.' },
 ] as const;
 export function moduleFor(key: string) { return modules.find(module => module.key === key); }
-export const policyDecisions: Record<string, string[]> = {
-  attendance: ['Working schedule and timezone', 'Break allowance and counted work', 'Late arrival, half day, and overtime', 'Leave and correction approval rules'],
-  work: ['Task completion and client approval stages', 'Jira environment and synchronization direction', 'Jira status and client mappings'],
-  communication: ['Channel membership and client participation', 'Message retention and editing permissions', 'Private-message oversight policy'],
-  finance: ['Currency, taxes, and invoice numbering', 'Payment and revenue accounting rules', 'Financial approval workflow'],
-  sales: ['Lead pipeline stages', 'Client handover and proposal approval'],
-  clients: ['Client services and renewal workflow', 'Client portal sharing and approvals'],
-  campaigns: ['Connected platform accounts', 'Campaign metric sources and reporting windows'],
-  analytics: ['Metric definitions and denominators', 'Workload and cycle-time definitions'],
-  reports: ['Report calculations and access scope', 'Export branding and retention'],
-};
+// Menus that expose sensitive data are hidden from people who cannot use them. The server still enforces access.
+export function moduleVisible(key: string, access: { owner: boolean; permissions: string[] }) {
+  if (key === 'campaigns') return access.owner;
+  if (key === 'finance') return access.owner || access.permissions.includes('finance.read');
+  return true;
+}

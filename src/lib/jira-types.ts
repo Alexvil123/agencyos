@@ -1,7 +1,6 @@
 export const JIRA_SITE = 'https://vilpowerdigitalmarketing.atlassian.net';
 export const JIRA_PROJECTS = ['OCT', 'SEP', 'SOURCE'] as const;
 export type JiraIssue = { id: string; key: string; project_key: string; summary: string; description: unknown; status_id: string; status_name: string; assignee_id: string | null; assignee_name: string | null; jira_updated: string };
-export type JiraLink = { membership_id: string; account_id: string };
 export type JiraTransition = { id: string; name: string; to: { id: string; name: string } };
 export function descriptionText(value: unknown): string {
   if (!value || typeof value !== 'object') return '';

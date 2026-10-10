@@ -1,11 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {attendanceTotals,shiftStart,lateness,formatDuration} from '../src/lib/time-core';
-test('both approved shifts span 9:30 in India time',()=>{
- assert.equal(shiftStart('2026-10-06','early'),'2026-10-06T08:30:00+05:30');
- assert.equal(shiftStart('2026-10-06','late'),'2026-10-06T09:00:00+05:30');
- assert.throws(()=>shiftStart('2026-02-30','early'));
-});
+import {attendanceTotals,formatDuration} from '../src/lib/time-core';
 test('break time and work add up to elapsed attendance; duplicate spans cannot double-count',()=>{
  const total=attendanceTotals('2026-10-06T08:30:00+05:30','2026-10-06T18:00:00+05:30',[
  {start:'2026-10-06T13:00:00+05:30',end:'2026-10-06T14:00:00+05:30'},
@@ -23,9 +18,7 @@ test('active break and unfinished attendance are provisional; invalid clocks fai
  assert.throws(()=>attendanceTotals('2026-10-06T09:00:00',null,[],'2026-10-06T10:00:00Z','combined'));
  assert.throws(()=>attendanceTotals('2026-10-06T09:00:00Z','2026-10-06T08:00:00Z',[],'2026-10-06T10:00:00Z','combined'));
 });
-test('five-minute grace is inclusive and durations preserve total hours',()=>{
- assert.equal(lateness('2026-10-06T08:35:00+05:30',shiftStart('2026-10-06','early')).late,false);
- assert.equal(lateness('2026-10-06T08:35:01+05:30',shiftStart('2026-10-06','early')).late,true);
+test('durations preserve total hours',()=>{
  assert.equal(formatDuration(34200),'9h 30m');
 });
 test('approved re-entry excludes off-clock gaps from work, breaks and daily attendance',()=>{

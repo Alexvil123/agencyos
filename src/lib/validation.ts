@@ -16,6 +16,3 @@ export const employeeLoginSchema = employeeSchema.extend({
 export const departmentSchema = z.object({ name: z.string().trim().min(2).max(80) });
 export const companySchema = z.object({ display_name: z.string().trim().min(2).max(100) });
 export const clientSchema = z.object({ display_name: z.string().trim().min(2).max(100) });
-export function safeDestination(value: string | null) {
-  return value && value.startsWith('/') && !value.startsWith('//') && !value.includes('\\') && !/[\r\n]/.test(value) ? value : '/';
-}

@@ -1,0 +1,20 @@
+/* Finance menu */
+.finance .fin-search{flex:1 1 220px;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:inherit;font:inherit}
+.fin-row{cursor:pointer}.fin-row:hover{background:var(--soft)}
+.fin-link{padding:0;border:0;background:transparent;color:var(--purple-dark);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
+.fin-status{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#e5e7eb;color:#374151}
+.fin-status.sent{background:#dbeafe;color:#1e40af}.fin-status.partial{background:#fef3c7;color:#92400e}.fin-status.overdue{background:#fee2e2;color:#991b1b}.fin-status.paid{background:#dcfce7;color:#166534}.fin-status.void{background:#f3f4f6;color:#6b7280;text-decoration:line-through}
+.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.fin-grid label{display:grid;gap:5px;font-size:13px}
+.fin-grid input,.fin-grid select,.fin-form textarea,.fin-item input,.fin-reverse input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:inherit;font:inherit}
+.fin-items{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px}
+.fin-items legend{padding:0 6px;font-weight:700;font-size:13px}
+.fin-item{display:grid;grid-template-columns:minmax(160px,3fr) minmax(70px,1fr) minmax(90px,1.2fr) minmax(90px,1fr) 36px;gap:8px;align-items:center}
+.fin-item output{text-align:right;font-weight:600;font-size:13px}
+.fin-totals{display:grid;gap:6px;margin:0;padding:12px 16px;max-width:360px;margin-left:auto;border:1px solid var(--line);border-radius:12px}
+.fin-totals div{display:flex;justify-content:space-between;gap:20px;font-size:14px}.fin-totals dt{color:var(--muted)}.fin-totals dd{margin:0}
+.fin-reversed td{color:var(--muted);text-decoration:line-through}.fin-reversed td small{text-decoration:none}
+.fin-reverse{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.fin-reverse input{min-width:150px}
+.secondary.danger{color:#b91c1c;border-color:#fecaca}
+html[data-theme=dark] .fin-status{background:#374151;color:#e5e7eb}
+@media(max-width:700px){.fin-item{grid-template-columns:1fr 1fr}.fin-item input:first-child{grid-column:1/-1}.fin-totals{max-width:none}}

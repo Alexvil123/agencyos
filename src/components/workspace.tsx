@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useTransition } from 'rea
 import { Activity, ArrowDownLeft, CalendarDays, ArrowRight, ArrowUpRight, Bell, Building2, ChevronDown, CircleHelp, Clock3, Command, FileBarChart2, Globe, Library, Layers3, LayoutDashboard, LockKeyhole, Menu, MessageSquare, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, Target, Users, Wallet, X, Zap } from 'lucide-react';
 import type { WorkspaceContext } from '@/lib/access';
 import type { WorkspaceData } from '@/lib/data';
-import { modules, moduleFor, policyDecisions } from '@/lib/modules';
+import { modules, moduleFor, moduleVisible } from '@/lib/modules';
 import { createDepartment, saveCompany } from '@/app/actions';
 import { inviteMember, changeMember } from '@/app/user-actions';
 import { TeamPanel } from './team-panel';
@@ -19,6 +19,9 @@ import {WorkPanel} from './work-panel';
 import {WorkSettings} from './work-settings';
 import {TimePanel} from './time-panel';
 import {CalendarPanel} from './calendar-panel';
+import {AnalyticsPanel} from './analytics-panel';
+import {CampaignsPanel} from './campaigns-panel';
+import {FinancePanel} from './finance-panel';
 import {OverviewTime} from './overview-time';
 import {EmployeeSelfService} from './employee-self-service';
 import {SalesPanel} from './sales-panel';
@@ -70,12 +73,13 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
     startTransition(async () => { const outcome = await action(form); setResult(outcome); });
   }
   const filteredEmployees = data.employees.filter(e => `${e.display_name} ${e.email} ${e.job_title}`.toLowerCase().includes(query.toLowerCase()));
-  const filteredModules = modules.filter(m => `${m.name} ${m.description}`.toLowerCase().includes(query.toLowerCase()));
+  const menuAccess = { owner: ctx.roles.includes('Owner'), permissions: ctx.permissions };
+  const filteredModules = modules.filter(m => moduleVisible(m.key, menuAccess) && `${m.name} ${m.description}`.toLowerCase().includes(query.toLowerCase()));
   return <div className="app-shell">
     <aside className={`sidebar ${mobile ? 'is-open' : ''}`}>
       <Link className="brand" href="/"><span className="brand-mark">a</span> agency<span className="brand-os">os</span><span className="brand-dot"/></Link>
       <div className="workspace-switch"><span className="workspace-icon"><Zap size={18}/></span><div><strong>{ctx.company}</strong><small>Agency workspace</small></div><ChevronDown size={14}/></div>
-      <nav ref={navigation} aria-label="Main navigation" onScroll={rememberNavigation}>{['Workspace', 'Management', 'System'].map(group => <div className="nav-group" key={group}><div className="nav-label">{group}</div>{modules.filter(m => m.group === group).map(m => { const Icon = icons[m.icon]; return <Link key={m.key} href={`/${m.key}`} scroll={false} onClick={() => { rememberNavigation(); setMobile(false); setQuery(''); }} className={`nav-item ${moduleKey === m.key ? 'active' : ''}`} aria-current={moduleKey === m.key ? 'page' : undefined}><Icon size={18}/><span>{m.name}</span>{m.key==='chat'&&chatNotifications.unread>0&&<span className="chat-unread-badge" aria-label={`${chatNotifications.unread} unread chat messages`}>{chatNotifications.unread>99?'99+':chatNotifications.unread}</span>}{moduleKey === m.key && <span className="active-dot"/>}</Link>; })}</div>)}</nav>
+      <nav ref={navigation} aria-label="Main navigation" onScroll={rememberNavigation}>{['Workspace', 'Management', 'System'].map(group => <div className="nav-group" key={group}><div className="nav-label">{group}</div>{modules.filter(m => m.group === group && moduleVisible(m.key, menuAccess)).map(m => { const Icon = icons[m.icon]; return <Link key={m.key} href={`/${m.key}`} scroll={false} onClick={() => { rememberNavigation(); setMobile(false); setQuery(''); }} className={`nav-item ${moduleKey === m.key ? 'active' : ''}`} aria-current={moduleKey === m.key ? 'page' : undefined}><Icon size={18}/><span>{m.name}</span>{m.key==='chat'&&chatNotifications.unread>0&&<span className="chat-unread-badge" aria-label={`${chatNotifications.unread} unread chat messages`}>{chatNotifications.unread>99?'99+':chatNotifications.unread}</span>}{moduleKey === m.key && <span className="active-dot"/>}</Link>; })}</div>)}</nav>
       <div className="sidebar-bottom"><button className="help-link" onClick={() => open('help')}><CircleHelp size={18}/> Help & getting started <ArrowUpRight size={14}/></button><div className="profile"><span className="avatar purple">{initials(ctx.name)}</span><div><strong>{ctx.name}</strong><small>{ctx.roles.join(', ') || 'Member'}</small></div>{ctx.preview ? <Link href="/login" aria-label="Open sign in"><MoreHorizontal size={18}/></Link> : <form action="/auth/signout" method="post"><button className="icon-button" title="Sign out" aria-label="Sign out"><ArrowDownLeft size={18}/></button></form>}</div></div>
     </aside>
     {mobile && <button className="sidebar-overlay" aria-label="Close navigation" onClick={() => setMobile(false)}/>}
@@ -105,7 +109,9 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
         {(moduleKey==='attendance'||moduleKey==='reports')&&<TimePanel reports={moduleKey==='reports'} preview={ctx.preview}/>}
         {moduleKey==='communication'&&<Announcements feed={announcements} owner={ctx.roles.includes('Owner')&&!ctx.preview}/>}
         {moduleKey==='chat'&&!ctx.preview&&<TeamChat unread={chatNotifications.items}/>}
-        {'pending' in current && moduleKey!=='communication' && <section className="panel pending-panel"><span className={`module-icon ${moduleKey}`}><LockKeyhole size={24}/></span><span className="eyebrow">PLANNED WORKSPACE</span><h2>{current.name}, built around your workflow.</h2><p>This module will be implemented after its business rules are confirmed.<br/>Your real data will appear only after the module is connected.</p><div className="decision-list"><strong>Before we connect this module</strong>{(policyDecisions[moduleKey] || []).map(item => <div key={item}><span className="decision-circle"/><span>{item}</span></div>)}</div><Link href="/" className="secondary">Back to overview <ArrowRight size={15}/></Link></section>}
+        {moduleKey === 'analytics' && <AnalyticsPanel preview={ctx.preview}/>}
+        {moduleKey === 'campaigns' && <CampaignsPanel preview={ctx.preview}/>}
+        {moduleKey === 'finance' && <FinancePanel preview={ctx.preview} company={ctx.company}/>}
         <footer className="workspace-footer"><span><span className="mini-logo">a</span> agency os</span><span>Clarity for your team. Space for great work.</span><span>Agency workspace</span></footer>
       </main>
     </div>
@@ -116,7 +122,7 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
       {modal === 'employee' && <EmployeeForm canCreateLogin={!ctx.preview && ctx.roles.includes('Owner')} loginReady={ctx.employeeLoginReady} departments={data.departments} onClose={() => setModal(null)} canInvite={!ctx.preview && (ctx.roles.includes('Owner') || ctx.roles.includes('System Administrator'))} onInvite={email => { open('invite'); setInviteEmail(email); }}/ >}
       {(modal === 'department' || modal === 'invite') && <form className="stack modal-form" action={f => submit(modal === 'department' ? createDepartment : inviteMember, f)}>{modal === 'department' ? <label>Department name<input name="name" minLength={2} maxLength={80} required placeholder="Your department name"/></label> : <><label>Email address<input name="email" type="email" defaultValue={inviteEmail} required/></label><label>Account type<select name="kind"><option value="employee">Employee</option></select></label><div className="notice">Invitations grant no roles automatically. Assign approved roles after the account has been created.</div><label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>I confirm this person should receive a workspace invitation.</label></>}<button className="primary" disabled={pending || result?.ok}>{pending ? 'Saving…' : modal === 'invite' ? 'Send invitation' : 'Save record'}</button>{result && <p role="status" className={`form-message ${result.ok ? 'success' : 'error'}`}>{result.message}</p>}</form>}
       {modal === 'notifications' && (ctx.preview?<p>Sign in to view announcements.</p>:<Announcements feed={announcements}/>)}
-      {modal === 'help' && <div className="help-body"><p>Start with company settings and your employee directory. Then confirm each module’s business rules before connecting real data.</p><div className="notice">This is the Phase 1 foundation. Planned modules are clearly marked; attendance calculations and Jira automation are awaiting your decisions.</div><Link className="primary" href="/settings" onClick={() => setModal(null)}>Open workspace settings <ArrowRight size={15}/></Link></div>}
+      {modal === 'help' && <div className="help-body"><p>Start with company settings and your employee directory. Jira, Google Sheets and the ad platforms connect in Settings and the hosting environment; every menu then works from your real data.</p><div className="notice">Calendar, Work and Reports follow Jira. Finance, Campaigns and Settings are limited to the Owner and the roles that need them.</div><Link className="primary" href="/settings" onClick={() => setModal(null)}>Open workspace settings <ArrowRight size={15}/></Link></div>}
     </dialog>
   </div>;
 }

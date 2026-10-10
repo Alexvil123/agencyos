@@ -1,10 +1,115 @@
 /* Employee-first interactions and small-screen work queue */
-.daily-overview{display:grid;gap:18px}.overview-top-row{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}.overview-current,.overview-next,.overview-day-note,.overview-team{padding:20px}.overview-current .time-heading{margin-bottom:12px}.overview-task-title{font-size:19px;font-weight:700;text-align:left;margin:8px 0}.overview-current p,.overview-day-note p{font-size:13px;line-height:1.7;color:var(--muted);margin:10px 0}.overview-current .task-quick-work{padding:12px;margin:12px 0 0}.overview-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.overview-metrics article{padding:17px;border-top:3px solid var(--purple)}.overview-metrics article:nth-child(2){border-color:#e3a354}.overview-metrics article:nth-child(3){border-color:#3da6d9}.overview-metrics article:nth-child(4){border-color:#35b58e}.overview-metrics strong{display:block;font-size:23px;margin-top:8px;font-variant-numeric:tabular-nums}.overview-bottom-row{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}.overview-next>button{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;text-align:left;padding:13px 0;border-bottom:1px solid var(--line)}.overview-next strong,.overview-next small{display:block}.overview-next small{margin-top:5px}.overview-day-note>a{margin-top:14px}.focused-work.dash-layout{display:block}.focused-work .dash-summary-grid{display:block;margin:12px 0}.focused-work .dash-current{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 18px;min-height:0}.focused-work .dash-current .dash-card-head{padding:0;margin:0}.focused-work .dash-card-head button{display:none}.focused-work .dash-current-title{margin:0;flex:1;min-width:180px}.focused-work .dash-current-tags,.focused-work .task-session-stamps{display:none}.focused-work .dash-current-clock{margin:0}.focused-work .dash-current-clock strong{font-size:22px}.focused-work .dash-current-actions{display:flex;margin:0;gap:8px}.focused-work .dash-action{min-height:40px;padding:10px 15px}.focused-work .dash-idle{padding:8px;display:flex;align-items:center;flex-wrap:wrap;gap:14px;min-height:0}.focused-work .dash-idle p{margin:0}.focused-work .dash-task-table{min-width:980px}.focused-work .dash-task-table :is(th,td){padding:12px 10px}.focused-work .dash-task-table th:last-child,.focused-work .dash-task-table td:last-child{position:sticky;right:0;background:var(--surface,#fff);box-shadow:-5px 0 8px #33333308;z-index:2;min-width:168px}.task-date-filters{display:flex;flex-wrap:wrap;align-items:end;gap:12px;padding:12px 16px;border-top:1px solid var(--line);background:var(--soft)}.task-date-filters>label{display:grid;gap:6px;font-size:12px}.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:160px;padding:8px}.task-date-filters .checkbox-label{display:flex;align-items:center;align-self:center}.work-unified .work-sync-bar small{font-size:12px}.overview-alert-strip{padding:12px 18px}.overview-team .time-stats{margin:0}.overview-current .time-heading a{white-space:nowrap}
-@media(max-width:800px){.overview-top-row,.overview-bottom-row{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,1fr)}.focused-work .dash-current-actions{width:100%}.focused-work .dash-current-actions button{flex:1}.task-date-filters>label{flex:1}.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:100%}}
-@media(min-width:721px){.focused-work .dash-task-table th:last-child{width:190px}.focused-work .dash-row-actions{justify-content:flex-start}.focused-work .task-timer-controls{min-width:0;width:100%}.focused-work .task-timer-buttons{flex-wrap:wrap}}
-@media(max-width:720px){.focused-work .dash-task-table{min-width:0}.focused-work .dash-task-table td:last-child{position:static;box-shadow:none}.overview-current .time-heading{flex-wrap:wrap}.overview-metrics strong{font-size:20px}}
-.self-service{padding:24px;margin-bottom:20px}.self-service h2{margin:12px 0}.self-service .tabs{margin-top:24px}.self-account{max-width:480px;margin-top:24px}.self-account p{margin:12px 0;line-height:1.7}.task-quick-work{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--soft);margin:18px 0}.task-quick-work strong{display:block;margin-top:8px;font-size:20px;font-variant-numeric:tabular-nums}.task-quick-work p,.task-quick-work small{font-size:12px;color:var(--muted)}.task-source-links{display:grid;gap:10px;margin:20px 0;overflow-wrap:anywhere}.my-task-hours{margin:20px 0}.my-task-hours summary{cursor:pointer;font-weight:600;padding:12px 0}.my-task-hours ul{list-style:none;padding:0}.my-task-hours li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}.action-saving{padding:12px 18px;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--purple);font-weight:600}.sidebar nav{overflow-x:hidden}.sidebar .nav-item{min-width:0}.sidebar .nav-item span{overflow-wrap:anywhere}.work-drawer button,.self-service button{min-height:44px}.work-drawer textarea,.work-drawer input{font-size:16px}.task-source-links a{color:var(--purple)}
-@media(max-width:720px){.task-quick-work{flex-direction:column;align-items:stretch}.my-task-hours li{align-items:flex-start;flex-direction:column;gap:6px}.self-service{padding:18px}.work-drawer{width:100vw;max-width:100vw;margin:0;height:100dvh;max-height:100dvh;border-radius:0;padding:14px}.work-drawer .time-heading{flex-wrap:wrap;gap:12px}.work-drawer .time-controls>button{flex:1}.work-drawer .time-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-task-table{min-width:0;width:100%;table-layout:fixed}.dash-task-table thead{display:none}.dash-task-table tbody,.dash-task-table tr,.dash-task-table td{display:block;width:100%}.dash-task-table tr{padding:14px;border-bottom:1px solid var(--line)}.dash-task-table td{padding:6px 0;border:0;overflow-wrap:anywhere}.dash-task-table td:nth-child(4)::before{content:'Due / work date: ';font-weight:600}.dash-task-table td:nth-child(5)::before{content:'Work timeline';display:block;font-weight:600;margin-bottom:5px}.dash-task-table td:nth-child(6)::before{content:'Today / total work';display:block;font-weight:600;margin-bottom:5px}.dash-task-table td:nth-child(7){padding-top:12px}.task-timer-buttons{gap:12px}.task-timer-buttons button{min-height:44px;min-width:100px}.action-saving{position:sticky;top:66px;z-index:20}.time-controls{flex-wrap:wrap}.my-day-panel .time-controls>*{min-height:44px}.work-command-bar{flex-wrap:wrap}.work-command-actions{width:100%;justify-content:space-between}.my-day-totals strong{font-size:18px}.dash-current-clock{flex-wrap:wrap}.my-day-panel h2{font-size:20px}}
-
+.daily-overview{display:grid;gap:18px}
+.overview-top-row{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}
+.overview-current,.overview-next,.overview-day-note,.overview-team{padding:20px}
+.overview-current .time-heading{margin-bottom:12px}
+.overview-task-title{font-size:19px;font-weight:700;text-align:left;margin:8px 0}
+.overview-current p,.overview-day-note p{font-size:13px;line-height:1.7;color:var(--muted);margin:10px 0}
+.overview-current .task-quick-work{padding:12px;margin:12px 0 0}
+.overview-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.overview-metrics article{padding:17px;border-top:3px solid var(--purple)}
+.overview-metrics article:nth-child(2){border-color:#e3a354}
+.overview-metrics article:nth-child(3){border-color:#3da6d9}
+.overview-metrics article:nth-child(4){border-color:#35b58e}
+.overview-metrics strong{display:block;font-size:23px;margin-top:8px;font-variant-numeric:tabular-nums}
+.overview-bottom-row{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.overview-next>button{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;text-align:left;padding:13px 0;border-bottom:1px solid var(--line)}
+.overview-next strong,.overview-next small{display:block}
+.overview-next small{margin-top:5px}
+.overview-day-note>a{margin-top:14px}
+.focused-work.dash-layout{display:block}
+.focused-work .dash-summary-grid{display:block;margin:12px 0}
+.focused-work .dash-current{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 18px;min-height:0}
+.focused-work .dash-current .dash-card-head{padding:0;margin:0}
+.focused-work .dash-card-head button{display:none}
+.focused-work .dash-current-title{margin:0;flex:1;min-width:180px}
+.focused-work .dash-current-tags,.focused-work .task-session-stamps{display:none}
+.focused-work .dash-current-clock{margin:0}
+.focused-work .dash-current-clock strong{font-size:22px}
+.focused-work .dash-current-actions{display:flex;margin:0;gap:8px}
+.focused-work .dash-action{min-height:40px;padding:10px 15px}
+.focused-work .dash-idle{padding:8px;display:flex;align-items:center;flex-wrap:wrap;gap:14px;min-height:0}
+.focused-work .dash-idle p{margin:0}
+.focused-work .dash-task-table{min-width:980px}
+.focused-work .dash-task-table :is(th,td){padding:12px 10px}
+.focused-work .dash-task-table th:last-child,.focused-work .dash-task-table td:last-child{position:sticky;right:0;background:var(--surface,#fff);box-shadow:-5px 0 8px #33333308;z-index:2;min-width:168px}
+.task-date-filters{display:flex;flex-wrap:wrap;align-items:end;gap:12px;padding:12px 16px;border-top:1px solid var(--line);background:var(--soft)}
+.task-date-filters>label{display:grid;gap:6px;font-size:12px}
+.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:160px;padding:8px}
+.task-date-filters .checkbox-label{display:flex;align-items:center;align-self:center}
+.work-unified .work-sync-bar small{font-size:12px}
+.overview-team .time-stats{margin:0}
+.overview-current .time-heading a{white-space:nowrap}
+@media(max-width:800px){
+.overview-top-row,.overview-bottom-row{grid-template-columns:1fr}
+.overview-metrics{grid-template-columns:repeat(2,1fr)}
+.focused-work .dash-current-actions{width:100%}
+.focused-work .dash-current-actions button{flex:1}
+.task-date-filters>label{flex:1}
+.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:100%}
+}
+@media(min-width:721px){
+.focused-work .dash-task-table th:last-child{width:190px}
+.focused-work .dash-row-actions{justify-content:flex-start}
+.focused-work .task-timer-controls{min-width:0;width:100%}
+.focused-work .task-timer-buttons{flex-wrap:wrap}
+}
+@media(max-width:720px){
+.focused-work .dash-task-table{min-width:0}
+.focused-work .dash-task-table td:last-child{position:static;box-shadow:none}
+.overview-current .time-heading{flex-wrap:wrap}
+.overview-metrics strong{font-size:20px}
+}
+.self-service{padding:24px;margin-bottom:20px}
+.self-service h2{margin:12px 0}
+.self-service .tabs{margin-top:24px}
+.self-account{max-width:480px;margin-top:24px}
+.self-account p{margin:12px 0;line-height:1.7}
+.task-quick-work{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--soft);margin:18px 0}
+.task-quick-work strong{display:block;margin-top:8px;font-size:20px;font-variant-numeric:tabular-nums}
+.task-quick-work p,.task-quick-work small{font-size:12px;color:var(--muted)}
+.task-source-links{display:grid;gap:10px;margin:20px 0;overflow-wrap:anywhere}
+.action-saving{padding:12px 18px;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--purple);font-weight:600}
+.sidebar nav{overflow-x:hidden}
+.sidebar .nav-item{min-width:0}
+.sidebar .nav-item span{overflow-wrap:anywhere}
+.work-drawer button,.self-service button{min-height:44px}
+.work-drawer textarea,.work-drawer input{font-size:16px}
+.task-source-links a{color:var(--purple)}
+@media(max-width:720px){
+.task-quick-work{flex-direction:column;align-items:stretch}
+.self-service{padding:18px}
+.work-drawer{width:100vw;max-width:100vw;margin:0;height:100dvh;max-height:100dvh;border-radius:0;padding:14px}
+.work-drawer .time-heading{flex-wrap:wrap;gap:12px}
+.work-drawer .time-controls>button{flex:1}
+.work-drawer .time-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dash-task-table{min-width:0;width:100%;table-layout:fixed}
+.dash-task-table thead{display:none}
+.dash-task-table tbody,.dash-task-table tr,.dash-task-table td{display:block;width:100%}
+.dash-task-table tr{padding:14px;border-bottom:1px solid var(--line)}
+.dash-task-table td{padding:6px 0;border:0;overflow-wrap:anywhere}
+.dash-task-table td:nth-child(4)::before{content:'Due / work date: ';font-weight:600}
+.dash-task-table td:nth-child(5)::before{content:'Work timeline';display:block;font-weight:600;margin-bottom:5px}
+.dash-task-table td:nth-child(6)::before{content:'Today / total work';display:block;font-weight:600;margin-bottom:5px}
+.dash-task-table td:nth-child(7){padding-top:12px}
+.task-timer-buttons{gap:12px}
+.task-timer-buttons button{min-height:44px;min-width:100px}
+.action-saving{position:sticky;top:66px;z-index:20}
+.time-controls{flex-wrap:wrap}
+.work-command-bar{flex-wrap:wrap}
+.work-command-actions{width:100%;justify-content:space-between}
+.dash-current-clock{flex-wrap:wrap}
+}
 .task-order-note{display:flex;justify-content:space-between;gap:12px;padding:10px 18px;color:var(--muted);font-size:12px;border-bottom:1px solid var(--line)}
-.task-order-controls{flex-shrink:0;display:flex;flex-direction:column;gap:3px;align-items:center}.task-drag-handle{display:flex;align-items:center;gap:2px;cursor:grab;color:var(--muted);padding:4px;border-radius:5px}.task-drag-handle:active{cursor:grabbing}.task-order-controls>div{display:flex;gap:2px}.task-order-controls>div button{padding:3px;border-radius:4px;color:var(--muted)}.task-order-controls button:hover:enabled{background:#eee7ff;color:#7651ed}.task-order-controls button:disabled{opacity:.35;cursor:default}.task-dragging{opacity:.45}.task-order-controls button:focus-visible{outline:2px solid #7651ed;outline-offset:2px}@media(max-width:700px){.task-order-note{flex-direction:column}}
+.task-order-controls{flex-shrink:0;display:flex;flex-direction:column;gap:3px;align-items:center}
+.task-drag-handle{display:flex;align-items:center;gap:2px;cursor:grab;color:var(--muted);padding:4px;border-radius:5px}
+.task-drag-handle:active{cursor:grabbing}
+.task-order-controls>div{display:flex;gap:2px}
+.task-order-controls>div button{padding:3px;border-radius:4px;color:var(--muted)}
+.task-order-controls button:hover:enabled{background:#eee7ff;color:#7651ed}
+.task-order-controls button:disabled{opacity:.35;cursor:default}
+.task-dragging{opacity:.45}
+.task-order-controls button:focus-visible{outline:2px solid #7651ed;outline-offset:2px}
+@media(max-width:700px){
+.task-order-note{flex-direction:column}
+}
