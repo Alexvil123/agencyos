@@ -12,6 +12,6 @@ export async function loadSocial(range:{from:string;to:string;fresh?:boolean}):P
     const ctx=await workspaceContext();
     if(ctx.preview||ctx.kind!=='employee')return {ok:false,message:'Sign in with an employee account to see social analytics.',...empty};
     const parsed=input.parse(range);
-    return {ok:true,message:'',...await socialData({from:parsed.from,to:parsed.to},parsed.fresh)};
+    return {ok:true,message:'',...await socialData({from:parsed.from,to:parsed.to},ctx.organizationId,parsed.fresh)};
   }catch(error){return {ok:false,message:error instanceof z.ZodError?'Choose a valid date range.':error instanceof Error&&error.message.startsWith('Choose a')?error.message:'Social analytics could not be loaded.',...empty};}
 }

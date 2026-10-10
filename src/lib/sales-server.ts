@@ -9,6 +9,7 @@ import {SALES_SPREADSHEET_ID,salesColumn,type SalesGrid} from './sales-sheet';
 import {parseNativeSales,type NativeWorkbook,type NativeSheet,type NativeSales} from './sales-native';
 import {recordSyncHealth} from './sync-health-server';
 import {salesTeamMembers} from './sales-team-server';
+import {credentialValues,saveCredentials} from './integrations-server';
 const file=join(process.cwd(),'.sales-google.local.json');
 const schema=z.object({organizationId:z.uuid(),email:z.email().refine(v=>v.endsWith('.iam.gserviceaccount.com')),key:z.string().max(10000).refine(v=>v.includes('PRIVATE KEY')),members:z.array(z.uuid()).max(500)});
 export type SalesConfig=z.infer<typeof schema>;
@@ -18,10 +19,12 @@ const metadataCache=new Map<string,{expires:number;pending?:boolean;promise:Prom
 function configKey(config:SalesConfig){return version([config.organizationId,config.email,config.key]);}
 export async function salesConfig(org:string):Promise<SalesConfig|null>{
  if(process.env.GOOGLE_SHEETS_ORGANIZATION_ID===org&&process.env.GOOGLE_SHEETS_SERVICE_ACCOUNT_JSON){const members=await salesTeamMembers(org);try{const key=JSON.parse(process.env.GOOGLE_SHEETS_SERVICE_ACCOUNT_JSON);return schema.parse({organizationId:org,email:key.client_email,key:key.private_key,members});}catch{throw new Error('Google Sheets server configuration is invalid.');}}
+ const {source,values}=await credentialValues(org,'google_sheets');
+ if(source==='stored'){try{const key=JSON.parse(values.service_account_json||'{}');return schema.parse({organizationId:org,email:key.client_email,key:key.private_key,members:await salesTeamMembers(org)});}catch{throw new Error('Google Sheets credentials saved in Settings are invalid. Save them again.');}}
  if(process.env.NODE_ENV==='production')return null;
  try{const config=schema.parse(JSON.parse(await readFile(file,'utf8')));return config.organizationId===org?{...config,members:await salesTeamMembers(org)}:null;}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw new Error('Sales configuration could not be verified.');}
 }
-export async function saveSalesConfig(config:SalesConfig){if(process.env.NODE_ENV==='production')throw new Error('Use managed hosting environment settings for Google credentials and sales membership IDs.');const temp=`${file}.${randomUUID()}`;try{await writeFile(temp,JSON.stringify(schema.parse(config)),{mode:0o600,flag:'wx'});await rename(temp,file);}finally{await unlink(temp).catch(()=>{});}}
+export async function saveSalesConfig(config:SalesConfig,actor?:string){if(process.env.NODE_ENV==='production'){if(!actor)throw new Error('Save the Google credentials in Settings → Integrations.');await saveCredentials(config.organizationId,'google_sheets',{service_account_json:JSON.stringify({type:'service_account',client_email:config.email,private_key:config.key})},actor);return;}const temp=`${file}.${randomUUID()}`;try{await writeFile(temp,JSON.stringify(schema.parse(config)),{mode:0o600,flag:'wx'});await rename(temp,file);}finally{await unlink(temp).catch(()=>{});}}
 export function serviceAccount(value:unknown,organizationId:string):SalesConfig{const x=z.object({type:z.literal('service_account'),client_email:z.string(),private_key:z.string()}).parse(value);return schema.parse({organizationId,email:x.client_email,key:x.private_key,members:[]});}
 export async function sheetsRequest<T>(config:SalesConfig,path:string,body?:unknown):Promise<T>{
  const key=configKey(config);let auth=authClients.get(key);if(!auth){auth=new JWT({email:config.email,key:config.key,scopes:['https://www.googleapis.com/auth/spreadsheets']});authClients.clear();authClients.set(key,auth);}

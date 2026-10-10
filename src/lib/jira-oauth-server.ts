@@ -5,6 +5,7 @@ import {randomUUID} from 'node:crypto';
 import {createClient} from '@supabase/supabase-js';
 import {z} from 'zod';
 import {sealTokens,openTokens,type OAuthTokens} from './jira-oauth-core';
+import {credentialValues,masterKeyBase64} from './integrations-server';
 import type {JiraCredentials} from './jira-http';
 export const oauthAppFile=join(process.cwd(),'.jira-oauth-app.local.json');
 export type OAuthApp={clientId:string;clientSecret:string;encryptionKey:string;organizationId:string};
@@ -22,6 +23,8 @@ function validApp(value:OAuthApp) {
 }
 export async function oauthApp(organizationId:string):Promise<OAuthApp|null> {
  if(process.env.JIRA_OAUTH_CLIENT_ID&&process.env.JIRA_OAUTH_CLIENT_SECRET&&process.env.JIRA_ORGANIZATION_ID===organizationId) return validApp({clientId:process.env.JIRA_OAUTH_CLIENT_ID,clientSecret:process.env.JIRA_OAUTH_CLIENT_SECRET,encryptionKey:process.env.JIRA_OAUTH_ENCRYPTION_KEY||'',organizationId});
+ const stored=await credentialValues(organizationId,'jira_oauth_app');
+ if(stored.source==='stored'&&stored.values.client_id&&stored.values.client_secret)return validApp({clientId:stored.values.client_id,clientSecret:stored.values.client_secret,encryptionKey:process.env.JIRA_OAUTH_ENCRYPTION_KEY||masterKeyBase64()||'',organizationId});
  if(process.env.NODE_ENV==='production')return null;
  try {const value=JSON.parse(await readFile(oauthAppFile,'utf8')) as OAuthApp;return value.organizationId===organizationId?validApp(value):null;}catch{return null;}
 }

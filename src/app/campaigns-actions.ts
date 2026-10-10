@@ -12,6 +12,6 @@ export async function loadCampaigns(range:{from:string;to:string;fresh?:boolean}
     const ctx=await workspaceContext();
     if(ctx.preview||ctx.kind!=='employee'||!ctx.roles.includes('Owner'))return {ok:false,message:'Only the Owner can view campaign spend.',...empty};
     const parsed=input.parse(range);
-    return {ok:true,message:'',...await campaignData({from:parsed.from,to:parsed.to},parsed.fresh)};
+    return {ok:true,message:'',...await campaignData({from:parsed.from,to:parsed.to},ctx.organizationId,parsed.fresh)};
   }catch(error){return {ok:false,message:error instanceof z.ZodError?'Choose a valid date range.':error instanceof Error&&error.message.startsWith('Choose a')?error.message:'Campaigns could not be loaded.',...empty};}
 }
