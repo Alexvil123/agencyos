@@ -20,6 +20,14 @@ test('an unconfigured integration offers Set up and no Remove; hosting-setting v
   const none=render(item('none'));assert.match(none,/Not set up/);assert.match(none,/Set up/);assert.doesNotMatch(none,/Remove/);
   const env=render(item('env'));assert.match(env,/hosting settings/);assert.match(env,/Saving here replaces them/);assert.doesNotMatch(env,/>Remove</);assert.doesNotMatch(env,/SECRET-TOKEN-VALUE/);
 });
+test('accounts are listed with client names, each removable, and a server-file setup counts as active',()=>{
+  const stored=item('stored',{accounts:[{field:'facebook_page_ids',id:'111111',label:'Acme Dental'},{field:'instagram_account_ids',id:'222222',label:''}]});
+  const html=render(stored);
+  assert.match(html,/Acme Dental/);assert.match(html,/aria-label="Remove Facebook Page Acme Dental"/);assert.match(html,/aria-label="Remove Instagram account 222222"/);assert.match(html,/Client name \(optional\)/);
+  assert.doesNotMatch(render(item('none')),/Client name/);
+  const file=render(item('none',{source:'file',hint:'Service account x@y.iam.gserviceaccount.com'}));
+  assert.match(file,/Active · server file/);assert.match(file,/already configured on the server/);
+});
 test('messages and unreadable credentials are announced',()=>{
   assert.match(render(item('stored'),{note:{ok:true,message:'Saved and active.'}}),/role="status"[^>]*>Saved and active\./);
   assert.match(render(item('none'),{note:{ok:false,message:'Meta rejected this access token.'}}),/role="alert"[^>]*>Meta rejected this access token\./);

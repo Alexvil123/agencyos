@@ -61,7 +61,8 @@ export async function auditIntegration(org:string,actor:string,action:string,pro
 }
 
 export type Overview={ready:boolean;setupRequired:boolean;items:(PublicIntegration&{unreadable:boolean})[]};
-export async function integrationOverview(org:string):Promise<Overview>{
+/** serverFiles: integrations that are configured in a server-side file (local setups) and so are active although nothing is stored here. */
+export async function integrationOverview(org:string,serverFiles:Partial<Record<ProviderKey,string>>={}):Promise<Overview>{
   let setupRequired=false;
   const items=await Promise.all(PROVIDERS.map(async spec=>{
     const state=await readStored(org,spec.key,true);
@@ -69,6 +70,7 @@ export async function integrationOverview(org:string):Promise<Overview>{
     if(state.state==='ok')return {...publicIntegration(spec,'stored',state.stored.payload,state.stored.updatedAt,state.stored.hint),unreadable:false};
     const picked=pickValues(spec,null,process.env);
     if(picked.source==='env'){const payload=Object.fromEntries(Object.entries(picked.values).filter(([,v])=>v)) as Payload;return {...publicIntegration(spec,'env',payload,null),unreadable:state.state==='unreadable'};}
+    if(serverFiles[spec.key])return {...publicIntegration(spec,'file',null,null,serverFiles[spec.key]),unreadable:state.state==='unreadable'};
     return {...publicIntegration(spec,'none',null,state.state==='unreadable'?state.updatedAt:null),unreadable:state.state==='unreadable'};
   }));
   return {ready:masterKey()!==null,setupRequired,items};

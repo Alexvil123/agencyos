@@ -1,7 +1,7 @@
 'use client';
 import {useState} from 'react';
-import {CheckCircle2,KeyRound,Trash2} from 'lucide-react';
-import type {PublicIntegration,ProviderSpec} from '@/lib/integrations';
+import {CheckCircle2,KeyRound,Plus,Trash2,X} from 'lucide-react';
+import {ACCOUNT_KINDS,type PublicIntegration,type ProviderSpec} from '@/lib/integrations';
 import type {Overview} from '@/lib/integrations-server';
 
 export type IntegrationItem=Overview['items'][number];
@@ -9,11 +9,12 @@ export type IntegrationNote={ok:boolean;message:string};
 type Item=IntegrationItem;
 type Note=IntegrationNote;
 const when=(iso:string|null)=>iso?new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(iso)):'';
-export const statusLabel=(item:Pick<PublicIntegration,'source'>&{unreadable?:boolean})=>item.unreadable&&item.source!=='stored'?'Needs attention':item.source==='stored'?'Active':item.source==='env'?'Active · hosting settings':'Not set up';
+export const statusLabel=(item:Pick<PublicIntegration,'source'>&{unreadable?:boolean})=>item.unreadable&&item.source!=='stored'?'Needs attention':item.source==='stored'?'Active':item.source==='env'?'Active · hosting settings':item.source==='file'?'Active · server file':'Not set up';
 
 /** One integration: its status, the fields it needs, Save (switches it on) and Remove (switches it off). Secrets are never shown. */
-export function IntegrationCard({spec,item,busy,note,onSave,onRemove}:{spec:ProviderSpec;item:Item;busy:boolean;note?:Note;onSave:(form:FormData)=>void;onRemove:(provider:string)=>void}){
+export function IntegrationCard({spec,item,busy,note,onSave,onRemove,onAddAccount=()=>undefined,onRemoveAccount=()=>undefined}:{spec:ProviderSpec;item:Item;busy:boolean;note?:Note;onSave:(form:FormData)=>void;onRemove:(provider:string)=>void;onAddAccount?:(form:FormData)=>void;onRemoveAccount?:(form:FormData)=>void}){
   const [open,setOpen]=useState(false);
+  const kinds=ACCOUNT_KINDS[spec.key]||[],managed=item.source==='stored'&&kinds.length>0,hidden=new Set(managed?kinds.map(k=>k.field):[]);
   const tone=item.unreadable&&item.source!=='stored'?'bad':item.source==='none'?'off':'on';
   return <article className={`integ-card ${tone}`} aria-label={spec.title}>
     <header>
@@ -22,15 +23,29 @@ export function IntegrationCard({spec,item,busy,note,onSave,onRemove}:{spec:Prov
     </header>
     {item.hint&&<p className="integ-hint">{item.hint}{item.updatedAt&&<> · saved {when(item.updatedAt)}</>}</p>}
     {item.source==='env'&&<p className="integ-note">These values come from the hosting settings. Saving here replaces them; removing the saved values later switches back to the hosting settings.</p>}
+    {item.source==='file'&&<p className="integ-note">This is already configured on the server, so it works as it is. Saving here moves it into Settings (encrypted) and replaces the server setup.</p>}
     {item.unreadable&&<p role="alert" className="integ-note bad">The saved credentials could not be opened (the encryption key changed). Enter them again and save.</p>}
     <div className="integ-actions">
       <button className="secondary small" aria-expanded={open} onClick={()=>setOpen(!open)}><KeyRound size={14}/> {item.source==='none'?'Set up':'Edit'}</button>
       {item.source==='stored'&&<button className="secondary small danger" disabled={busy} onClick={()=>{if(window.confirm(`Remove ${spec.title}? It is switched off until you save it again.`))onRemove(spec.key);}}><Trash2 size={14}/> Remove</button>}
     </div>
+    {managed&&<div className="integ-accounts">{kinds.map(kind=>{
+      const rows=item.accounts.filter(a=>a.field===kind.field);
+      return <section key={kind.field} aria-label={`${kind.noun}s`}>
+        <h4>{kind.noun}s <span>{rows.length}</span></h4>
+        {rows.length===0?<p className="integ-hint">None added.</p>:<ul>{rows.map(row=><li key={row.id}><span><b>{row.label||row.id}</b>{row.label&&<small>{row.id}</small>}</span><button type="button" className="icon-button" disabled={busy} aria-label={`Remove ${kind.noun} ${row.label||row.id}`} title="Remove this account" onClick={()=>{if(window.confirm(`Remove ${kind.noun} ${row.label||row.id}? It disappears from the reports.`)){const form=new FormData();form.set('provider',spec.key);form.set('field',kind.field);form.set('id',row.id);onRemoveAccount(form);}}}><X size={14}/></button></li>)}</ul>}
+        <form className="integ-add" onSubmit={e=>{e.preventDefault();const form=new FormData(e.currentTarget),target=e.currentTarget;onAddAccount(form);target.reset();}}>
+          <input type="hidden" name="provider" value={spec.key}/><input type="hidden" name="field" value={kind.field}/>
+          <input name="id" required spellCheck={false} autoComplete="off" placeholder={kind.placeholder} aria-label={`${kind.noun} ID`}/>
+          <input name="label" maxLength={80} autoComplete="off" placeholder="Client name (optional)" aria-label={`${kind.noun} client name`}/>
+          <button className="secondary small" disabled={busy}><Plus size={14}/> Add</button>
+        </form>
+      </section>;
+    })}</div>}
     {note&&<p role={note.ok?'status':'alert'} className={`form-message ${note.ok?'success':'error'}`}>{note.message}</p>}
     {open&&<form className="integ-form" key={item.updatedAt||item.source} autoComplete="off" onSubmit={e=>{e.preventDefault();onSave(new FormData(e.currentTarget));}}>
       <input type="hidden" name="provider" value={spec.key}/>
-      {spec.fields.map(field=>{
+      {spec.fields.filter(field=>!hidden.has(field.key)).map(field=>{
         const saved=Boolean(item.has[field.key]);
         return <label key={field.key} className={field.multiline?'wide':undefined}>{field.label}{field.required&&<b aria-hidden="true"> *</b>}
           {field.multiline

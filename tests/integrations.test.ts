@@ -93,3 +93,18 @@ test('live checks accept good credentials, reject bad ones and never echo secret
   assert.equal(googleBad.ok,false);
   for(const provider of ['jira_oauth_app','google_sheets'] as ProviderKey[])assert.equal((await verifyProvider(provider,{},(async()=>{throw new Error('no network expected');}) as unknown as typeof fetch)).ok,true);
 });
+
+test('accounts can be added with a client name and removed again without touching the others',async()=>{
+  const {accountsOf,changeAccount,keepLabels}=await import('../src/lib/integrations');
+  let payload:Record<string,string>={token:'x'.repeat(30),facebook_page_ids:'11111',instagram_account_ids:'22222'};
+  payload=changeAccount('meta_social',payload,{op:'add',field:'facebook_page_ids',id:' 33333 ',label:'Acme Dental'});
+  assert.equal(payload.facebook_page_ids,'11111,33333');
+  assert.deepEqual(accountsOf('meta_social',payload).find(a=>a.id==='33333'),{field:'facebook_page_ids',id:'33333',label:'Acme Dental'});
+  assert.throws(()=>changeAccount('meta_social',payload,{op:'add',field:'facebook_page_ids',id:'33333'}),/already added/);
+  assert.throws(()=>changeAccount('meta_social',payload,{op:'add',field:'facebook_page_ids',id:'abc'}));
+  const removed=changeAccount('meta_social',payload,{op:'remove',field:'facebook_page_ids',id:'33333'});
+  assert.equal(removed.facebook_page_ids,'11111');assert.equal(removed.instagram_account_ids,'22222');assert.equal(removed.labels,undefined);
+  assert.throws(()=>changeAccount('meta_social',payload,{op:'remove',field:'facebook_page_ids',id:'99999'}),/not in the list/);
+  const kept=keepLabels('meta_social',payload,{...removed,facebook_page_ids:'11111,33333'});assert.match(kept.labels||'',/Acme Dental/);
+  assert.equal(keepLabels('meta_social',payload,{...removed}).labels,undefined);
+});

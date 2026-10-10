@@ -87,16 +87,55 @@ export function hintFor(provider:ProviderKey,values:Payload){
     case 'jira_oauth_app':return `Client ID ${(values.client_id||'').slice(0,6)}…`;
   }
 }
-export type PublicIntegration={provider:ProviderKey;source:'stored'|'env'|'none';hint:string;updatedAt:string|null;values:Payload;has:Record<string,boolean>};
+export type PublicIntegration={provider:ProviderKey;source:'stored'|'env'|'file'|'none';hint:string;updatedAt:string|null;values:Payload;has:Record<string,boolean>;accounts:AccountEntry[]};
 /** What the browser may see: non-secret values and only a yes/no for each secret. */
-export function publicIntegration(spec:ProviderSpec,source:'stored'|'env'|'none',payload:Payload|null,updatedAt:string|null,hint=''):PublicIntegration{
+export function publicIntegration(spec:ProviderSpec,source:PublicIntegration['source'],payload:Payload|null,updatedAt:string|null,hint=''):PublicIntegration{
   const values:Payload={},has:Record<string,boolean>={};
   for(const field of spec.fields){
     if(field.secret)has[field.key]=Boolean(payload?.[field.key]);
     else if(payload?.[field.key]!==undefined)values[field.key]=payload[field.key];
   }
-  return {provider:spec.key,source,hint:hint||(payload?hintFor(spec.key,payload):''),updatedAt,values,has};
+  return {provider:spec.key,source,hint:hint||(payload?hintFor(spec.key,payload):''),updatedAt,values,has,accounts:payload?accountsOf(spec.key,payload):[]};
 }
+// ---------- accounts (several Pages / channels / ad accounts per integration) ----------
+export type AccountKind={field:string;noun:string;normalize:(value:string)=>string;placeholder:string};
+export type AccountEntry={field:string;id:string;label:string};
+export const ACCOUNT_KINDS:Partial<Record<ProviderKey,AccountKind[]>>={
+  meta_social:[{field:'facebook_page_ids',noun:'Facebook Page',normalize:normalizeMetaId,placeholder:'Page ID, e.g. 1234567890'},{field:'instagram_account_ids',noun:'Instagram account',normalize:normalizeMetaId,placeholder:'Instagram account ID, e.g. 17841400000000000'}],
+  youtube:[{field:'channel_ids',noun:'YouTube channel',normalize:normalizeChannelId,placeholder:'Channel ID starting with UC'}],
+  meta_ads:[{field:'account_ids',noun:'ad account',normalize:normalizeMetaAccount,placeholder:'act_1234567890'}],
+  google_ads:[{field:'customer_ids',noun:'Google Ads account',normalize:normalizeGoogleCustomer,placeholder:'123-456-7890'}],
+};
+const MAX_ACCOUNTS=50;
+const readLabels=(payload:Payload):Record<string,string>=>{try{const v=JSON.parse(payload.labels||'{}') as unknown;return v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v as Record<string,unknown>).filter(([,x])=>typeof x==='string')) as Record<string,string>:{};}catch{return {};}};
+export function accountsOf(provider:ProviderKey,payload:Payload):AccountEntry[]{
+  const labels=readLabels(payload);
+  return (ACCOUNT_KINDS[provider]||[]).flatMap(kind=>list(payload[kind.field]||'').map(id=>({field:kind.field,id,label:labels[kind.field+':'+id]||''})));
+}
+/** Keeps the account names (client labels) for the accounts that are still listed. */
+export function keepLabels(provider:ProviderKey,from:Payload|null,to:Payload):Payload{
+  if(!from?.labels)return to;const labels=readLabels(from),kept:Record<string,string>={};
+  for(const entry of accountsOf(provider,to)){const label=labels[entry.field+':'+entry.id];if(label)kept[entry.field+':'+entry.id]=label;}
+  return Object.keys(kept).length?{...to,labels:JSON.stringify(kept)}:to;
+}
+/** Adds or removes one account in a payload and returns the new payload. Throws a plain-language message. */
+export function changeAccount(provider:ProviderKey,payload:Payload,change:{op:'add'|'remove';field:string;id:string;label?:string}):Payload{
+  const kind=(ACCOUNT_KINDS[provider]||[]).find(k=>k.field===change.field);if(!kind)throw new Error('This integration has no accounts to change.');
+  const current=list(payload[kind.field]||''),labels=readLabels(payload),key=(id:string)=>kind.field+':'+id;
+  if(change.op==='add'){
+    const id=kind.normalize(change.id.trim());
+    if(current.includes(id))throw new Error('That '+kind.noun+' is already added.');
+    if(accountsOf(provider,payload).length>=MAX_ACCOUNTS)throw new Error('You can add up to '+MAX_ACCOUNTS+' accounts.');
+    current.push(id);const label=(change.label||'').trim().slice(0,80);if(label)labels[key(id)]=label;
+  }else{
+    if(!current.includes(change.id))throw new Error('That '+kind.noun+' is not in the list.');
+    current.splice(current.indexOf(change.id),1);delete labels[key(change.id)];
+  }
+  const next:Payload={...payload,[kind.field]:current.join(',')};
+  if(Object.keys(labels).length)next.labels=JSON.stringify(labels);else delete next.labels;
+  return next;
+}
+
 /** Stored values win; when nothing is stored the hosting environment variables are used (so existing setups keep working). */
 export function pickValues(spec:ProviderSpec,stored:Payload|null,env:Record<string,string|undefined>):{source:'stored'|'env'|'none';values:Record<string,string|undefined>}{
   if(stored)return {source:'stored',values:Object.fromEntries(Object.keys(spec.env).map(key=>[key,stored[key]||undefined]))};

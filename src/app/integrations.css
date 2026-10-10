@@ -20,3 +20,14 @@
 .integ code{padding:2px 6px;border-radius:6px;background:var(--soft);font-size:12px}
 html[data-theme=dark] .integ-card{background:#171b2a}
 html[data-theme=dark] .integ-status{background:#374151;color:#e5e7eb}html[data-theme=dark] .integ-status.on{background:#14532d;color:#bbf7d0}html[data-theme=dark] .integ-status.bad{background:#7f1d1d;color:#fecaca}
+.integ-accounts{display:grid;gap:12px}
+.integ-accounts section{display:grid;gap:6px}
+.integ-accounts h4{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:flex;gap:6px;align-items:center}
+.integ-accounts h4 span{padding:1px 7px;border-radius:999px;background:var(--soft);font-size:11px}
+.integ-accounts ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.integ-accounts li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px}
+.integ-accounts li span{display:grid;min-width:0}.integ-accounts li b{overflow:hidden;text-overflow:ellipsis}.integ-accounts li small{color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.integ-accounts .icon-button{display:inline-grid;place-items:center;width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:transparent;color:#b91c1c;cursor:pointer}
+.integ-add{display:grid;grid-template-columns:1.3fr 1fr auto;gap:6px}
+.integ-add input{padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:inherit;font:inherit;font-size:13px;min-width:0}
+@media(max-width:520px){.integ-add{grid-template-columns:1fr}}
