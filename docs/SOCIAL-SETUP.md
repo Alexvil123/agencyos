@@ -30,5 +30,7 @@ Only public statistics are read (views, likes, comments). The API's default quot
 - Instagram uses the `views` insight and Facebook `post_media_view`; both replaced the retired impressions metrics. Platforms can delay
   insights by up to 48 hours. Instagram Stories are not included. A dash means the platform did not report that number.
 - Up to 50 posts per Instagram account and Facebook Page and 100 videos per YouTube channel are read for each period.
+- Besides the post list the page shows follower and subscriber counts, a comparison by content type (Instagram Reel/Photo/Carousel, YouTube Short up to 3 minutes vs Video) and the best posting weekday and time (average views, India time). Instagram reach is shown per post where the platform reports it.
+- Meta reports an expired or invalid token as an error code in the response body; the page turns that into a plain message ("rejected the saved credentials") instead of a generic HTTP error.
 - The code is covered by tests with simulated API responses. It has **not** been run against real accounts yet: the first run with real
   credentials is the live test. A wrong token, ID or API version shows as a clear message on the page, not as an error screen.

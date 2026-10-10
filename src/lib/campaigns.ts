@@ -6,13 +6,24 @@ export type CampaignRow={platform:CampaignPlatform;account:string;id:string;name
 export type CampaignRange={from:string;to:string};
 export type Fetcher=typeof fetch;
 
+// Meta reports most failures as HTTP 400 with an error code in the body (190 = expired or invalid token, 10/200-299 = permission, 4/17/32/613 = rate limit).
+export function metaEffectiveStatus(status:number,code?:number){
+  if(code===undefined)return status;
+  if(code===190||code===102||code===467)return 401;
+  if(code===10||(code>=200&&code<300))return 403;
+  if(code===4||code===17||code===32||code===613)return 429;
+  return status;
+}
 export class CampaignApiError extends Error{
-  constructor(public platform:CampaignPlatform,public status:number){
+  status:number;
+  constructor(public platform:CampaignPlatform,rawStatus:number,code?:number){
+    const status=platform==='meta'?metaEffectiveStatus(rawStatus,code):rawStatus;
     super(status===401||status===190?`${platform==='meta'?'Meta':'Google'} rejected the saved credentials. Create a new access token and update it in the hosting settings.`
       :status===403?`${platform==='meta'?'Meta':'Google'} denied access. Check that the token can read the ad account and that the account ID is correct.`
       :status===429?`${platform==='meta'?'Meta':'Google'} rate limit reached. Try again in a few minutes.`
       :status===0?`${platform==='meta'?'Meta':'Google'} could not be reached. Check the connection and try again.`
       :`${platform==='meta'?'Meta':'Google'} could not return campaign data (HTTP ${status}). Check the account IDs and API version in the hosting settings.`);
+    this.status=status;
   }
 }
 
@@ -71,7 +82,11 @@ async function metaPages<T>(url:string,token:string,fetcher:Fetcher){
     let response:Response;
     try{response=await fetcher(next,{headers:{Authorization:`Bearer ${token}`,Accept:'application/json'},cache:'no-store',redirect:'error',signal:AbortSignal.timeout(20000)});}
     catch{throw new CampaignApiError('meta',0);}
-    if(!response.ok)throw new CampaignApiError('meta',response.status);
+    if(!response.ok){
+      let code:number|undefined;
+      try{const body=await response.json() as {error?:{code?:unknown}};if(typeof body?.error?.code==='number')code=body.error.code;}catch{/* Only the numeric error code is used, never shown. */}
+      throw new CampaignApiError('meta',response.status,code);
+    }
     const body=await response.json() as {data?:T[];paging?:{next?:string}};
     items.push(...(body.data||[]));next=body.paging?.next;
   }

@@ -34,6 +34,12 @@ test('Meta errors map to safe messages without credentials',async()=>{
   const down=(async()=>{throw new Error('socket hang up secret-token');}) as unknown as typeof fetch;
   await assert.rejects(()=>fetchMeta({token:'secret-token',accounts:['act_1234567890'],version:'v25.0'},range,down),(e:unknown)=>e instanceof CampaignApiError&&e.status===0&&!/secret-token/.test(e.message));
 });
+test('Meta body error codes decide the Campaigns message too',async()=>{
+  const expired=(async()=>json({error:{code:190,message:'token secret-token expired'}},400)) as unknown as typeof fetch;
+  await assert.rejects(()=>fetchMeta({token:'secret-token',accounts:['act_1234567890'],version:'v25.0'},range,expired),(e:unknown)=>e instanceof CampaignApiError&&e.status===401&&/rejected the saved credentials/.test(e.message)&&!/secret-token/.test(e.message));
+  const limited=(async()=>json({error:{code:17}},400)) as unknown as typeof fetch;
+  await assert.rejects(()=>fetchMeta({token:'t',accounts:['act_1234567890'],version:'v25.0'},range,limited),(e:unknown)=>e instanceof CampaignApiError&&e.status===429);
+});
 test('Google Ads refreshes the OAuth token, sends the developer token and parses micros',async()=>{
   const calls:{url:string;headers:Headers;body:string}[]=[];
   const fetcher=(async(url:string,init?:RequestInit)=>{

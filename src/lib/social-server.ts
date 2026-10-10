@@ -1,5 +1,5 @@
 import 'server-only';
-import {fetchFacebook,fetchInstagram,fetchYouTube,normalizeChannelId,normalizeMetaId,SocialApiError,type MetaSocialConfig,type SocialPlatform,type SocialPost,type YouTubeConfig} from './social';
+import {fetchFacebook,fetchInstagram,fetchYouTube,normalizeChannelId,normalizeMetaId,SocialApiError,type MetaSocialConfig,type SocialAccount,type SocialFetch,type SocialPlatform,type SocialPost,type YouTubeConfig} from './social';
 import {validateRange,type CampaignRange} from './campaigns';
 // Credentials come only from server environment variables (never from the browser, never logged):
 //   META_SOCIAL_ACCESS_TOKEN  (system-user or long-lived token: pages_read_engagement, read_insights, instagram_basic, instagram_manage_insights)
@@ -23,16 +23,16 @@ function youtubeConfig():SocialConfig<YouTubeConfig>{
 }
 
 export type SocialPlatformResult={platform:SocialPlatform;configured:boolean;ok:boolean;error?:string};
-const cache=new Map<string,{expires:number;posts:SocialPost[]}>();
-async function cached(platform:SocialPlatform,range:CampaignRange,fresh:boolean,load:()=>Promise<SocialPost[]>){
+const cache=new Map<string,{expires:number;data:SocialFetch}>();
+async function cached(platform:SocialPlatform,range:CampaignRange,fresh:boolean,load:()=>Promise<SocialFetch>){
   const key=`${platform}:${range.from}:${range.to}`,hit=cache.get(key);
-  if(!fresh&&hit&&hit.expires>Date.now())return hit.posts;
-  const posts=await load();cache.set(key,{expires:Date.now()+900000,posts});return posts;
+  if(!fresh&&hit&&hit.expires>Date.now())return hit.data;
+  const data=await load();cache.set(key,{expires:Date.now()+900000,data});return data;
 }
 export async function socialData(range:CampaignRange,fresh=false){
   validateRange(range);
-  const posts:SocialPost[]=[],platforms:SocialPlatformResult[]=[];
-  const jobs:[SocialPlatform,SocialConfig<unknown>,(config:never)=>Promise<SocialPost[]>][]=[
+  const posts:SocialPost[]=[],accounts:SocialAccount[]=[],platforms:SocialPlatformResult[]=[];
+  const jobs:[SocialPlatform,SocialConfig<unknown>,(config:never)=>Promise<SocialFetch>][]=[
     ['instagram',metaConfig('instagram'),(c:MetaSocialConfig)=>fetchInstagram(c,range)],
     ['facebook',metaConfig('facebook'),(c:MetaSocialConfig)=>fetchFacebook(c,range)],
     ['youtube',youtubeConfig(),(c:YouTubeConfig)=>fetchYouTube(c,range)],
@@ -40,8 +40,8 @@ export async function socialData(range:CampaignRange,fresh=false){
   for(const [platform,config,load] of jobs){
     if(!config.configured){platforms.push({platform,configured:false,ok:false});continue;}
     if(config.error!==undefined){platforms.push({platform,configured:true,ok:false,error:config.error});continue;}
-    try{posts.push(...await cached(platform,range,fresh,()=>load(config.config as never)));platforms.push({platform,configured:true,ok:true});}
+    try{const data=await cached(platform,range,fresh,()=>load(config.config as never));posts.push(...data.posts);accounts.push(...data.accounts);platforms.push({platform,configured:true,ok:true});}
     catch(error){platforms.push({platform,configured:true,ok:false,error:error instanceof SocialApiError?error.message:'The platform did not return post data.'});}
   }
-  return {posts,platforms,fetchedAt:new Date().toISOString()};
+  return {posts,accounts,platforms,fetchedAt:new Date().toISOString()};
 }
