@@ -1,0 +1,3 @@
+type Feed={self:string;people:{id:string;display_name:string;photo_url?:string|null}[];chats:{id:string;kind:string;name:string;created_by?:string;photo_url?:string|null}[];members:{conversation_id:string;membership_id:string}[]};
+export function personalChatList(feed:Feed){return feed.people.filter(p=>p.id!==feed.self).map(person=>({person,chat:feed.chats.find(c=>c.kind==='direct'&&feed.members.some(m=>m.conversation_id===c.id&&m.membership_id===person.id)&&feed.members.some(m=>m.conversation_id===c.id&&m.membership_id===feed.self))}));}
+export function memberGroups(feed:Feed){return feed.chats.filter(c=>c.kind==='group'&&feed.members.some(m=>m.conversation_id===c.id&&m.membership_id===feed.self));}

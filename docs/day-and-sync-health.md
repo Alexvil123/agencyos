@@ -1,0 +1,17 @@
+# Daily operations and connection health
+
+Overview adds My Day (the signed-in employee's current/next assigned task, deadline, exact Jira priority/status, daily task work and separate work/break totals). Existing explicit timer controls and Overview-only clock/break controls remain in place. Owner also sees a searchable live team table with recorded work, attendance, breaks, combined time, working-time overtime and pending corrections.
+
+The notification bell derives current conditions from server-enforced time scope and selected Sales membership: due/overdue work, open attendance after the shift end plus five minutes, correction requests, unsuccessful Jira updates and Tracksheet follow-up dates. Own requests cannot be approved by the requester. SOURCE reference records do not enter task reminders. Closed and negative sales leads do not get follow-up reminders. Alerts disappear when the source condition resolves; they are not email or push messages.
+
+Settings → Sync health is Owner-only. Migration 202610080014_workspace_sync_health.sql persists sanitized successful fetch / verified-save timestamps. Employees can read only their own Jira health row; organization Google health and Google pending-save counts are Owner-only. No credentials, cell contents or task descriptions are stored in telemetry. Missing telemetry says Not recorded yet; a failed check preserves the previous successful timestamp. Telemetry failure never converts a confirmed external write into a retryable failure.
+
+Google saves awaiting a matching confirmation audit for under two minutes are pending. Older unmatched audit tickets require review, including operations interrupted before writing. Review the sheet before retrying; these counts are not proof that the external write failed. Existing conversion controls handle confirmed rejection retries and manual linking of uncertain Jira creations.
+
+Visible screens refresh at 30-second intervals, with failure backoff. Counters from open attendance/timers are provisional; there is no claim of instantaneous sync or employee online presence. Client conversion background processing still requires a running server or durable hosting scheduler. Jira statuses never fabricate timer activity.
+
+Validation: India day clipping, deadline categorization, shift-end grace, break overrides, working-time overtime, Sales dates, assignment/SOURCE filtering, SQL RLS and service-only recording covered by focused tests. Full regression suite, production build, typecheck and targeted lint run. Existing authenticated localhost browser verification was unavailable; no production task, attendance or sheet write was performed as a test.
+
+Background Jira reconciliation fetches all approved OCT/SEP/SOURCE pages every minute without requiring an open Work page. It imports with the existing service-only system-event path, preserves exact metadata, and never sends Jira edits or timer actions. Owner authorization is checked at each run. Page refresh remains 30 seconds. Deploy on a persistent Node server or attach a durable scheduler for background operation.
+
+Migration 202610080015_work_stop_capture.sql captures actual CRM End/clock-out times on stopped logs using server time, including ending a held task. Historical records fall back to their last recorded work segment end; Jira completion timestamps are never used as task timer stops. Overview retains today's closed attendance totals. Attendance reports display seconds, with clock controls only on Overview.

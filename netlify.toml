@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Netlify automatically installs its Next.js adapter for detected Next.js projects.
+# Set secrets through the provider's protected environment configuration, not here.

@@ -1,0 +1,14 @@
+import { createClient } from '@supabase/supabase-js';
+import { existsSync } from 'node:fs';
+if (existsSync('.env.local')) process.loadEnvFile('.env.local');
+const [email, company, authUserId] = process.argv.slice(2);
+if (!email || !company || !authUserId) throw new Error('Usage: npx tsx scripts/bootstrap-owner.ts REAL_OWNER_EMAIL AGENCY_NAME AUTH_USER_UUID');
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const secret = process.env.SUPABASE_SECRET_KEY;
+if (!url || !secret) throw new Error('Configure Supabase URL and server-only secret in .env.local.');
+const db = createClient(url, secret, { auth: { persistSession: false, autoRefreshToken: false } });
+const { data, error } = await db.auth.admin.getUserById(authUserId);
+if (error || data.user?.email?.toLowerCase() !== email.toLowerCase()) throw new Error('Provided owner email must match the existing Supabase auth identity.');
+const { error: bootstrapError } = await db.rpc('bootstrap_owner', { owner_user_id: authUserId, agency_name: company, owner_name: 'Alex' });
+if (bootstrapError) throw new Error('Bootstrap failed. Check migrations and whether the workspace is already initialized.');
+console.log('Owner workspace created. Bootstrap is locked after first use.');

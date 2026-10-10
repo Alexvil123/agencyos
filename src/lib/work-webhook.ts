@@ -1,0 +1,2 @@
+import {createHmac,timingSafeEqual} from 'node:crypto';
+export function validWorkWebhook(body:string,signature:string|null,secret:string){if(secret.length<32||!signature||!/^sha256=[0-9a-f]{64}$/i.test(signature))return false;const expected=createHmac('sha256',secret).update(body).digest();const received=Buffer.from(signature.slice(7),'hex');return received.length===expected.length&&timingSafeEqual(received,expected);}

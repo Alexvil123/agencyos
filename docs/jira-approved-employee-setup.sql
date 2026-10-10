@@ -1,0 +1,15 @@
+begin;
+select set_config('request.jwt.claim.sub','33852255-e6b8-4de4-acd4-e96429fd35fd',true);
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'593de79b-b432-4345-91b9-ac6b2e9da94f'::uuid,'712020:1482cc78-4ddd-4c88-acc7-ed879e038dc7');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'c827dc9c-4c12-48ed-b34e-e2a2963b74f7'::uuid,'712020:e105ce97-a788-47a4-ae26-c57fab427086');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'1c823e3b-c9ac-4451-884c-5ec29a672169'::uuid,'712020:12da58fd-81b5-4aa5-a439-1d5e51844cb6');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'aa8fb9ed-df05-4808-b72c-2bb0a875e496'::uuid,'712020:aa136971-ff42-402f-8c36-4adeabb3b226');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'763d1dc1-487e-40aa-a6f9-8c94cc5006d9'::uuid,'712020:e682d485-9738-4b66-823d-b8d2a2e87ad7');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'0923ffb0-ca30-43e7-abca-0f3b02146f58'::uuid,'712020:7753c649-1056-4613-8585-dd0e544cdb9a');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'6c63e177-1e54-4995-9097-8d684331fdbf'::uuid,'626feb1ee51c620070bc9cc5');
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'f31ae9ec-145f-442a-bf9d-093b9ef27a68'::uuid,'712020:10a3d13c-cdc6-4565-9905-d204b51f099e');
+select public.update_directory_record('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'employee','305280c3-cd5d-43d9-8182-5bc6c6484bb2'::uuid,(select jsonb_build_object('display_name','Nanjil Manohar S','email',email,'job_title',job_title,'department_id',department_id) from public.employees where id='305280c3-cd5d-43d9-8182-5bc6c6484bb2'::uuid and organization_id='6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid));
+select public.link_jira_account('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'b3a05373-2c83-4de3-83e2-0c7ac4c3fe07'::uuid,'712020:6b2638a8-d886-4c59-a0ce-dcb6559f3454');
+select public.update_directory_record('6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid,'employee','0259a96d-bd62-4114-b706-f1ca45cf1f7a'::uuid,(select jsonb_build_object('display_name','Muthu','email',email,'job_title',job_title,'department_id',department_id) from public.employees where id='0259a96d-bd62-4114-b706-f1ca45cf1f7a'::uuid and organization_id='6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid));
+commit;
+select e.display_name,e.email,l.account_id from public.employees e join public.jira_account_links l on l.membership_id=e.membership_id where e.organization_id='6b6f9be3-6d3f-42a5-9901-32f736c95e2b'::uuid order by e.display_name;

@@ -1,0 +1,12 @@
+'use client';
+import {useEffect,useRef} from 'react';
+import type {SalesCell} from '@/lib/sales-sheet';
+import type {SalesDirection} from '@/lib/sales-grid-navigation';
+export function SalesCellInput({cell,label,value,disabled,focus,onChange,onCommit,onCancel,onNavigate,saveOnBlur=true}:{cell:SalesCell;label:string;value:string;disabled:boolean;focus?:boolean;saveOnBlur?:boolean;onChange:(value:string)=>void;onCommit:(direction?:number,value?:string)=>void;onCancel:()=>void;onNavigate?:(direction:SalesDirection)=>void}){
+ const input=useRef<HTMLInputElement|HTMLSelectElement|null>(null),cancelled=useRef(false);
+ useEffect(()=>{if(focus){input.current?.focus();if(input.current instanceof HTMLInputElement&&input.current.type==='text')input.current.select();}},[focus]);
+ const shared={ref:(node:HTMLInputElement|HTMLSelectElement|null)=>{input.current=node;},value,disabled,'aria-label':label,className:'sales-inline-input',onKeyDown:(e:React.KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();cancelled.current=true;onCancel();}else if(onNavigate&&(e.key==='ArrowUp'||e.key==='ArrowDown')&&!(e.target instanceof HTMLSelectElement)&&!cell.kind){e.preventDefault();cancelled.current=true;onNavigate(e.key==='ArrowUp'?'up':'down');}else if(onNavigate&&e.altKey&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();cancelled.current=true;onNavigate(e.key==='ArrowLeft'?'left':'right');}else if(e.key==='Enter'||(e.key==='Tab'&&saveOnBlur)){e.preventDefault();cancelled.current=true;onCommit(e.key==='Tab'?(e.shiftKey?-1:1):0);}},onBlur:()=>{if(saveOnBlur&&!cancelled.current&&!disabled)onCommit();}};
+ if(cell.choices.length)return <select {...shared} onChange={e=>onChange(e.target.value)}><option value="">Empty</option>{value&&!cell.choices.includes(value)&&<option value={value}>{value}</option>}{cell.choices.map(v=><option key={v}>{v}</option>)}</select>;
+ if(typeof cell.raw==='boolean')return <select {...shared} onChange={e=>onChange(e.target.value)}><option value="">Empty</option><option value="true">Yes</option><option value="false">No</option></select>;
+ return <input {...shared} type={cell.kind||'text'} step={1} inputMode={typeof cell.raw==='number'?'decimal':undefined} maxLength={10000} onChange={e=>onChange(e.target.value)}/>;
+}

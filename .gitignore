@@ -1,0 +1,24 @@
+node_modules/
+.next/
+.next-preview/
+.netlify/
+.env*
+!.env.example
+*.tsbuildinfo
+coverage/
+test-results/
+.jira-credentials.local.json
+.jira-credentials.local.json.*
+.jira-oauth-app.local.json*
+.npm-cache/
+.sales-google.local.json*
+.sales-snapshot.local.json*
+.sales-deleted-rows/
+
+# Screenshots/backups may show live data or setup screens; keep them out of version control
+docs/**/*.jpg
+docs/**/*.jpeg
+docs/**/*.png
+docs/backups/
+*.log
+.claude/

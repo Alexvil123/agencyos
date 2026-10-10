@@ -1,0 +1,5 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {personalChatList,memberGroups} from '../src/lib/chat-list';
+test('default personal list includes every teammate even before conversations exist',()=>{const feed={self:'alex',people:[{id:'alex',display_name:'Alex'},{id:'worker',display_name:'Worker'},{id:'other',display_name:'Other'}],chats:[],members:[]};const list=personalChatList(feed);assert.deepEqual(list.map(c=>c.person.id),['worker','other']);assert(list.every(c=>!c.chat));});
+test('existing direct conversations are reused and only own member groups are shown',()=>{const feed={self:'alex',people:[{id:'alex',display_name:'Alex'},{id:'worker',display_name:'Worker'}],chats:[{id:'direct',kind:'direct',name:''},{id:'joined',kind:'group',name:'Design'},{id:'private',kind:'group',name:'Private'}],members:[{conversation_id:'direct',membership_id:'alex'},{conversation_id:'direct',membership_id:'worker'},{conversation_id:'joined',membership_id:'alex'},{conversation_id:'private',membership_id:'worker'}]};assert.equal(personalChatList(feed)[0].chat?.id,'direct');assert.deepEqual(memberGroups(feed).map(c=>c.id),['joined']);});
