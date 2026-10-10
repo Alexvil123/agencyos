@@ -15,7 +15,7 @@ team chat and announcements, reports, analytics, campaign reporting and invoicin
 | Attendance / My account & time | Attendance, breaks, timesheets, corrections and approvals | Supabase |
 | Announcements, Team Chat | Company announcements, personal and group chat | Supabase |
 | Campaigns (Owner) | Meta Ads and Google Ads spend and results | Ad platform APIs (env keys) |
-| Analytics | Tracked hours, completed and open work, with definitions | Work records |
+| Analytics | Instagram, Facebook and YouTube post views, likes and engagement (plus a Team work tab) | Platform APIs (env keys) |
 | Finance (Owner, Finance role) | Invoices, payments, outstanding balances, PDF/CSV | Supabase |
 | Team, Reports, Settings | Directory and profiles, filterable reports with CSV/Excel/PDF, users, integrations, sync health, audit | Supabase |
 
@@ -36,6 +36,7 @@ Netlify Free for the app, Supabase Free for data. Secrets live only in the hosti
 - `docs/FREE-HOSTING-LAUNCH.md` — deploying to Netlify
 - `docs/SCHEDULED-SYNC.md` — the external scheduler for background Jira sync and Sales → client onboarding (`CRON_SECRET`)
 - `docs/CAMPAIGNS-SETUP.md` — Meta Ads and Google Ads credentials
+- `docs/SOCIAL-SETUP.md` — Instagram, Facebook and YouTube credentials for Analytics
 
 ## Checks
 ```powershell

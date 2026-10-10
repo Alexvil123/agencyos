@@ -10,7 +10,7 @@ export const modules = [
   { key: 'communication', name: 'Announcements', group: 'Workspace', icon: 'chat', description: 'Company announcements for all team members.' },
   { key: 'chat', name: 'Team Chat', group: 'Workspace', icon: 'chat', description: 'Personal conversations and employee group chats.' },
   { key: 'campaigns', name: 'Campaigns', group: 'Management', icon: 'campaigns', description: 'Meta Ads and Google Ads spend and results. Owner only.' },
-  { key: 'analytics', name: 'Analytics', group: 'Management', icon: 'analytics', description: 'Tracked hours, completed work and open work, with transparent definitions.' },
+  { key: 'analytics', name: 'Analytics', group: 'Management', icon: 'analytics', description: 'Instagram, Facebook and YouTube post views, likes and engagement.' },
   { key: 'finance', name: 'Finance', group: 'Management', icon: 'finance', description: 'Invoices, payments, and outstanding balances. Owner and Finance roles.' },
   { key: 'team', name: 'Team', group: 'Management', icon: 'team', description: 'Your people and departments.' },
   { key: 'reports', name: 'Reports', group: 'Management', icon: 'reports', description: 'Team attendance, task time, client time, overtime, and deadlines.' },
