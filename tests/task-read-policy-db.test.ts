@@ -8,7 +8,7 @@ const ids={owner:'50000000-0000-4000-8000-000000000001',worker:'50000000-0000-40
 const earlier=['202610060001_foundation.sql','202610060002_password_login_clients.sql','202610060006_jira.sql','202610060007_jira_table_grants.sql','202610060009_time_management.sql','202610060010_jira_time.sql','202610060011_unified_work.sql','202610070012_jira_metadata.sql','202610080015_work_stop_capture.sql','202610080016_flexible_attendance.sql','202610080017_simple_manual_tasks.sql','202610080018_break_task_resume.sql','202610080019_manual_task_restart.sql','202610080020_jira_auto_fetch.sql','202610090021_announcements_continue_work.sql'];
 const sql=(file:string)=>readFileSync(`supabase/migrations/${file}`,'utf8');
 
-test('the optimised task read policy shows exactly what the old one showed, for every kind of person',async()=>{
+test('the optimised task read policy shows exactly what the old one showed, for every kind of person',{timeout:180000},async()=>{
   const db=new PGlite();
   try{
     await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key,email text);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create function auth.jwt() returns jsonb language sql stable as $$select '{"aal":"aal2"}'::jsonb$$;`);
@@ -52,4 +52,4 @@ test('the optimised task read policy shows exactly what the old one showed, for 
     await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub','',false)");await db.exec('set role authenticated');
     assert.equal((await db.query('select 1 from public.time_tasks')).rows.length,0);
   }finally{await db.close();}
-},{timeout:180000});
+});
