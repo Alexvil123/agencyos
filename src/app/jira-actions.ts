@@ -10,6 +10,7 @@ import {oauthApp,oauthConfigured,oauthCallback,oauthDb,saveLocalOAuthApp} from '
 import { jiraRequest, JiraError, verifyJiraCredentials } from '@/lib/jira-http';
 import {WORK_JIRA_FIELDS,workIssue,parseJiraLabels,type RemoteWorkIssue} from '@/lib/work-jira-sync';
 import { JIRA_PROJECTS, plainDescription, type JiraTransition } from '@/lib/jira-types';
+import {retireJiraTask} from '@/lib/jira-availability-server';
 type RemoteIssue=RemoteWorkIssue;
 const issueData=workIssue;
 
@@ -17,7 +18,7 @@ function admin() {
   if (!process.env.SUPABASE_SECRET_KEY) throw new Error('Server configuration missing');
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
 }
-function message(error: unknown) { return error instanceof JiraError ? error.message : 'Jira setup or operation could not be confirmed. Check connection and database setup.'; }
+function message(error: unknown) { return error instanceof JiraError && error.status === 404 ? 'This task no longer exists in Jira, so it was removed from the CRM lists. Recorded work time is kept.' : error instanceof JiraError ? error.message : 'Jira setup or operation could not be confirmed. Check connection and database setup.'; }
 async function access(ownerOnly = false) {
   const ctx = await workspaceContext();
   if (ctx.preview || (!ctx.roles.includes('Owner') && (ownerOnly || ctx.kind !== 'employee' || !ctx.roles.includes('Employee')))) throw new Error('Not authorized');
@@ -75,7 +76,7 @@ export async function configureJiraOAuthApp(form:FormData) {
 async function authorizedIssue(key: string) {
   const ctx=await access(); z.string().regex(/^(OCT|SEP|SOURCE)-[1-9][0-9]*$/).parse(key);
   const credentials=await jiraCredentials(ctx.organizationId); if(!credentials) throw new Error('Missing connection');
-  const remote=await jiraRequest<RemoteIssue>(credentials,`/rest/api/3/issue/${encodeURIComponent(key)}?fields=${[...WORK_JIRA_FIELDS,"attachment"].join(',')}`);
+  const remote=await jiraRequest<RemoteIssue>(credentials,`/rest/api/3/issue/${encodeURIComponent(key)}?fields=${[...WORK_JIRA_FIELDS,"attachment"].join(',')}`).catch(async error=>{if(error instanceof JiraError&&error.status===404)await retireJiraTask(ctx.organizationId,key).catch(()=>undefined);throw error;});
   const issue=issueData(remote);
   if(!JIRA_PROJECTS.includes(issue.project_key as typeof JIRA_PROJECTS[number]) || (!ctx.roles.includes('Owner') && issue.assignee_id!==await accountId(ctx.organizationId,ctx.membershipId))) throw new Error('Not assigned');
   return {ctx,credentials,issue};
