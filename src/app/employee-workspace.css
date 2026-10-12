@@ -107,3 +107,13 @@
 @media(max-width:700px){
 .task-order-note{flex-direction:column}
 }
+
+/* Work: date filters as one calm inline row instead of a coloured band */
+.task-date-filters{align-items:center;gap:8px 16px;padding:8px 18px 12px;border-top:0;background:transparent}
+.task-date-filters>label{display:flex;align-items:center;gap:8px;flex:0 1 auto;font-size:12px;color:var(--muted)}
+.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:auto;min-width:150px;padding:7px 10px;font-size:12.5px}
+@media(max-width:720px){.task-date-filters>label{flex:1 1 100%;display:grid}.task-date-filters input:not([type=checkbox]),.task-date-filters select{width:100%}}
+/* Work: an empty "current task" is a slim strip, not a hero card */
+.work-task-summary .dash-current:has(.dash-idle){padding:12px 18px}
+.work-task-summary .dash-current:has(.dash-idle) .dash-idle{padding:0}
+.work-task-summary .dash-current:has(.dash-idle) .dash-card-head{margin:0 0 6px}

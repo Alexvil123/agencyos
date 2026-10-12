@@ -77,3 +77,18 @@ html[data-theme=dark] .tone-done{--tone-bg:#17382a;--tone-ink:#c8f0da}
   .cal-meta,.cal-form-row{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.cal-day{transition:none}}
+
+/* Polish */
+.cal-day.today{background:color-mix(in srgb,var(--purple) 7%,var(--surface,#fff))}
+.cal-day{transition:background .15s,box-shadow .15s}
+.cal-chip{border-radius:7px;transition:transform .12s,box-shadow .12s}
+.cal-chip:hover{transform:translateY(-1px);box-shadow:0 3px 8px #2c35501f;filter:none}
+.cal-title-icon{background:linear-gradient(135deg,#efe9ff,#e3f0ff)}
+.cal-view{display:inline-flex;gap:2px;padding:3px;border-radius:11px;background:var(--soft)}
+.cal-view button{border:0;border-radius:8px;padding:6px 14px}
+.cal-view button.selected{background:var(--surface,#fff);box-shadow:0 1px 4px #2c35501f;color:var(--purple-dark)}
+.cal-weekday{position:sticky;top:0;z-index:1}
+@media(prefers-reduced-motion:reduce){.cal-chip,.cal-day{transition:none}}
+html[data-theme=dark] .cal-day.today{background:#241f3a}
+html[data-theme=dark] .cal-title-icon{background:#2b2646}
+html[data-theme=dark] .cal-view button.selected{background:#2d3247}
