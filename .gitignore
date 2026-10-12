@@ -22,3 +22,6 @@ docs/**/*.png
 docs/backups/
 *.log
 .claude/
+
+# Supabase CLI link state
+supabase/.temp/

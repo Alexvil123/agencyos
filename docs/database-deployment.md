@@ -18,13 +18,13 @@ Next steps: connect the application using the project's public configuration, ar
 - Verified confirmed email/password auth account: Alex, `alexvilpower@gmail.com`, UID `33852255-e6b8-4de4-acd4-e96429fd35fd`.
 - Added public project URL and publishable key to ignored `.env.local`. No server secret was retrieved or stored.
 - Restarted the local application with this connection.
-- Prepared `supabase/activate-alex-owner.sql` and staged it in the SQL Editor, without execution. It verifies the actual confirmed auth identity and initializes the one-time Owner membership, linked employee record, and audit entries.
+- Prepared the one-time Owner activation script (removed after use) and staged it in the SQL Editor, without execution. It verifies the actual confirmed auth identity and initializes the one-time Owner membership, linked employee record, and audit entries.
 - Editable company display name will use the existing Supabase organization name `mycrm`.
 - Owner activation awaits action-time confirmation because it grants privileged access.
 
 ## Confirmed Owner activation
 
-On 06 October 2026 the user explicitly confirmed "Owner activate pannu". Executed `supabase/activate-alex-owner.sql` through the project's SQL Editor.
+On 06 October 2026 the user explicitly confirmed "Owner activate pannu". Executed the one-time Owner activation script (removed after use) through the project's SQL Editor.
 
 - Created organization ID: `6b6f9be3-6d3f-42a5-9901-32f736c95e2b` (`mycrm`).
 - Live read-only verification: Alex's membership is active, role is `owner`, one linked employee profile, one `owner_bootstrapped` audit entry.
