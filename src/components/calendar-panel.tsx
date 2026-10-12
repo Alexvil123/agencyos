@@ -149,8 +149,10 @@ function TaskChip({task,tone,who,draggable,onDragStart,onOpen}:{task:TimeTask;to
 
 function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeTask;data:WorkData;setup?:CalendarSetup;owner:boolean;busy:boolean;who:string;onClose:()=>void;onSave:(form:FormData)=>void}){
   const day=taskDay(task)||'',editable=owner&&task.source==='jira'&&task.jira_project!=='SOURCE';
-  const [due,setDue]=useState(day),[assignee,setAssignee]=useState(task.membership_id);
-  const changed=due!==day||assignee!==task.membership_id;
+  // An unassigned Jira task has no member; use '' so the form never sends the text "null".
+  const current=task.membership_id||'';
+  const [due,setDue]=useState(day),[assignee,setAssignee]=useState(current);
+  const changed=due!==day||assignee!==current;
   return <section className="panel time-panel cal-drawer">
     <div className="time-heading"><div><span className="eyebrow">{task.source==='jira'?'JIRA TASK':'MANUAL CRM TASK'}</span><h2>{task.title}</h2></div><button className="secondary" onClick={onClose}>Close</button></div>
     <dl className="cal-meta">
@@ -166,14 +168,14 @@ function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeT
       e.preventDefault();
       const form=new FormData();form.set('task',task.id);
       form.set('change_due',due!==day?'yes':'no');form.set('due_date',due);
-      form.set('change_assignee',assignee!==task.membership_id?'yes':'no');form.set('assignee',assignee);
+      form.set('change_assignee',assignee!==current?'yes':'no');form.set('assignee',assignee);
       onSave(form);
     }}>
       <h3>Reschedule or reassign in Jira</h3>
       <label>Assign to<select value={assignee} onChange={e=>setAssignee(e.target.value)} disabled={!setup?.ok}>
-        {!setup&&<option value={task.membership_id}>{who}</option>}
+        {!setup&&<option value={current}>{who}</option>}
         {setup?.assignees.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
-        {setup?.assignees.every(a=>a.id!==task.membership_id)&&<option value={task.membership_id}>{who}</option>}
+        {setup?.assignees.every(a=>a.id!==current)&&<option value={current}>{who}</option>}
       </select></label>
       <label>Due date<input type="date" value={due} onChange={e=>setDue(e.target.value)}/></label>
       {setup&&!setup.ok&&<p role="alert" className="form-message error">{setup.message}</p>}
