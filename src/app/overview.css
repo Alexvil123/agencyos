@@ -83,3 +83,6 @@ html[data-theme=dark] .ov-week-total strong{color:#e7e9f6}
 html[data-theme=dark] .ov-bar-track{background:linear-gradient(180deg,transparent,#9a7dff14)}
 html[data-theme=dark] .overview-metrics article:hover{box-shadow:0 12px 28px #00000066}
 html[data-theme=dark] .ov-target{border-top-color:#66d9a799}
+.ov-bars li.long .ov-bar-value{color:#b4691b;font-weight:700}
+.ov-bars li.long .ov-bar{box-shadow:0 0 0 2px #f09a3e55}
+html[data-theme=dark] .ov-bars li.long .ov-bar-value{color:#f4b66e}

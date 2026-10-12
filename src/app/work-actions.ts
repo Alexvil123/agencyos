@@ -7,28 +7,41 @@ import {jiraRequest,JiraError} from '@/lib/jira-http';
 import {JIRA_PROJECTS} from '@/lib/jira-types';
 
 import {jiraTaskDetails,editJiraTask} from './jira-actions';
-import {fetchWorkJiraSnapshot,WORK_JIRA_FIELDS} from '@/lib/work-jira-sync';
+import {fetchWorkJiraSnapshot,hydrateJiraMetadata,WORK_JIRA_FIELDS} from '@/lib/work-jira-sync';
 import {recordSyncHealth} from '@/lib/sync-health-server';
 import {parseManualTask} from '@/lib/manual-task';
+import {taskOperationalState} from '@/lib/task-filters';
+import type {TimeTask} from '@/lib/time-types';
 import {jiraAutoFetch} from '@/lib/jira-sync-settings-server';
 import {reconcileJiraAvailability} from '@/lib/jira-availability-server';
 
 const optional=z.preprocess(v=>v===''?null:v,z.uuid().nullable());
 function errorMessage(e:unknown){const m=e instanceof Error?e.message:'';const safe=['You already have an active task.','Active task changed; review again','Clock in first','End break before starting work','Assigned task required','Task is closed','No held work session','No open work session','Task already on hold','Own task or authorized manager required','Task changed or is Jira-synced','Hold the task before editing','Client scope denied','Current Jira assignment required','Session changed; request again','Work session overlap','Closed session and valid times required'];return safe.find(x=>m.includes(x))||'Could not confirm this operation. Refresh the workspace and review the current record.';}
-export async function loadWorkData(){
+// scope 'overview' is for the landing page: it only needs open work, so finished and removed tasks (unless a timer or session still refers to them) stay out of the response.
+function workTasks<T extends {id:string;jira_available?:boolean}&Parameters<typeof taskOperationalState>[0]>(tasks:T[],scope:'full'|'overview',logs:{task_id:string}[],sessions:Record<string,unknown>[]){
+ if(scope!=='overview')return tasks;
+ const referenced=new Set<string>([...logs.map(l=>l.task_id),...sessions.map(s=>String(s.task_id))]);
+ return tasks.filter(t=>referenced.has(t.id)||(t.jira_available!==false&&!['completed','cancelled'].includes(taskOperationalState(t))));
+}
+export async function loadWorkData(scope:'full'|'overview'='full'){
  try{
   const {ctx,db}=await workAccess();
   const sessionRead=async()=>{let rows:Record<string,unknown>[]=[];let limited=false;for(let page=0;page<20;page++){const r=await db.from('task_work_sessions').select('*').eq('organization_id',ctx.organizationId).order('started_at',{ascending:false}).order('id').range(page*1000,page*1000+999);if(r.error)throw new Error('Sessions unavailable');rows=rows.concat(r.data);if(r.data.length<1000)break;if(page===19)limited=true;}return {rows,limited};};
   // All independent reads share one verified user context and start together.
   const [base,departments,config,mappings,sessions,autoFetch,orders,employees]=await Promise.all([
-   readTimeData(ctx,db),db.rpc('work_departments',{org_id:ctx.organizationId}),
+   readTimeData(ctx,db,{openTasksOnly:scope==='overview'}),db.rpc('work_departments',{org_id:ctx.organizationId}),
    db.from('work_project_config').select('*').eq('organization_id',ctx.organizationId),
    db.from('work_workflow_mappings').select('*').eq('organization_id',ctx.organizationId),
    sessionRead(),jiraAutoFetch(ctx.organizationId),db.from('work_task_orders').select('membership_id,task_ids,revision').eq('organization_id',ctx.organizationId),
    db.from('employees').select('membership_id,department_id').eq('organization_id',ctx.organizationId).not('membership_id','is',null)
   ]);
   if(!base.ok||!base.data||departments.error||config.error||mappings.error||orders.error||employees.error)throw new Error('Unified task database setup required');
-  return {ok:true,message:'',autoFetch,data:{...base.data,taskOrders:orders.data as {membership_id:string;task_ids:string[];revision:number}[],tasks:base.data.tasks.filter(t=>!t.canonical_id),departments:departments.data as {id:string;name:string}[],employeeDepartments:employees.data as {membership_id:string;department_id:string|null}[],projectConfig:config.data as {client_id:string;jira_project:string;issue_type_id:string}[],mappings:mappings.data as {project:string;start_status:string;hold_status:string|null;end_status:string;enabled:boolean}[],sessions:sessions.rows,limited:base.data.limited||sessions.limited}};
+  if(scope==='overview'){
+   // Finished tasks stay out of the query, except those a timer or recorded session still points at.
+   const present=new Set(base.data.tasks.map(t=>t.id)),missing=[...new Set<string>([...base.data.logs.map(l=>l.task_id),...sessions.rows.map(s=>String(s.task_id))])].filter(id=>id&&!present.has(id));
+   for(let index=0;index<missing.length;index+=100){const extra=await db.from('time_tasks').select('*').eq('organization_id',ctx.organizationId).in('id',missing.slice(index,index+100));if(extra.error)throw new Error('Referenced tasks unavailable');base.data.tasks.push(...extra.data.map(t=>hydrateJiraMetadata(t as unknown as TimeTask)));}
+  }
+  return {ok:true,message:'',autoFetch,data:{...base.data,taskOrders:orders.data as {membership_id:string;task_ids:string[];revision:number}[],tasks:workTasks(base.data.tasks.filter(t=>!t.canonical_id),scope,base.data.logs,sessions.rows),departments:departments.data as {id:string;name:string}[],employeeDepartments:employees.data as {membership_id:string;department_id:string|null}[],projectConfig:config.data as {client_id:string;jira_project:string;issue_type_id:string}[],mappings:mappings.data as {project:string;start_status:string;hold_status:string|null;end_status:string;enabled:boolean}[],sessions:sessions.rows,limited:base.data.limited||sessions.limited}};
  }catch{return {ok:false,message:'Unified Work Tracking database setup is not ready, or team access could not be verified.',data:undefined,autoFetch:{ready:false,enabled:false}};}
 }
 export async function saveWorkTaskOrder(target:string,ids:string[],revision:number){
