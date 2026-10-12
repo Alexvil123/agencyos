@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
-import {PROVIDERS,providerSpec,validateProvider,mergeSubmitted,hintFor,publicIntegration,pickValues,parseMasterKey,sealJson,openJson,sealContext,type Payload,type ProviderKey} from '../src/lib/integrations';
+import {PROVIDERS,providerSpec,validateProvider,mergeSubmitted,hintFor,publicIntegration,pickValues,type Payload,type ProviderKey} from '../src/lib/integrations';
+import {parseMasterKey,sealJson,openJson,sealContext} from '../src/lib/integrations-crypto';
 import {verifyProvider} from '../src/lib/integration-verify';
 const key=randomBytes(32),json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json'}});
 const SECRET='EAAB'+'x'.repeat(40);

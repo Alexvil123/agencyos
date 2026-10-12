@@ -199,3 +199,6 @@ html[data-theme=dark] .modal-head{ background: #282038; border-color: #49365a; }
 }
 .sync-indicator.idle{ background: #f1f2f7; border-color: #e1e3ec; color: #6b7488; }
 html[data-theme=dark] .sync-indicator.idle{ background: #1c2031; border-color: #2d3247; color: #a3a3bc; }
+html[data-theme=dark] .secondary{ color: #d3d7ec; border-color: #353b57; }
+html[data-theme=dark] .secondary:hover:not(:disabled){ color: #fff; }
+html[data-theme=dark] .secondary:disabled{ color: #8d93ad; opacity: .75; }

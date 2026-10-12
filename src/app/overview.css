@@ -48,3 +48,38 @@ html[data-theme=dark] .ov-clock.break .ov-state{color:#f4b66e}
 html[data-theme=dark] .ov-progress{background:#2d3247}
 html[data-theme=dark] .ov-note.warn{background:#3f301e}
 html[data-theme=dark] :is(.ov-empty,.ov-stat){background:#1c2031;border-color:#2d3247}
+
+/* Week chart */
+.ov-week{padding:20px 22px}
+.ov-week .time-heading p{margin:4px 0 0;font-size:12.5px;color:var(--muted)}
+.ov-week .time-heading h2{margin:0}
+.ov-week-total{text-align:right}.ov-week-total strong{display:block;font-size:22px;font-variant-numeric:tabular-nums}.ov-week-total small{font-size:12px;color:var(--muted)}
+.ov-bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin:18px 0 0;padding:0;list-style:none;height:176px}
+.ov-bars li{display:grid;grid-template-rows:18px minmax(0,1fr) 18px;gap:6px;justify-items:center;min-width:0}
+.ov-bar-value{font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.ov-bars li.today .ov-bar-value,.ov-bars li.today small{color:var(--purple);font-weight:700}
+.ov-bars small{font-size:12px;color:var(--muted)}
+.ov-bar-track{position:relative;display:flex;align-items:flex-end;justify-content:center;width:100%;border-radius:10px;background:linear-gradient(180deg,transparent,#7b5cf00d)}
+.ov-bar{display:flex;flex-direction:column-reverse;width:min(34px,70%);min-height:3px;border-radius:9px 9px 4px 4px;overflow:hidden;transform-origin:bottom;animation:ov-grow .8s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 6px 16px #7b5cf026}
+.ov-bar .work{background:linear-gradient(180deg,#9a7dff,#6d4de0)}
+.ov-bar .rest{background:linear-gradient(180deg,#ffc27a,#f09a3e)}
+.ov-bars li.today .ov-bar{box-shadow:0 0 0 2px #7b5cf044,0 8px 22px #7b5cf055}
+.ov-target{position:absolute;left:-6px;right:-6px;height:0;border-top:1.5px dashed #1fb27a99;pointer-events:none}
+.ov-bars li:hover .ov-bar{filter:brightness(1.08)}
+
+/* Motion */
+@keyframes ov-grow{from{transform:scaleY(0);opacity:.2}to{transform:scaleY(1);opacity:1}}
+@keyframes ov-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes ov-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.daily-overview>*{animation:ov-rise .5s cubic-bezier(.2,.8,.2,1) both}
+.daily-overview>*:nth-child(2){animation-delay:.05s}.daily-overview>*:nth-child(3){animation-delay:.1s}.daily-overview>*:nth-child(4){animation-delay:.15s}.daily-overview>*:nth-child(5){animation-delay:.2s}.daily-overview>*:nth-child(6){animation-delay:.25s}
+.overview-metrics article{transition:transform .2s,box-shadow .2s}
+.overview-metrics article:hover{transform:translateY(-3px);box-shadow:0 12px 28px #4b31531f}
+.ov-clock.live .ov-progress span{background:linear-gradient(90deg,#7b5cf0,#1fb27a,#7b5cf0);background-size:200% 100%;animation:ov-shimmer 4s linear infinite}
+.ov-clock .dash-action{transition:transform .15s,box-shadow .15s}
+@media(prefers-reduced-motion:reduce){.daily-overview>*,.ov-bar,.ov-clock.live .ov-progress span{animation:none}.overview-metrics article{transition:none}}
+@media(max-width:560px){.ov-bars{gap:6px;height:150px}.ov-bar-value{font-size:10px}.ov-week{padding:16px}}
+html[data-theme=dark] .ov-week-total strong{color:#e7e9f6}
+html[data-theme=dark] .ov-bar-track{background:linear-gradient(180deg,transparent,#9a7dff14)}
+html[data-theme=dark] .overview-metrics article:hover{box-shadow:0 12px 28px #00000066}
+html[data-theme=dark] .ov-target{border-top-color:#66d9a799}

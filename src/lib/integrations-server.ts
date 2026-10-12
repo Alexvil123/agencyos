@@ -1,6 +1,7 @@
 import 'server-only';
 import {createClient} from '@supabase/supabase-js';
-import {PROVIDERS,hintFor,openJson,parseMasterKey,pickValues,providerSpec,publicIntegration,sealContext,sealJson,type Payload,type ProviderKey,type PublicIntegration} from './integrations';
+import {PROVIDERS,hintFor,pickValues,providerSpec,publicIntegration,type Payload,type ProviderKey,type PublicIntegration} from './integrations';
+import {openJson,parseMasterKey,sealContext,sealJson} from './integrations-crypto';
 
 // Stored integration credentials (Settings → Integrations). Ciphertext lives in public.integration_credentials, which only the
 // server can read. Consumers call credentialValues(): stored credentials win, otherwise the hosting environment variables
