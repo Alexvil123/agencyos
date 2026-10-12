@@ -1,43 +1,52 @@
 'use client';
+import '../app/jira-connection.css';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { Layers3 } from 'lucide-react';
-import { connectJira, configureJiraOAuthApp, jiraConnectionState } from '@/app/jira-actions';
+import { CheckCircle2, Layers3 } from 'lucide-react';
+import { connectJira, jiraConnectionState } from '@/app/jira-actions';
 type Result={ok:boolean;message:string};
+const outcomes:Record<string,string>={
+  connected:'Jira OAuth connected. Open Work and refresh your tasks.',
+  denied:'Jira access was declined. Connect again when ready.',
+  site_or_scopes:'Select vilpowerdigitalmarketing.atlassian.net and grant the required Jira read, write and user permissions.',
+};
+/** Connect the CRM to Jira. The OAuth app credentials themselves are entered in the Integrations list above. */
 export function JiraConnection({owner,preview}:{owner:boolean;preview:boolean}) {
   const tokenInput=useRef<HTMLInputElement>(null);
-  const appSecretInput=useRef<HTMLInputElement>(null);
   const [state,setState]=useState<Awaited<ReturnType<typeof jiraConnectionState>>>();
   const [result,setResult]=useState<Result>();const [busy,start]=useTransition();
   useEffect(()=>{if(!preview) start(async()=>{
     setState(await jiraConnectionState());
     const outcome=new URL(window.location.href).searchParams.get('jira_oauth');
-    if(outcome) setResult({ok:outcome==='connected',message:outcome==='connected'?'Jira OAuth connected. Open Work and refresh your tasks.':outcome==='denied'?'Jira access was declined. Connect again when ready.':outcome==='site_or_scopes'?'Select vilpowerdigitalmarketing.atlassian.net and grant the required Jira read/write/user permissions.':'OAuth connection was not completed. Check Client ID/Secret, callback URL, permissions and try Connect Jira again.'});
+    if(outcome) setResult({ok:outcome==='connected',message:outcomes[outcome]||'OAuth connection was not completed. Check the Client ID and secret in Integrations, the callback URL and permissions, then try Connect Jira again.'});
   });},[preview]);
-  return <div className="jira-connection"><div className="integration-row"><span className="activity-icon"><Layers3 size={19}/></span><div><strong>Jira · Two-way task updates</strong><p>OCT · SEP · SOURCE · Same Jira statuses</p></div><span className="neutral-pill">{state?.configured ? 'CREDENTIAL CONFIGURED' : 'SETUP REQUIRED'}</span></div>
-    <p className="subtle">Employees access assigned tasks. Owner creates tasks and links employee accounts. Jira permissions and valid transitions still apply.</p>
-    {state && !state.databaseReady && <div className="notice">Jira database migration has not been applied yet.</div>}
-    {owner && !preview && <>
-      <h3>Connect with Atlassian OAuth</h3><p className="subtle">Sign in to Atlassian and approve Jira access. CRM sign-in stays email/password.</p>
-      <p className="subtle">Atlassian callback URL: <code>{state?.callback||'http://127.0.0.1:3000/integrations/jira/callback'}</code></p>
-      {state?.oauthConnected && <div className="notice">Jira OAuth connection saved. Open Work → Refresh tasks to verify current project access.</div>}
-      <details open={!state?.oauthAppReady}><summary>OAuth app credentials · Owner setup</summary><form className="stack settings-form" action={form=>start(async()=>{setResult(await configureJiraOAuthApp(form));if(appSecretInput.current)appSecretInput.current.value='';setState(await jiraConnectionState());})}>
-        <label>OAuth Client ID<input name="client_id" required autoComplete="off" maxLength={512}/></label>
-        <label>OAuth Client Secret<input ref={appSecretInput} name="client_secret" type="password" required autoComplete="new-password" minLength={10} maxLength={4096}/></label>
-        <p className="subtle">Copied from your Atlassian app Settings. Saved only in an ignored local server file; authorization tokens are encrypted in the database. Do not send the secret in chat.</p>
-        <label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>Save this OAuth app configuration on the CRM server.</label>
-        <button className="primary" disabled={busy||!state?.databaseReady||state?.oauthConnected}>Save OAuth app</button>
-      </form></details>
-      <form className="stack settings-form" action="/integrations/jira/connect" method="post"><label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>Authorize Jira issue read/write and user-profile access for this agency connection.</label><button className="primary" disabled={busy||!state?.oauthAppReady}>{state?.oauthConnected?'Reconnect Jira':'Connect Jira'}</button></form>
+  const checking=!preview&&!state,connected=Boolean(state?.configured);
+  return <section className="panel jira-connection" aria-label="Jira connection">
+    <header>
+      <span className="activity-icon"><Layers3 size={19}/></span>
+      <div><h3>Jira · Two-way task updates</h3><p>OCT · SEP · SOURCE · same Jira statuses</p></div>
+      <span className={`jira-status ${checking?'checking':connected?'on':'off'}`}>{checking?'Checking…':connected?<><CheckCircle2 size={13}/> Connected</>:'Not connected'}</span>
+    </header>
+    <p className="jira-help">Employees see their assigned tasks. The Owner creates tasks and links employee accounts. Jira permissions and valid transitions still apply.</p>
+    {state && !state.databaseReady && <div className="notice">The Jira database migration has not been applied yet.</div>}
+    {checking&&<p role="status" className="jira-help">Checking the Jira connection…</p>}
+    {owner && state && !preview && <>
+      {!state.oauthAppReady&&<p role="alert" className="notice">Add the Jira OAuth app (Client ID and Client secret) in the <b>Jira OAuth app</b> card above, then connect here.</p>}
+      {state.oauthConnected && <p role="status" className="notice">Jira OAuth connection saved. Open Work → Sync Jira to verify current project access.</p>}
+      <p className="jira-help">Register this callback URL in your Atlassian OAuth app: <code>{state.callback}</code></p>
+      <form className="jira-connect" action="/integrations/jira/connect" method="post">
+        <label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>Authorize Jira issue read/write and user-profile access for this agency connection.</label>
+        <button className="primary" disabled={busy||!state.oauthAppReady}>{state.oauthConnected?'Reconnect Jira':'Connect Jira'}</button>
+      </form>
       {result&&<p role="status" className={`form-message ${result.ok?'success':'error'}`}>{result.message}</p>}
+      <details className="jira-advanced"><summary>Advanced · API token fallback</summary>
+        <form className="stack settings-form" action={form=>start(async()=>{setResult(await connectJira(form));if(tokenInput.current)tokenInput.current.value='';setState(await jiraConnectionState());})}>
+          <label>Jira account email<input name="email" type="email" required autoComplete="off" placeholder="Email of the account that created the token"/></label>
+          <label>Jira API token<input ref={tokenInput} name="token" type="password" required autoComplete="new-password" minLength={10} maxLength={4096}/></label>
+          <p className="jira-help">Only for a local setup: the token is kept in an ignored file on this computer. Hosted sites use the OAuth app above. Never paste tokens into chat.</p>
+          <label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>I authorize this CRM server to read and update tasks in my Jira site.</label>
+          <button className="primary" disabled={busy || !state.databaseReady}>{busy?'Checking…':connected?'Replace connection':'Verify & connect Jira'}</button>
+        </form>
+      </details>
     </>}
-    {owner && !preview && <details><summary>Advanced · API token fallback</summary><form className="stack settings-form" action={form=>start(async()=>{setResult(await connectJira(form));if(tokenInput.current)tokenInput.current.value='';setState(await jiraConnectionState());})}>
-      <label>Jira account email<input name="email" type="email" required autoComplete="off" placeholder="Email of the account that created the token"/></label>
-      <label>Jira API token<input ref={tokenInput} name="token" type="password" required autoComplete="new-password" minLength={10} maxLength={4096}/></label>
-      <p className="subtle">Normal and scoped tokens are supported automatically. Your observed Jira login was digitalmarketing@vilpower.com; use that email if it created the token. Scoped tokens need Jira read/write and user-read scopes.</p>
-      <p className="subtle">For this local agency CRM, the token is saved in an ignored server file on this computer. Production hosting requires server environment secrets. Never paste tokens into chat.</p>
-      <label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>I authorize this CRM server to read and update tasks in my Jira site.</label>
-      <button className="primary" disabled={busy || !state?.databaseReady}>{busy?'Checking…':state?.configured?'Replace connection':'Verify & connect Jira'}</button>
-      {result && <p role="status" className={`form-message ${result.ok?'success':'error'}`}>{result.message}</p>}
-    </form></details>}
-  </div>;
+  </section>;
 }

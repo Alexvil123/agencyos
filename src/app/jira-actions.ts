@@ -1,12 +1,12 @@
 'use server';
 import { writeFile, rename, unlink } from 'node:fs/promises';
-import { randomUUID,randomBytes } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { workspaceContext } from '@/lib/access';
 import { serverClient } from '@/lib/supabase/server';
 import { jiraCredentials, legacyJiraCredentials, credentialFile } from '@/lib/jira-server';
-import {oauthApp,oauthConfigured,oauthCallback,oauthDb,saveLocalOAuthApp} from '@/lib/jira-oauth-server';
+import {oauthApp,oauthConfigured,oauthCallback} from '@/lib/jira-oauth-server';
 import { jiraRequest, JiraError, verifyJiraCredentials } from '@/lib/jira-http';
 import {WORK_JIRA_FIELDS,workIssue,parseJiraLabels,type RemoteWorkIssue} from '@/lib/work-jira-sync';
 import { JIRA_PROJECTS, plainDescription, type JiraTransition } from '@/lib/jira-types';
@@ -59,19 +59,6 @@ export async function jiraConnectionState() {
     const {error}=await db.from('jira_account_links').select('membership_id').limit(1);
     return {ok:true,configured:oauthConnected||Boolean(credentials),databaseReady:!error,owner:ctx.roles.includes('Owner'),oauthAppReady:Boolean(app),oauthConnected,callback:oauthCallback(),message:''};
   } catch { return {ok:false,configured:false,databaseReady:false,owner:false,message:'Jira access requires an active Owner or Employee account.'}; }
-}
-export async function configureJiraOAuthApp(form:FormData) {
- try {
-  const ctx=await access(true);
-  if(process.env.NODE_ENV==='production')return {ok:false,message:'Configure OAuth client ID, secret and encryption key in managed server hosting settings.'};
-  const input=z.object({client_id:z.string().trim().min(1).max(512),client_secret:z.string().trim().min(10).max(4096),confirmed:z.literal('yes')}).parse(Object.fromEntries(form));
-  const existing=await oauthApp(ctx.organizationId);
-  if(existing&&await oauthConfigured(ctx.organizationId))return {ok:false,message:'An OAuth connection already exists. Keep its existing app configuration.'};
-  const {error}=await oauthDb().from('jira_oauth_states').select('nonce_hash').limit(1);if(error)throw new Error('OAuth migration required');
-  await audit(ctx,null,'connection_requested','OAuth app setup');
-  await saveLocalOAuthApp({clientId:input.client_id,clientSecret:input.client_secret,organizationId:ctx.organizationId,encryptionKey:existing?.encryptionKey||randomBytes(32).toString('base64')});
-  return {ok:true,message:'OAuth app saved server-side. Set the matching callback URL and Jira scopes in Atlassian, then Connect Jira.'};
- }catch{return {ok:false,message:'Could not configure the OAuth app. Check Owner access and apply the OAuth database migration.'};}
 }
 async function authorizedIssue(key: string) {
   const ctx=await access(); z.string().regex(/^(OCT|SEP|SOURCE)-[1-9][0-9]*$/).parse(key);

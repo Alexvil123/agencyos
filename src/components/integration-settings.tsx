@@ -21,7 +21,7 @@ export function IntegrationSettings({owner,preview=false}:{owner:boolean;preview
     {error&&<p role="alert" className="form-message error">{error}</p>}
     {overview&&!overview.ready&&<p role="alert" className="notice">One-time setup: add an encryption key to the hosting settings before saving credentials here. Create it with <code>openssl rand -base64 32</code>, store it as <code>INTEGRATION_ENCRYPTION_KEY</code> and redeploy (see docs/INTEGRATIONS.md).</p>}
     {overview?.setupRequired&&<p role="alert" className="notice">The database table for saved credentials is not applied yet. Apply <code>supabase/migrations/202610100030_integration_credentials.sql</code> in Supabase, then refresh.</p>}
-    {!overview&&!error&&<p role="status">Loading integrations…</p>}
+    {!overview&&!error&&<div className="integ-grid" role="status" aria-label="Loading integrations">{PROVIDERS.map(spec=><div key={spec.key} className="integ-card integ-skeleton" aria-hidden="true"><span/><span/><span/></div>)}</div>}
     {overview&&<div className="integ-grid">{PROVIDERS.map(spec=>{const item=overview.items.find(i=>i.provider===spec.key);return item?<IntegrationCard key={spec.key} spec={spec} item={item} busy={busy} note={notes[spec.key]} onSave={form=>act(spec.key,()=>saveIntegration(form))} onAddAccount={form=>act(spec.key,()=>addIntegrationAccount(form))} onRemoveAccount={form=>act(spec.key,()=>removeIntegrationAccount(form))} onRemove={provider=>{const form=new FormData();form.set('provider',provider);act(provider,()=>removeIntegration(form));}}/>:null;})}</div>}
   </section>;
 }

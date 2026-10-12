@@ -1,5 +1,5 @@
 import 'server-only';
-import {readFile,writeFile,rename,unlink} from 'node:fs/promises';
+import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {createClient} from '@supabase/supabase-js';
@@ -27,10 +27,6 @@ export async function oauthApp(organizationId:string):Promise<OAuthApp|null> {
  if(stored.source==='stored'&&stored.values.client_id&&stored.values.client_secret)return validApp({clientId:stored.values.client_id,clientSecret:stored.values.client_secret,encryptionKey:process.env.JIRA_OAUTH_ENCRYPTION_KEY||masterKeyBase64()||'',organizationId});
  if(process.env.NODE_ENV==='production')return null;
  try {const value=JSON.parse(await readFile(oauthAppFile,'utf8')) as OAuthApp;return value.organizationId===organizationId?validApp(value):null;}catch{return null;}
-}
-export async function saveLocalOAuthApp(app:OAuthApp) {
- const temporary=`${oauthAppFile}.${randomUUID()}`;
- try{await writeFile(temporary,JSON.stringify(validApp(app)),{encoding:'utf8',mode:0o600,flag:'wx'});await rename(temporary,oauthAppFile);}finally{await unlink(temporary).catch(()=>{});}
 }
 export async function oauthJson<T>(url:string,body?:unknown,accessToken?:string):Promise<T> {
  if(!['https://auth.atlassian.com/oauth/token','https://api.atlassian.com/oauth/token/accessible-resources'].includes(url))throw new Error('Invalid OAuth endpoint');

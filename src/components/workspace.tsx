@@ -92,7 +92,7 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
         {moduleKey === 'calendar' && <CalendarPanel preview={ctx.preview}/>}
         {moduleKey === 'sales' && <SalesPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview} employees={data.employees}/>}
         {moduleKey === 'source' && <WorkPanel preview={ctx.preview} sourceRecords/>}
-        {moduleKey === 'settings' && settingsTab === 'integrations' && <><IntegrationSettings owner={!ctx.preview&&ctx.roles.includes('Owner')} preview={ctx.preview}/><section className="panel settings-panel"><JiraConnection owner={ctx.roles.includes('Owner')} preview={ctx.preview}/><WorkSettings owner={!ctx.preview&&ctx.roles.includes('Owner')}/><SalesConversionPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview}/></section></>}
+        {moduleKey === 'settings' && settingsTab === 'integrations' && <><IntegrationSettings owner={!ctx.preview&&ctx.roles.includes('Owner')} preview={ctx.preview}/><JiraConnection owner={ctx.roles.includes('Owner')} preview={ctx.preview}/><section className="panel settings-panel"><WorkSettings owner={!ctx.preview&&ctx.roles.includes('Owner')}/><SalesConversionPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview}/></section></>}
         {!moduleKey && <><OverviewTime preview={ctx.preview}/></>}
         {moduleKey === 'team' && <TeamPanel isOwner={!ctx.preview && ctx.roles.includes('Owner')} key={query} data={data} canManage={manage} preview={ctx.preview} initialQuery={query} onAddEmployee={() => open('employee')} onAddDepartment={() => open('department')}/>}
         {moduleKey === 'clients' && <><SalesConversionPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview}/><JiraClients preview={ctx.preview}/></>}
