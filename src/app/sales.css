@@ -8,6 +8,6 @@
 .sales-workspace .sales-conversion-panel>.panel-title p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
 .sales-workspace .sales-conversion-panel>.subtle{margin:8px 0 0;font-size:12px}
 .sales-workspace .sales-conversion-panel>.panel-title{margin:0}
-.sales-workspace .settings-panel{display:grid;gap:10px}
+.sales-workspace .settings-panel{display:grid;align-content:start;gap:10px}
 .sales-workspace .settings-panel h2{margin:0}
 .sales-workspace .settings-panel>p{margin:0}
