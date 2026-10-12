@@ -47,11 +47,6 @@
 .dash-card-head{margin-bottom:20px}
 .dash-card-head h2{font-size:15px;font-weight:750}
 .dash-card-head button,.dash-card-head a{font-size:12px}
-.dash-attendance-body{margin-top:22px;grid-template-columns:minmax(0,1fr) 105px;gap:12px}
-.dash-attendance-clock{font-size:36px;letter-spacing:-1.4px}
-.dash-attendance-head small{font-size:10px}
-.dash-attendance-actions{margin-top:20px}
-.dash-attendance-body p{font-size:12px}
 .dash-shift-note{font-size:11px;margin-top:12px}
 .dash-action{font-size:12px;padding:10px 12px}
 .dash-current-title strong{font-size:13px}
@@ -124,31 +119,23 @@ html[data-theme=dark] :is(.work-drawer input,.work-drawer select,.work-drawer te
 .dash-summary-grid{grid-template-columns:1.25fr 1fr 1fr}
 .dash-view-switch button{min-width:80px}
 .dash-summary-grid>.panel{padding:18px}
-.dash-attendance-clock{font-size:32px}
-.dash-attendance-body{grid-template-columns:minmax(0,1fr) 94px}
 .dash-card-head{gap:5px}
 .dash-card-head h2{font-size:14px}
 .dash-card-head button{font-size:11px}
 }
 @media(min-width:1440px){
 .dash-view-caption span{display:none}
-.dash-attendance-clock{font-size:34px}
 .dash-summary-grid{grid-template-columns:1.3fr 1fr 1fr}
 .dash-summary-grid>.panel{padding:20px 18px}
-.dash-attendance-body{grid-template-columns:minmax(0,1fr) 96px}
 .dash-view-switch button{min-width:85px}
 .dash-task-table{min-width:780px}
-.dash-attendance-head{flex-wrap:wrap}
 }
 @media(min-width:1600px){
 :root{--sidebar:250px}
 .dash-layout{grid-template-columns:minmax(0,1fr) 310px}
 .main-content{padding:28px 30px}
-.dash-attendance-clock{font-size:38px}
 .dash-summary-grid>.panel{padding:22px}
-.dash-attendance-body{grid-template-columns:minmax(0,1fr) 105px}
 .dash-view-caption span{display:inline}
-.dash-attendance-head{flex-wrap:nowrap}
 }
 @media(max-width:1050px){
 .dash-summary-grid{grid-template-columns:1fr 1fr}
@@ -176,9 +163,6 @@ html[data-theme=dark] :is(.work-drawer input,.work-drawer select,.work-drawer te
 .dash-view-switch button{min-width:0;padding:9px;font-size:11px}
 .dash-summary-grid,.dash-summary-grid.work-task-summary{grid-template-columns:1fr}
 .dash-summary-grid>.panel{padding:20px;min-height:210px}
-.dash-attendance-clock{font-size:38px}
-.dash-attendance-head{flex-wrap:wrap}
-.dash-attendance-body{grid-template-columns:minmax(0,1fr) 110px}
 .dash-filters{padding:12px;gap:8px}
 .dash-search{max-width:none;flex-basis:100%}
 .dash-filters select{max-width:none;min-width:calc(50% - 4px);flex:1;min-height:42px}
@@ -196,10 +180,7 @@ html[data-theme=dark] :is(.work-drawer input,.work-drawer select,.work-drawer te
 .sync-spinning{animation:none}
 }
 @media(min-width:721px) and (max-width:1050px){
-.dash-summary-grid>.dash-attendance{grid-column:1/-1}
 .dash-summary-grid:not(.work-task-summary)>.dash-today{grid-column:auto;display:block}
-.dash-summary-grid>.dash-attendance .dash-attendance-body{grid-template-columns:minmax(0,1fr) 180px}
-.dash-attendance-clock{font-size:36px}
 }
 .jira-client-search{display:flex;gap:9px;align-items:center;padding:0 22px 18px;color:var(--muted)}
 .jira-client-search input{max-width:420px}

@@ -1,0 +1,50 @@
+/* Overview: clock card, daily metrics, upcoming work */
+.overview-top-row{align-items:stretch}
+.ov-clock{display:grid;align-content:start;gap:14px;padding:22px 24px;border-top:3px solid #b8bfd0}
+.ov-clock.live{border-top-color:#1fb27a;background:linear-gradient(135deg,#f0fbf6 0%,var(--surface,#fff) 70%)}
+.ov-clock.break{border-top-color:#f09a3e;background:linear-gradient(135deg,#fff7ec 0%,var(--surface,#fff) 70%)}
+.ov-clock header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ov-clock header small{font-size:12px;color:var(--muted)}
+.ov-state{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#6b7488}
+.ov-state i{width:9px;height:9px;border-radius:50%;background:#a9afc0}
+.ov-clock.live .ov-state{color:#0b8a57}.ov-clock.live .ov-state i{background:#1fb27a;box-shadow:0 0 0 4px #1fb27a26;animation:ov-pulse 2s ease-in-out infinite}
+.ov-clock.break .ov-state{color:#b4691b}.ov-clock.break .ov-state i{background:#f09a3e;box-shadow:0 0 0 4px #f09a3e26}
+.ov-clock-main{display:grid;gap:4px}
+.ov-clock-time{font-size:clamp(36px,5vw,48px);line-height:1.05;letter-spacing:-1.5px;font-weight:800;font-variant-numeric:tabular-nums;color:#183b34}
+.ov-clock-main span{font-size:13px;color:var(--muted)}
+.ov-progress{height:9px;border-radius:999px;background:#e6e8f0;overflow:hidden}
+.ov-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7b5cf0,#1fb27a);transition:width .6s ease}
+.ov-progress-label{margin:-4px 0 0;font-size:13px;color:var(--muted)}
+.ov-progress-label strong{color:inherit;font-weight:700}
+.ov-actions{display:flex;gap:10px;flex-wrap:wrap}
+.ov-actions .dash-action{min-height:42px;padding:10px 18px;font-size:13px;border-radius:10px}
+.ov-note{margin:0;padding:9px 12px;border-radius:10px;background:var(--soft,#f4f2fb);font-size:13px;line-height:1.5}
+.ov-note.warn{background:#fff2db}
+.ov-help{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+
+.overview-metrics{gap:16px}
+.overview-metrics article{display:grid;gap:4px;padding:18px 20px;border-top-width:3px}
+.overview-metrics small{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.overview-metrics strong{margin-top:2px;font-size:28px}
+.overview-metrics article span{font-size:12.5px;color:var(--muted)}
+
+.overview-bottom-row{align-items:start}
+.ov-empty{display:grid;gap:6px;justify-items:center;text-align:center;padding:26px 16px;border:1px dashed var(--line);border-radius:14px;background:var(--soft,#f7f6fc)}
+.ov-empty strong{font-size:15px}
+.ov-empty p{margin:0;max-width:34ch;font-size:13px;line-height:1.6;color:var(--muted)}
+.ov-stat{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:14px 0;padding:12px 14px;border-radius:12px;background:var(--soft,#f7f6fc);font-size:13px}
+.ov-stat strong{font-size:18px;font-variant-numeric:tabular-nums}
+.overview-day-note small{font-size:12px;color:var(--muted)}
+
+@keyframes ov-pulse{0%,100%{box-shadow:0 0 0 4px #1fb27a26}50%{box-shadow:0 0 0 7px #1fb27a10}}
+@media(prefers-reduced-motion:reduce){.ov-state i,.ov-progress span{animation:none;transition:none}}
+@media(max-width:560px){.ov-clock{padding:18px}.ov-actions .dash-action{flex:1 1 130px}}
+
+html[data-theme=dark] .ov-clock.live{background:linear-gradient(135deg,#18342f 0%,#1b2230 75%)}
+html[data-theme=dark] .ov-clock.break{background:linear-gradient(135deg,#3a2c1b 0%,#1b2230 75%)}
+html[data-theme=dark] .ov-clock-time{color:#abedce}
+html[data-theme=dark] .ov-clock.live .ov-state{color:#66d9a7}
+html[data-theme=dark] .ov-clock.break .ov-state{color:#f4b66e}
+html[data-theme=dark] .ov-progress{background:#2d3247}
+html[data-theme=dark] .ov-note.warn{background:#3f301e}
+html[data-theme=dark] :is(.ov-empty,.ov-stat){background:#1c2031;border-color:#2d3247}

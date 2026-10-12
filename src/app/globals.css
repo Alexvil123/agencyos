@@ -505,18 +505,6 @@ html[data-theme=dark] .command-trigger{border-color:#333448}
 .dash-dot.orange{background:#ff8b31}
 .dash-dot.gray{background:#a9afc0}
 .dash-dot.blue{background:#438dff}
-.dash-attendance-head{display:flex;justify-content:space-between;align-items:center;gap:9px}
-.dash-attendance-head strong{display:flex;align-items:center;gap:10px;color:#778399;font-size:13px}
-.dash-attendance-head .is-clocked{color:#099a59}
-.dash-attendance-head small{font-size:9px;white-space:nowrap}
-.dash-attendance-body{display:grid;grid-template-columns:minmax(0,1fr) 105px;gap:16px;margin-top:29px}
-.dash-attendance-clock{font-size:35px;letter-spacing:-1px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
-.dash-attendance-body p{font-size:11px;color:var(--muted);margin-top:10px}
-.dash-attendance-body dl{margin:0;border-left:1px solid var(--line);padding-left:16px}
-.dash-attendance-body dl>div+div{border-top:1px solid var(--line);padding-top:15px;margin-top:15px}
-.dash-attendance-body dt{font-size:11px;color:var(--muted);margin-bottom:6px}
-.dash-attendance-body dd{margin:0;font-size:16px;font-weight:750;font-variant-numeric:tabular-nums}
-.dash-attendance-actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
 .dash-action{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid;border-radius:7px;padding:10px 12px;font-size:11px;font-weight:600;white-space:nowrap}
 .dash-action.break{color:var(--purple);background:#f3f0ff;border-color:#e8e1ff}
 .dash-action.end{background:#ff394c;color:white;border-color:#ff394c}
@@ -607,7 +595,6 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 @media(min-width:1550px){
 .dash-layout{grid-template-columns:minmax(0,1fr) 345px;gap:22px}
 .dash-summary-grid>.panel{padding:24px 22px}
-.dash-attendance-clock{font-size:40px}
 .dash-card-head h2{font-size:15px}
 .dash-task-table{font-size:12px}
 .dash-title-link{font-size:12px}
@@ -641,7 +628,6 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 .dash-search{flex-basis:100%}
 .dash-filters select{flex:1;max-width:none}
 .dash-table-foot{align-items:flex-start;flex-direction:column}
-.dash-attendance-clock{font-size:38px}
 .topbar .command-trigger span{display:none}
 .topbar .command-trigger{flex:0}
 .topbar-actions{justify-content:flex-end}
@@ -663,8 +649,6 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 @media(min-width:1371px){
 .dash-view-row{margin-bottom:39px}
 .dash-summary-grid>.panel{padding:20px 22px}
-.dash-attendance-body{margin-top:25px}
-.dash-attendance-actions{margin-top:20px}
 .dash-shift-note{margin-top:8px;margin-bottom:0}
 .dash-task-table td{padding:12px 9px}
 .dash-title-link{font-size:13px}

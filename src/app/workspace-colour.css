@@ -84,19 +84,11 @@ button:active:not(:disabled){ transform: translateY(1px); }
   box-shadow: 0 9px 26px #394b7910;
   transform: translateY(-2px);
 }
-.dash-summary-grid>.dash-attendance{
-  background: linear-gradient(125deg, #effcf6, #fff 78%);
-  border-color: #d4efdf;
-  border-top: 3px solid #37ba8a;
-}
 .dash-summary-grid>.dash-current{
   background: linear-gradient(130deg, #f2ecff, #fff 78%);
   border-color: #e4d8fa;
   border-top: 3px solid #9568e7;
 }
-.dash-attendance-clock{ color: #145b4a; }
-.dash-attendance-body dl{ border-left-color: #d5e9de; }
-.dash-attendance-body dd{ color: #326b5a; }
 .dash-current-clock strong{ color: #663bc0; }
 .dash-idle>svg{ padding: 8px; box-sizing: content-box; background: #ece2ff; border-radius: 13px; }
 .dash-action.start{ background: #e3f8ec; color: #14714e; border-color: #a6dfc2; }
@@ -170,11 +162,8 @@ html[data-theme=dark] .page-heading p{ color: #b3aec8; }
 html[data-theme=dark] .topbar .command-trigger{ background: linear-gradient(110deg, #2a2240, #212b43); border-color: #433650; }
 html[data-theme=dark] .primary{ color: #fff; }
 html[data-theme=dark] .secondary:hover:not(:disabled){ background: #332648; border-color: #76549b; }
-html[data-theme=dark] .dash-summary-grid>.dash-attendance{ background: linear-gradient(125deg, #18342f, #1b2230); border-color: #32594d; border-top-color: #48b891; }
 html[data-theme=dark] .dash-summary-grid>.dash-current{ background: linear-gradient(125deg, #302341, #212136); border-color: #49345f; border-top-color: #b084ec; }
-html[data-theme=dark] .dash-attendance-clock,html[data-theme=dark] .dash-attendance-body dd{ color: #abedce; }
 html[data-theme=dark] .dash-current-clock strong{ color: #d2b7ff; }
-html[data-theme=dark] .dash-attendance-body dl{ border-color: #345348; }
 html[data-theme=dark] .dash-idle>svg{ background: #3a2853; color: #c09af2; }
 html[data-theme=dark] .dash-view-switch{ background: #232138; border-color: #423655; }
 html[data-theme=dark] .dash-view-switch button:not(.selected):hover{ background: #372a49; color: #d4b7f7; }
@@ -208,3 +197,5 @@ html[data-theme=dark] .modal-head{ background: #282038; border-color: #49365a; }
 @media(prefers-reduced-motion:reduce){
 .app-shell *,.work-drawer,.work-drawer *,.modal,.modal *{ animation: none!important; transition: none!important; scroll-behavior: auto!important; }
 }
+.sync-indicator.idle{ background: #f1f2f7; border-color: #e1e3ec; color: #6b7488; }
+html[data-theme=dark] .sync-indicator.idle{ background: #1c2031; border-color: #2d3247; color: #a3a3bc; }
