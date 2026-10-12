@@ -1,7 +1,7 @@
 /* Settings → Integrations */
-.integ{display:grid;gap:14px}
-.integ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
-.integ-card{display:grid;gap:10px;align-content:start;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface,#fff)}
+.integ{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.integ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:14px}
+.integ-card{display:grid;min-width:0;gap:10px;align-content:start;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface,#fff)}
 .integ-card.on{border-color:#86efac}.integ-card.bad{border-color:#fca5a5}
 .integ-card header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .integ-card h3{margin:0 0 4px;font-size:15px}.integ-card header p{margin:0;font-size:12px}
@@ -17,6 +17,7 @@
 .integ-form input,.integ-form textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:inherit;font:inherit;font-weight:400}
 .integ-form textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;resize:vertical}
 .integ-guide{margin:0;font-size:12px;color:var(--muted)}
+.integ code,.integ .notice{overflow-wrap:anywhere}
 .integ code{padding:2px 6px;border-radius:6px;background:var(--soft);font-size:12px}
 html[data-theme=dark] .integ-card{background:#171b2a}
 html[data-theme=dark] .integ-status{background:#374151;color:#e5e7eb}html[data-theme=dark] .integ-status.on{background:#14532d;color:#bbf7d0}html[data-theme=dark] .integ-status.bad{background:#7f1d1d;color:#fecaca}
