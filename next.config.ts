@@ -6,6 +6,10 @@ const config: NextConfig = {
   distDir: process.env.CRM_DESIGN_PREVIEW === '1' && process.env.NODE_ENV === 'development' ? '.next-preview' : '.next',
   poweredByHeader: false,
   logging: {serverFunctions:false,incomingRequests:{ignore:[/\/integrations\/jira\/callback/]}},
+  async redirects() {
+    // "My account & time" was merged into Attendance; keep old links and bookmarks working.
+    return [{ source: '/me', destination: '/attendance', permanent: true }];
+  },
   async headers() {
     return [{ source: '/:path*', headers: [
       { key: 'X-Content-Type-Options', value: 'nosniff' },

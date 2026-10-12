@@ -1,6 +1,0 @@
-'use client';
-import Link from 'next/link';
-import {useState} from 'react';
-import {TimePanel} from './time-panel';
-import {SetPassword} from './set-password';
-export function EmployeeSelfService({name,preview}:{name:string;preview:boolean}){const [tab,setTab]=useState('time');return <><section className="panel self-service"><span className="eyebrow">YOUR ACCOUNT · YOUR RECORDS</span><h2>{name}, your personal workspace</h2><p>Review your attendance, daily timesheet and correction requests. Your work queue stays in My Work.</p><div className="time-controls"><Link className="primary" href="/work">Open My Work</Link><Link className="secondary" href="/">Clock in & breaks</Link></div><div className="tabs"><button className={tab==='time'?'selected':''} onClick={()=>setTab('time')}>My time & corrections</button><button className={tab==='account'?'selected':''} onClick={()=>setTab('account')}>My account</button></div>{tab==='account'&&<section className="self-account"><h3>Change my password</h3><p>This changes only your signed-in account. Your employee name and email are maintained by the Owner.</p>{preview?<p>Sign in to manage your account.</p>:<SetPassword/>}</section>}</section>{tab==='time'&&<TimePanel preview={preview} selfOnly/>}</>;}

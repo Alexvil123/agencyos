@@ -5,7 +5,6 @@ export const modules = [
   { key: 'work', name: 'Work', group: 'Workspace', icon: 'work', description: 'Jira tasks, your production workflow, and assigned work.' },
   { key: 'calendar', name: 'Calendar', group: 'Workspace', icon: 'calendar', description: 'Tasks by due date. The Owner creates and assigns Jira tasks here.' },
   { key: 'source', name: 'Source', group: 'Workspace', icon: 'source', description: 'Jira SOURCE records, separate from work tasks and timers.' },
-  { key: 'me', name: 'My account & time', group: 'Workspace', icon: 'team', description: 'Your attendance, timesheets, corrections and account.' },
   { key: 'attendance', name: 'Attendance', group: 'Workspace', icon: 'attendance', description: 'Attendance, breaks, task timers, timesheets, and corrections.' },
   { key: 'communication', name: 'Announcements', group: 'Workspace', icon: 'chat', description: 'Company announcements for all team members.' },
   { key: 'chat', name: 'Team Chat', group: 'Workspace', icon: 'chat', description: 'Personal conversations and employee group chats.' },

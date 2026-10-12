@@ -12,7 +12,7 @@ team chat and announcements, reports, analytics, campaign reporting and invoicin
 | Work | Assigned and team tasks, timers, Jira status and edits (two-way) | Jira + Supabase |
 | Calendar | Tasks by due date. The Owner creates, assigns and reschedules Jira tasks here | Jira |
 | Source | Jira SOURCE reference records | Jira |
-| Attendance / My account & time | Attendance, breaks, timesheets, corrections and approvals | Supabase |
+| Attendance | Attendance, breaks, timesheets, corrections and approvals | Supabase |
 | Announcements, Team Chat | Company announcements, personal and group chat | Supabase |
 | Campaigns (Owner) | Meta Ads and Google Ads spend and results | Ad platform APIs (env keys) |
 | Analytics | Instagram, Facebook and YouTube post views, likes and engagement (plus a Team work tab) | Platform APIs (env keys) |
