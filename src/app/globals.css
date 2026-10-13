@@ -823,17 +823,6 @@ html[data-theme=dark] .sales-draft-row td{background:#2c2345!important}
 .sales-table:not(.sales-wrap) td>.sales-cell-button,.sales-table:not(.sales-wrap) td>span{max-height:35px}
 .sales-pagination{justify-content:space-between}
 .sales-cell-selected:focus{outline:2px solid var(--purple);outline-offset:-2px}
-.sales-conversion-panel{padding:20px;margin-bottom:20px}
-.sales-conversion-panel>.panel-title{gap:16px;align-items:start}
-.sales-conversion-panel h2{margin:8px 0;font-size:18px}
-.sales-conversion-panel p{font-size:12px;line-height:1.7}
-.sales-conversion-panel .heading-actions{display:flex;gap:8px}
-.sales-conversion-form{margin:20px 0;padding:18px;background:var(--soft);border-radius:12px}
-.sales-conversion-panel table{font-size:12px;width:100%;margin-top:20px}
-.sales-conversion-panel :is(td,th){padding:12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-.sales-conversion-panel td small{max-width:300px;margin-top:6px;line-height:1.5}
-.sales-conversion-panel summary{cursor:pointer;color:var(--purple);padding:8px 0}
-.sales-conversion-panel details form{max-width:260px}
 .task-timer-controls{min-width:150px}
 .task-timer-buttons{display:flex;flex-wrap:wrap;gap:6px}
 .task-timer-buttons .dash-icon-action{display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:65px;height:32px;padding:5px 8px;font-size:10px}
