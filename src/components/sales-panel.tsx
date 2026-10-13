@@ -1,9 +1,8 @@
 'use client';
 import {Fragment,useCallback,useEffect,useMemo,useRef,useState,useTransition} from 'react';
 import {ArrowUpRight,ArrowDownUp,Search,RefreshCw,ShieldCheck,Plus,Filter,Columns3,Trash2,Pencil,ChevronDown,X,FileSpreadsheet,LockKeyhole} from 'lucide-react';
-import {connectSales,loadSales,salesConnection,setSalesTeam,mutateSalesRow} from '@/app/sales-actions';
+import {connectSales,loadSales,salesConnection,mutateSalesRow} from '@/app/sales-actions';
 import {SALES_SHEET_URL,salesView,salesInput,salesValue,salesMatches,salesStamp,salesStampShortcut,describeSalesFilter,type SalesGrid,type SalesRow,type SalesFilter,type SalesSort} from '@/lib/sales-sheet';
-import type {Employee} from '@/lib/data';
 import {notifyWorkspaceChange,useAutoRefresh} from './use-auto-refresh';
 import {SalesRecordEditor,type SalesEditor} from './sales-record-editor';
 import {SalesCellInput} from './sales-cell-input';
@@ -12,7 +11,7 @@ import {SalesChoiceMenu,chipProps,type ChoiceColor} from './sales-choice-menu';
 import {SalesConversionPanel} from './sales-conversion-panel';
 import '../app/sales.css';
 import {salesNeighbor,salesWindow,type SalesDirection} from '@/lib/sales-grid-navigation';
-export function SalesPanel({owner,preview,employees}:{owner:boolean;preview:boolean;employees:Employee[]}){
+export function SalesPanel({owner,preview}:{owner:boolean;preview:boolean}){
  const [connection,setConnection]=useState<Awaited<ReturnType<typeof salesConnection>>|null>(null),[tab,setTab]=useState('Tracksheet'),[grid,setGrid]=useState<SalesGrid|null>(null);
  const [query,setQuery]=useState(''),[filters,setFilters]=useState<SalesFilter[]>([]),[sort,setSort]=useState<SalesSort|null>(null),[message,setMessage]=useState(''),[settings,setSettings]=useState(false),[showColumns,setShowColumns]=useState(false),[hidden,setHidden]=useState<number[]>([]),[wrap,setWrap]=useState(false);
  const scrollArea=useRef<HTMLDivElement>(null),draftRef=useRef<HTMLTableRowElement>(null),cellRefs=useRef(new Map<string,HTMLTableCellElement>());
@@ -78,7 +77,7 @@ export function SalesPanel({owner,preview,employees}:{owner:boolean;preview:bool
   {preview&&<p className="notice">Sign in as Owner to connect the spreadsheet.</p>}
   {connection?.available&&!connection.configured&&<p className="notice">Imported snapshot · Read only · Live Google connection is pending.</p>}
   {((connection&&!connection.available)||settings)&&owner&&<section className="panel settings-panel"><h2>Sales connection</h2><p className="subtle">Enable Google Sheets API, share Business Development with the service account as Editor, then upload its JSON key.</p><form className="stack" action={f=>start(()=>configure(connectSales,f))}><label>Google service account key<input name="credential" type="file" accept=".json,application/json" required disabled={busy||preview}/></label><label className="checkbox-label"><input name="confirmed" value="yes" type="checkbox" required/>Connect this server account to the sales spreadsheet.</label><button className="primary" disabled={busy||preview}>{busy?'Verifying…':connection?.configured?'Replace server connection':'Connect & verify sheet'}</button></form>
-   {connection?.available&&<><p className="notice">{connection.configured?'Connected account: '+connection.email:'Imported data available.'}</p><form className="stack" action={f=>start(()=>configure(setSalesTeam,f))}><h3>Sales team access</h3><p className="subtle">Selected employees can view, add, edit and delete records across all sheet tabs. Formula cells and protected validations remain protected.</p><div className="sales-team-grid">{employees.filter(e=>e.membership_id).map(e=><label className="checkbox-label" key={e.id+'-'+connection.members.join(',')}><input type="checkbox" name="member" value={e.membership_id!} defaultChecked={connection.members.includes(e.membership_id!)}/>{e.display_name}<small>{e.job_title}</small></label>)}</div><button className="secondary" disabled={busy}>Save sales team</button></form></>}
+   {connection?.available&&<><p className="notice">{connection.configured?'Connected account: '+connection.email:'Imported data available.'}</p><p className="subtle">The Owner chooses who can use Sales in Settings → Module access.</p></>}
   </section>}
   {!owner&&connection&&!connection.ok&&<section className="panel settings-panel"><h2>Sales access required</h2><p>Ask Owner to add your account to the Sales team.</p></section>}
   {connection?.available&&<div className="sales-sheet-layout">

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { serverClient } from './supabase/server';
 import { hasBackend, isSetupPreview } from './config';
 import { GRANTABLE_MODULES } from './modules';
+import { salesTeamMembers } from './sales-team-server';
 export type WorkspaceContext = {
   preview: boolean; userId: string; membershipId: string; organizationId: string;
   name: string; company: string; kind: string; permissions: string[]; roles: string[]; modules: string[]; employeeLoginReady: boolean;
@@ -34,6 +35,9 @@ export async function workspaceContext(): Promise<WorkspaceContext> {
   const roles = typedGrants?.map(g => g.roles.name) || [];
   const { data: granted } = roles.includes('Owner') ? { data: GRANTABLE_MODULES as readonly string[] } : await db.rpc('module_access_mine', { org_id: membership.organization_id });
   const modules = (Array.isArray(granted) ? granted : []).filter((m): m is string => typeof m === 'string' && (GRANTABLE_MODULES as readonly string[]).includes(m));
+  // Sales: the Owner, and the employees picked as the Sales team (read through the server so a removal applies at once).
+  const salesMember = roles.includes('Owner') || (await salesTeamMembers(membership.organization_id).catch(() => [] as string[])).includes(membership.id);
+  if (salesMember) modules.push('sales');
   return { preview: false, userId: user.id, membershipId: membership.id, organizationId: membership.organization_id, name: profile?.display_name || 'Your workspace', company: org.display_name, kind: membership.kind, roles, modules, permissions: [...new Set(typedGrants?.flatMap(g => g.roles.role_permissions.map(p => p.permission_key)) || [])], employeeLoginReady: Boolean(process.env.SUPABASE_SECRET_KEY) };
 }
 export async function requirePermission(permission: string) {

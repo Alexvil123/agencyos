@@ -10,6 +10,6 @@ test('every menu is a working module and sensitive menus are hidden from people 
   assert.equal(moduleVisible('analytics',owner),true);assert.equal(moduleVisible('analytics',employee),false);
   assert.equal(moduleVisible('campaigns',granted),true);assert.equal(moduleVisible('analytics',granted),true);assert.equal(moduleVisible('finance',granted),false);
   assert.equal(moduleVisible('finance',{...employee,modules:['finance']}),true);
-  assert.equal(moduleVisible('communication',owner),true);assert.equal(moduleVisible('communication',granted),false);
-  for(const key of ['','sales','work','chat','reports','settings'])assert.equal(moduleVisible(key,employee),true,key);
+  assert.equal(moduleVisible('sales',owner),true);assert.equal(moduleVisible('sales',employee),false);assert.equal(moduleVisible('sales',{...employee,modules:['sales']}),true);assert.equal(moduleVisible('communication',owner),true);assert.equal(moduleVisible('communication',granted),false);
+  for(const key of ['','work','chat','reports','settings'])assert.equal(moduleVisible(key,employee),true,key);
 });

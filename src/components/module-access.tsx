@@ -4,6 +4,7 @@ import {useEffect,useState,useTransition} from 'react';
 import {loadModuleAccess,saveModuleAccess,type AccessPerson} from '@/app/module-access-actions';
 
 const MODULES=[
+  {key:'sales',name:'Sales',note:'Google Sheet leads, visits and follow-ups'},
   {key:'calendar',name:'Calendar',note:'Tasks by due date'},
   {key:'campaigns',name:'Campaigns',note:'Meta and Google Ads spend'},
   {key:'finance',name:'Finance',note:'Invoices and payments'},

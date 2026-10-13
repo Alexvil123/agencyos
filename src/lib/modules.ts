@@ -16,11 +16,12 @@ export const modules = [
   { key: 'settings', name: 'Settings', group: 'System', icon: 'settings', description: 'Company, users, permissions, integrations, and audit history.' },
 ] as const;
 export function moduleFor(key: string) { return modules.find(module => module.key === key); }
-// Calendar, Campaigns, Finance and Analytics are Owner-only unless the Owner grants an employee access in Settings (modules). Announcements are Owner-only.
+// Sales is for the Sales team the Owner picks. Calendar, Campaigns, Finance and Analytics are Owner-only unless the Owner grants an employee access in Settings (modules). Announcements are Owner-only.
 // Menus are hidden from people who cannot use them; the server still enforces access.
 export const GRANTABLE_MODULES = ['calendar', 'campaigns', 'finance', 'analytics'] as const;
 export function moduleVisible(key: string, access: { owner: boolean; permissions: string[]; modules: string[] }) {
   if (key === 'communication') return access.owner;
+  if (key === 'sales') return access.owner || access.modules.includes('sales');
   if (key === 'finance') return access.owner || access.permissions.includes('finance.read') || access.modules.includes('finance');
   if (key === 'calendar' || key === 'campaigns' || key === 'analytics') return access.owner || access.modules.includes(key);
   return true;
