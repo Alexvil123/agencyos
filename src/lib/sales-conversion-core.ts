@@ -1,7 +1,7 @@
 import {z} from 'zod';
-import {plainDescription} from './jira-types';
+import {MONTH_PROJECTS,plainDescription} from './jira-types';
 import type {SalesGrid} from './sales-sheet';
-export const conversionSchema=z.object({enabled:z.boolean(),source_tab:z.enum(['Tracksheet','Leads']),name_column:z.string().min(1).max(255),status_column:z.string().min(1).max(255),won_value:z.string().min(1).max(255),jira_project:z.enum(['OCT','SEP']),issue_type:z.string().regex(/^\d+$/),summary_template:z.string().min(1).max(180).refine(v=>v.includes('{client}'))});
+export const conversionSchema=z.object({enabled:z.boolean(),source_tab:z.enum(['Tracksheet','Leads']),name_column:z.string().min(1).max(255),status_column:z.string().min(1).max(255),won_value:z.string().min(1).max(255),jira_project:z.enum(MONTH_PROJECTS),issue_type:z.string().regex(/^\d+$/),summary_template:z.string().min(1).max(180).refine(v=>v.includes('{client}'))});
 export type ConversionConfig=z.infer<typeof conversionSchema>;
 export type ConversionSettings=ConversionConfig&{organization_id:string;owner_actor:string;updated_at:string;last_checked_at:string|null;last_error:string|null};
 export type ConversionJob={id:string;organization_id:string;client_key:string;client_name:string;jira_label:string;source_tab:string;source_id:string;source_fingerprint:string;jira_project:string;issue_type:string;summary:string;state:'pending'|'creating'|'synced'|'failed'|'review'|'cancelled';jira_key:string|null;error:string|null;updated_at:string};

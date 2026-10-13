@@ -1,9 +1,10 @@
 import {plainDescription} from './jira-types';
 import {parseJiraLabels} from './work-jira-sync';
 import {CALENDAR_PROJECTS} from './calendar-input';
+import {WORK_KEY} from './jira-types';
 // Thin Jira Cloud calls used by the Calendar. `call` is jiraRequest bound to the connected site, so tests can inject a fake.
 export type JiraCall=<T=unknown>(path:string,body?:unknown,method?:string)=>Promise<T>;
-const KEY=/^(OCT|SEP)-[1-9][0-9]*$/;
+const KEY=WORK_KEY;
 export function createIssueFields(input:{project:string;issue_type:string;summary:string;description:string;label:string;due_date:string}){
   if(!(CALENDAR_PROJECTS as readonly string[]).includes(input.project))throw new Error('Invalid project');
   const labels=input.label?parseJiraLabels(input.label):[];

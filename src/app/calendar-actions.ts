@@ -3,13 +3,15 @@ import {z} from 'zod';
 import {workAccess,workAdmin,readWorkIssue,importWorkIssues} from '@/lib/work-server';
 import {jiraCredentials} from '@/lib/jira-server';
 import {jiraRequest,JiraError} from '@/lib/jira-http';
+import {monthProjectKeys} from '@/lib/jira-projects-server';
+import {WORK_KEY,isMonthProject} from '@/lib/jira-types';
 import {calendarCreateSchema,calendarUpdateSchema} from '@/lib/calendar-input';
 import {createIssue,assignIssue,setIssueDueDate,unsupportedRequiredFields,type JiraCall} from '@/lib/calendar-jira';
 
 // Calendar writes go to Jira first, are read back from Jira, then saved in the CRM. Only the Owner may create or assign
 // Jira tasks (the database audit function enforces the same rule).
 export type CalendarResult={ok:boolean;message:string;key?:string};
-export type CalendarSetup={ok:boolean;message:string;assignees:{id:string;name:string}[];issueTypes:Record<'OCT'|'SEP',{id:string;name:string}[]>};
+export type CalendarSetup={ok:boolean;message:string;assignees:{id:string;name:string}[];projects:string[];issueTypes:Record<string,{id:string;name:string}[]>};
 class CalendarError extends Error{}
 type Context=Awaited<ReturnType<typeof workAccess>>['ctx'];
 
@@ -44,17 +46,19 @@ async function accountFor(db:Awaited<ReturnType<typeof ownerAccess>>['db'],organ
 
 export async function calendarSetup():Promise<CalendarSetup>{
   try{
-    const {ctx,db}=await ownerAccess(),call=await jira(ctx.organizationId);
-    const [links,people,oct,sep]=await Promise.all([
+    const {ctx,db}=await ownerAccess(),call=await jira(ctx.organizationId),credentials=await jiraCredentials(ctx.organizationId);
+    // Only month projects that exist in Jira are offered, so a new month appears here by itself.
+    const projects=credentials?await monthProjectKeys(credentials,true):[];
+    const [links,people,types]=await Promise.all([
       db.from('jira_account_links').select('membership_id').eq('organization_id',ctx.organizationId),
       db.from('employees').select('membership_id,display_name').eq('organization_id',ctx.organizationId).not('membership_id','is',null).order('display_name'),
-      issueTypes(call,'OCT'),issueTypes(call,'SEP'),
+      Promise.all(projects.map(async p=>[p,await issueTypes(call,p)] as const)),
     ]);
     if(links.error||people.error)throw new CalendarError('Employee Jira links could not be read.');
     const linked=new Set(links.data.map(l=>l.membership_id));
-    return {ok:true,message:'',assignees:people.data.filter(p=>linked.has(p.membership_id)).map(p=>({id:p.membership_id as string,name:p.display_name as string})),issueTypes:{OCT:oct,SEP:sep}};
+    return {ok:true,message:'',assignees:people.data.filter(p=>linked.has(p.membership_id)).map(p=>({id:p.membership_id as string,name:p.display_name as string})),projects,issueTypes:Object.fromEntries(types)};
   }catch(error){
-    return {ok:false,message:reason(error,'The calendar setup could not be loaded. Check the Jira connection in Settings.'),assignees:[],issueTypes:{OCT:[],SEP:[]}};
+    return {ok:false,message:reason(error,'The calendar setup could not be loaded. Check the Jira connection in Settings.'),assignees:[],projects:[],issueTypes:{}};
   }
 }
 
@@ -62,7 +66,7 @@ export async function calendarSetup():Promise<CalendarSetup>{
 export async function calendarRequirements(project:string,issueType:string):Promise<{ok:boolean;message:string;missing:string[]}>{
   try{
     const {ctx}=await ownerAccess();
-    if(!/^(OCT|SEP)$/.test(project)||!/^\d+$/.test(issueType))throw new CalendarError('Choose a project and issue type.');
+    if(!isMonthProject(project)||!/^\d+$/.test(issueType))throw new CalendarError('Choose a project and issue type.');
     const call=await jira(ctx.organizationId);
     const meta=await call<{fields?:unknown[];values?:unknown[]}>(`/rest/api/3/issue/createmeta/${project}/issuetypes/${issueType}?maxResults=200`);
     return {ok:true,message:'',missing:unsupportedRequiredFields(meta)};
@@ -108,7 +112,7 @@ export async function calendarUpdateTask(form:FormData):Promise<CalendarResult>{
     const {ctx,db}=await ownerAccess(),input=calendarUpdateSchema.parse(Object.fromEntries(form));
     const task=await db.from('time_tasks').select('jira_key,source').eq('organization_id',ctx.organizationId).eq('id',input.task).maybeSingle();
     const key=task.data?.jira_key;
-    if(task.error||!key||task.data?.source!=='jira'||!/^(OCT|SEP)-[1-9][0-9]*$/.test(key))throw new CalendarError('Only Jira tasks in OCT or SEP can be rescheduled or reassigned here.');
+    if(task.error||!key||task.data?.source!=='jira'||!WORK_KEY.test(key))throw new CalendarError('Only Jira tasks in a month project can be rescheduled or reassigned here.');
     const call=await jira(ctx.organizationId),before=await readWorkIssue(ctx.organizationId,key);
     if(input.expected&&before.issue.jira_updated!==input.expected){
       await importWorkIssues(ctx.organizationId,ctx.userId,[before.issue]);

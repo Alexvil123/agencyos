@@ -6,14 +6,17 @@ import {salesConfig,readSalesGrid} from './sales-server';
 import {conversionCandidates,conversionIdentity,conversionPayload,type ConversionSettings,type ConversionJob} from './sales-conversion-core';
 import {readWorkIssue,importWorkIssues} from './work-server';
 import {randomUUID} from 'node:crypto';
+import {isMonthProject} from './jira-types';
+import {monthProjectKeys} from './jira-projects-server';
+import {projectClause} from './jira-types';
 export async function conversionAudit(org:string,actor:string,action:string,id?:string){const {error}=await oauthDb().from('audit_logs').insert({organization_id:org,actor_id:actor,action,entity_type:'sales_conversion',entity_id:id||null});if(error)throw new Error('Conversion audit unavailable.');}
 async function ownerActive(config:ConversionSettings){const {data,error}=await oauthDb().from('memberships').select('membership_roles(role_key)').eq('organization_id',config.organization_id).eq('user_id',config.owner_actor).eq('kind','employee').eq('active',true).maybeSingle();return !error&&data?.membership_roles.some(r=>r.role_key==='owner');}
 async function recordState(job:ConversionJob,state:ConversionJob['state'],error:string|null,key=job.jira_key){const result=await oauthDb().from('sales_client_conversions').update({state,error,jira_key:key,updated_at:new Date().toISOString()}).eq('organization_id',job.organization_id).eq('id',job.id);if(result.error)throw new Error('Conversion state unavailable.');}
-export async function finishConversion(job:ConversionJob,actor:string,key:string){const {issue}=await readWorkIssue(job.organization_id,key);if(!['OCT','SEP'].includes(issue.project_key)||!issue.labels.includes(job.jira_label))throw new Error('Jira task project or client label does not match.');await importWorkIssues(job.organization_id,actor,[issue]);await recordState(job,'synced',null,key);await conversionAudit(job.organization_id,actor,'sales_client_synced',job.id);}
+export async function finishConversion(job:ConversionJob,actor:string,key:string){const {issue}=await readWorkIssue(job.organization_id,key);if(!isMonthProject(issue.project_key)||!issue.labels.includes(job.jira_label))throw new Error('Jira task project or client label does not match.');await importWorkIssues(job.organization_id,actor,[issue]);await recordState(job,'synced',null,key);await conversionAudit(job.organization_id,actor,'sales_client_synced',job.id);}
 async function processJob(job:ConversionJob,config:ConversionSettings,candidates:ReturnType<typeof conversionCandidates>){
  const source=candidates.find(r=>r.id===job.source_id);if(!source||conversionIdentity(source.name).client_key!==job.client_key){await recordState(job,'review','The original closed deal changed. Owner review required.');return;}
  const credentials=await jiraCredentials(job.organization_id);if(!credentials)throw new Error('Connect Jira before processing closed deals.');
- const existing=await jiraRequest<{issues:{key:string}[]}>(credentials,'/rest/api/3/search/jql',{jql:`project in (OCT, SEP) AND labels = ${JSON.stringify(job.jira_label)} ORDER BY created ASC`,fields:['key'],maxResults:1});
+ const existing=await jiraRequest<{issues:{key:string}[]}>(credentials,'/rest/api/3/search/jql',{jql:`${projectClause(await monthProjectKeys(credentials))} AND labels = ${JSON.stringify(job.jira_label)} ORDER BY created ASC`,fields:['key'],maxResults:1});
  if(existing.issues.length){await finishConversion(job,config.owner_actor,existing.issues[0].key);return;}
  const {data,error}=await oauthDb().rpc('sales_conversion_job_claim',{job_id:job.id});if(error)throw new Error('Could not reserve Jira creation.');if(!data?.length)return;
  let sent=false,key:string|undefined;

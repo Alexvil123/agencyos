@@ -9,7 +9,7 @@ import { jiraCredentials, legacyJiraCredentials, credentialFile } from '@/lib/ji
 import {oauthApp,oauthConfigured,oauthCallback} from '@/lib/jira-oauth-server';
 import { jiraRequest, JiraError, verifyJiraCredentials } from '@/lib/jira-http';
 import {WORK_JIRA_FIELDS,workIssue,parseJiraLabels,type RemoteWorkIssue} from '@/lib/work-jira-sync';
-import { JIRA_PROJECTS, plainDescription, type JiraTransition } from '@/lib/jira-types';
+import { JIRA_KEY, JIRA_PROJECTS, plainDescription, type JiraTransition } from '@/lib/jira-types';
 import {retireJiraTask} from '@/lib/jira-availability-server';
 type RemoteIssue=RemoteWorkIssue;
 const issueData=workIssue;
@@ -41,11 +41,11 @@ export async function connectJira(form: FormData) {
     const input=z.object({email:z.string().trim().pipe(z.email()),token:z.string().trim().min(10).max(4096),confirmed:z.literal('yes')}).parse(Object.fromEntries(form));
     const credentials=await verifyJiraCredentials({email:input.email,token:input.token,organizationId:ctx.organizationId});
     // Validate the audited database setup before persisting a credential.
-    await audit(ctx,null,'connection_requested','OCT,SEP,SOURCE');
+    await audit(ctx,null,'connection_requested','month projects and SOURCE');
     const temporary=`${credentialFile}.${randomUUID()}`;
     try { await writeFile(temporary,JSON.stringify(credentials),{encoding:'utf8',mode:0o600,flag:'wx'}); await rename(temporary,credentialFile); }
     finally { await unlink(temporary).catch(()=>{}); }
-    await audit(ctx,null,'connection_saved','OCT,SEP,SOURCE');
+    await audit(ctx,null,'connection_saved','month projects and SOURCE');
     return {ok:true,message:`Jira account verified (${credentials.tokenType} token). Server credential saved locally. Open Work and refresh tasks.`};
   } catch(error) { return {ok:false,message:message(error)}; }
 }
@@ -61,7 +61,7 @@ export async function jiraConnectionState() {
   } catch { return {ok:false,configured:false,databaseReady:false,owner:false,message:'Jira access requires an active Owner or Employee account.'}; }
 }
 async function authorizedIssue(key: string) {
-  const ctx=await access(); z.string().regex(/^(OCT|SEP|SOURCE)-[1-9][0-9]*$/).parse(key);
+  const ctx=await access(); z.string().regex(JIRA_KEY).parse(key);
   const credentials=await jiraCredentials(ctx.organizationId); if(!credentials) throw new Error('Missing connection');
   const remote=await jiraRequest<RemoteIssue>(credentials,`/rest/api/3/issue/${encodeURIComponent(key)}?fields=${[...WORK_JIRA_FIELDS,"attachment"].join(',')}`).catch(async error=>{if(error instanceof JiraError&&error.status===404)await retireJiraTask(ctx.organizationId,key).catch(()=>undefined);throw error;});
   const issue=issueData(remote);

@@ -1,6 +1,7 @@
 import {z} from 'zod';
-// Input rules for creating and changing Jira tasks from the Calendar. Only OCT and SEP hold work; SOURCE is a reference library.
-export const CALENDAR_PROJECTS=['OCT','SEP'] as const;
+import {MONTH_PROJECTS} from './jira-types';
+// Input rules for creating and changing Jira tasks from the Calendar. Month projects hold work; SOURCE is a reference library.
+export const CALENDAR_PROJECTS=MONTH_PROJECTS;
 const optionalDate=z.union([z.iso.date(),z.literal('')]).default('');
 const optionalMember=z.union([z.uuid(),z.literal('')]).default('');
 export const calendarCreateSchema=z.object({

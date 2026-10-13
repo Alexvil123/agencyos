@@ -23,7 +23,7 @@ export function JiraConnection({owner,preview}:{owner:boolean;preview:boolean}) 
   return <section className="panel jira-connection" aria-label="Jira connection">
     <header>
       <span className="activity-icon"><Layers3 size={19}/></span>
-      <div><h3>Jira · Two-way task updates</h3><p>OCT · SEP · SOURCE · same Jira statuses</p></div>
+      <div><h3>Jira · Two-way task updates</h3><p>Month projects (JAN–DEC) · SOURCE · same Jira statuses</p></div>
       <span className={`jira-status ${checking?'checking':connected?'on':'off'}`}>{checking?'Checking…':connected?<><CheckCircle2 size={13}/> Connected</>:'Not connected'}</span>
     </header>
     <p className="jira-help">Employees see their assigned tasks. The Owner creates tasks and links employee accounts. Jira permissions and valid transitions still apply.</p>

@@ -10,7 +10,7 @@ Migration 007 hardens default Supabase table privileges: authenticated users hav
 - Direction: CRM ↔ Jira task and status updates.
 - Use existing Jira execution workflow; do not invent completion or approval rules.
 - Free services only.
-- Projects: OCT + SEP + SOURCE.
+- Projects: one per month (JAN … DEC, for example OCT, SEP, NOV) plus SOURCE. A month project is picked up by the next sync as soon as it exists in Jira; nothing needs changing. Anything outside these twelve and SOURCE is ignored.
 - CRM displays the same Jira status names and uses available Jira transitions.
 - Employees: currently assigned tasks only; view and edit title/description/status. Owner alone creates tasks.
 

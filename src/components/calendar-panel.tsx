@@ -5,7 +5,7 @@ import {CalendarDays,ChevronLeft,ChevronRight,Plus} from 'lucide-react';
 import type {loadWorkData} from '@/app/work-actions';
 import {calendarCreateTask,calendarRequirements,calendarSetup,calendarUpdateTask,type CalendarResult,type CalendarSetup} from '@/app/calendar-actions';
 import {calendarTasks,dayLabel,istDay,monthDays,rangeLabel,shiftAnchor,taskDay,taskTone,tasksByDay,unscheduledTasks,weekDays,type CalendarFilters,type CalendarView} from '@/lib/calendar';
-import {CALENDAR_PROJECTS} from '@/lib/calendar-input';
+import {MONTH_PROJECTS} from '@/lib/jira-types';
 import {JIRA_SITE} from '@/lib/jira-types';
 import {taskClientLabel,taskDisplayStatus} from '@/lib/work-jira-sync';
 import type {WorkData} from '@/lib/work-report';
@@ -46,6 +46,8 @@ export function CalendarPanel({preview}:{preview:boolean}){
   const visible=useMemo(()=>data?calendarTasks(data.tasks,filters,today):[],[data,filters,today]);
   const byDay=useMemo(()=>tasksByDay(visible),[visible]);
   const unscheduled=useMemo(()=>unscheduledTasks(visible,today),[visible,today]);
+  // Only the month projects that actually have tasks are offered as a filter.
+  const projectsInUse=useMemo(()=>MONTH_PROJECTS.filter(p=>(data?.tasks||[]).some(t=>t.jira_project===p)),[data]);
   const labels=useMemo(()=>[...new Set((data?.tasks||[]).flatMap(t=>t.jira_labels||[]))].sort((a,b)=>a.localeCompare(b)),[data]);
   const name=(id:string)=>data?.people.find(p=>p.id===id)?.display_name||'Unassigned';
   if(preview)return <section className="panel time-panel"><h2>Calendar</h2><p>Sign in to see your tasks on the calendar.</p></section>;
@@ -83,7 +85,7 @@ export function CalendarPanel({preview}:{preview:boolean}){
       </div>
       <div className="cal-filters">
         {data.manager&&filterSelect('Employee',filters.employee,[['all','Everyone'],...data.people.map(p=>[p.id,p.display_name] as [string,string])],v=>setFilters(f=>({...f,employee:v})))}
-        {filterSelect('Project',filters.project,[['all','All projects'],...CALENDAR_PROJECTS.map(p=>[p,p] as [string,string]),['manual','Manual tasks']],v=>setFilters(f=>({...f,project:v})))}
+        {filterSelect('Project',filters.project,[['all','All projects'],...projectsInUse.map(p=>[p,p] as [string,string]),['manual','Manual tasks']],v=>setFilters(f=>({...f,project:v})))}
         {filterSelect('Status',filters.state,[['all','All'],['open','Open'],['done','Done']],v=>setFilters(f=>({...f,state:v as CalendarFilters['state']})))}
         <ul className="cal-legend" aria-label="Legend"><li className="tone-todo">To do</li><li className="tone-progress">In progress</li><li className="tone-hold">On hold</li><li className="tone-overdue">Overdue</li><li className="tone-done">Done</li></ul>
       </div>
@@ -187,7 +189,9 @@ function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeT
 }
 
 function CreateTask({day,setup,labels,busy,onClose,onSubmit}:{day:string;setup?:CalendarSetup;labels:string[];busy:boolean;onClose:()=>void;onSubmit:(form:FormData)=>void}){
-  const [project,setProject]=useState<'OCT'|'SEP'>('OCT'),[ticket]=useState(()=>crypto.randomUUID());
+  // Projects come from Jira (months that exist); the month of the chosen day is preselected when it exists.
+  const projects=setup?.projects||[],[picked,setProject]=useState(''),[ticket]=useState(()=>crypto.randomUUID());
+  const project=projects.includes(picked)?picked:(projects.find(p=>p===MONTH_PROJECTS[Number(day.slice(5,7))-1])||projects[projects.length-1]||'');
   const types=setup?.issueTypes[project]||[],[typeId,setTypeId]=useState('');
   const chosen=types.some(t=>t.id===typeId)?typeId:(types.find(t=>/^task$/i.test(t.name))||types[0])?.id||'';
   const [requirements,setRequirements]=useState<{key:string;missing:string[];error:string}>();
@@ -206,7 +210,7 @@ function CreateTask({day,setup,labels,busy,onClose,onSubmit}:{day:string;setup?:
       <label>Title<input name="summary" required maxLength={255} placeholder="What needs to be done?" autoFocus/></label>
       <label>Description<textarea name="description" maxLength={20000} rows={4} placeholder="Optional details, links, references"/></label>
       <div className="cal-form-row">
-        <label>Jira project<select name="project" value={project} onChange={e=>setProject(e.target.value as 'OCT'|'SEP')}>{CALENDAR_PROJECTS.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
+        <label>Jira project<select name="project" value={project} onChange={e=>setProject(e.target.value)} disabled={!projects.length}>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
         <label>Issue type<select name="issue_type" required disabled={!types.length} value={chosen} onChange={e=>setTypeId(e.target.value)}>{types.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
       </div>
       <div className="cal-form-row">

@@ -42,7 +42,7 @@ export function validatedTokens(value:unknown,cloudId:string):OAuthTokens {
 export async function saveOAuthConnection(app:OAuthApp,tokens:OAuthTokens,ownerActor:string) {
  const {error}=await oauthDb().from('jira_oauth_connections').upsert({organization_id:app.organizationId,encrypted_tokens:sealTokens(tokens,app.encryptionKey,app.organizationId),connected_by:ownerActor,updated_at:new Date().toISOString(),refresh_lease:null,refresh_lease_until:null});
  if(error)throw new Error('Could not save OAuth connection');
- const {error:auditError}=await oauthDb().rpc('jira_audit',{org_id:app.organizationId,actor:ownerActor,issue_assignee:null,operation:'connection_saved',issue_key:'OAuth OCT,SEP,SOURCE'});
+ const {error:auditError}=await oauthDb().rpc('jira_audit',{org_id:app.organizationId,actor:ownerActor,issue_assignee:null,operation:'connection_saved',issue_key:'OAuth month projects and SOURCE'});
  if(auditError)throw new Error('OAuth connection saved but audit confirmation failed');
 }
 export async function oauthConfigured(organizationId:string) {
