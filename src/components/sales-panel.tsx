@@ -2,7 +2,7 @@
 import {useCallback,useEffect,useMemo,useRef,useState,useTransition} from 'react';
 import {ArrowUpRight,ArrowDownUp,Search,RefreshCw,ShieldCheck,Plus,Filter,Columns3,Trash2,Pencil,ChevronDown,X,FileSpreadsheet,LockKeyhole} from 'lucide-react';
 import {connectSales,loadSales,salesConnection,setSalesTeam,mutateSalesRow} from '@/app/sales-actions';
-import {SALES_SHEET_URL,SALES_TABS,salesView,salesInput,salesValue,salesMatches,salesStamp,salesStampShortcut,describeSalesFilter,type SalesGrid,type SalesRow,type SalesFilter,type SalesSort} from '@/lib/sales-sheet';
+import {SALES_SHEET_URL,salesView,salesInput,salesValue,salesMatches,salesStamp,salesStampShortcut,describeSalesFilter,type SalesGrid,type SalesRow,type SalesFilter,type SalesSort} from '@/lib/sales-sheet';
 import type {Employee} from '@/lib/data';
 import {notifyWorkspaceChange,useAutoRefresh} from './use-auto-refresh';
 import {SalesRecordEditor,type SalesEditor} from './sales-record-editor';
@@ -62,7 +62,7 @@ export function SalesPanel({owner,preview,employees}:{owner:boolean;preview:bool
  async function configure(action:(f:FormData)=>Promise<{ok:boolean;message:string}>,form:FormData){const result=await action(form);setMessage(result.message);if(result.ok){setConnection(await salesConnection());notifyWorkspaceChange();}}
  const template=current?.rows.filter(r=>r.deletable&&r.editable).at(-1);
  const menuRow=choiceMenu?current?.rows.find(r=>r.id===choiceMenu.row.id)||choiceMenu.row:null;
- const canMutate=Boolean(connection?.configured&&!current?.readOnly&&!busy&&!editor&&!draft&&(owner||SALES_TABS.includes(tab as typeof SALES_TABS[number])));
+ const canMutate=Boolean(connection?.configured&&!current?.readOnly&&!busy&&!editor&&!draft);
  return <div className="sales-workspace">
   <section className="panel sales-bar" aria-label="Sheet connection"><div className="heading-actions"><span className={connection?.configured?'sales-live-badge':'workspace-state'}>{connection?.configured?'● Live Google connection':'Imported data'}</span><a className="secondary small" href={SALES_SHEET_URL+(current?.sheetId!==undefined?'#gid='+current.sheetId:'')} target="_blank" rel="noreferrer">Open sheet <ArrowUpRight size={15}/></a>{owner&&<button className="secondary small" onClick={()=>setSettings(!settings)}><ShieldCheck size={15}/> Connection & team</button>}</div></section>
   <SalesConversionPanel owner={owner} preview={preview}/>

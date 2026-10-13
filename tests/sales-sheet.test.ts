@@ -10,3 +10,9 @@ test('Sales search and exact filters intersect across every sheet row',()=>{asse
 test('Sheet columns are bounded and named like Google Sheets',()=>{assert.equal(salesColumn(26),'AA');assert.equal(salesColumn(33),'AH');assert.equal(salesColumn(119),'DP');assert.throws(()=>salesColumn(256));});
 test('Sheet calendar dates and times round-trip as numbers without changing contact strings or accepting impossible dates',()=>{const date=cell('11-Feb-2026',{raw:46064,kind:'date' as const});assert.equal(salesInput(date),'2026-02-11');assert.equal(salesValue(date,'2026-02-11'),46064);assert.throws(()=>salesValue(date,'2026-02-30'));const time=cell('10:30 AM',{raw:.4375,kind:'time' as const});assert.equal(salesInput(time),'10:30:00');assert.equal(salesValue(time,'10:30'),.4375);assert.throws(()=>salesValue(time,'25:30'));assert.equal(salesValue(cell('00123'),'00123'),'00123');assert.equal(salesValue(cell(''), '=not-a-formula'),'=not-a-formula');});
 
+test('a Sales team member has the same sheet access as the Owner on every tab, including tabs added later; outsiders have none',()=>{
+  const team=['member-1'];
+  for(const tab of ['Tracksheet','Leads','Timing Report','Expenses','Brand New Tab 2026'])for(const [who,owner,kind,id] of [['owner',true,'employee','owner-membership'],['sales member',false,'employee','member-1']] as const)assert.equal(salesTabAccess(owner,tab,kind,id,team),true,`${who} on ${tab}`);
+  assert.equal(salesTabAccess(false,'Tracksheet','employee','someone-else',team),false);
+  assert.equal(salesTabAccess(false,'Tracksheet','client','member-1',team),false);
+});
