@@ -10,7 +10,7 @@ import {invoiceInput,paymentInput,statusInput,voidPaymentInput,type FinanceInvoi
 export type FinanceResult={ok:boolean;message:string;id?:string};
 async function access(){
   const ctx=await workspaceContext();
-  if(ctx.preview||ctx.kind!=='employee'||!(ctx.roles.includes('Owner')||ctx.permissions.includes('finance.read')))throw new Error('Finance access required');
+  if(ctx.preview||ctx.kind!=='employee'||!(ctx.roles.includes('Owner')||ctx.permissions.includes('finance.read')||ctx.modules.includes('finance')))throw new Error('Finance access required');
   return {ctx,db:await serverClient()};
 }
 const KNOWN=['Finance access required','Only draft invoices can be edited','This status change is not allowed','Void or reverse the payments before voiding this invoice','Payments can only be recorded on sent invoices','Payment exceeds the outstanding balance','The payment date cannot be in the future','This payment was already reversed','Discount cannot exceed the subtotal','The due date cannot be before the issue date','Invoice not found','Payment not found'];

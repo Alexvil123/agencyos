@@ -2,12 +2,13 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { serverClient } from './supabase/server';
 import { hasBackend, isSetupPreview } from './config';
+import { GRANTABLE_MODULES } from './modules';
 export type WorkspaceContext = {
   preview: boolean; userId: string; membershipId: string; organizationId: string;
-  name: string; company: string; kind: string; permissions: string[]; roles: string[]; employeeLoginReady: boolean;
+  name: string; company: string; kind: string; permissions: string[]; roles: string[]; modules: string[]; employeeLoginReady: boolean;
 };
 export async function workspaceContext(): Promise<WorkspaceContext> {
-  if (isSetupPreview()) return { preview: true, userId: '', membershipId: '', organizationId: '', name: 'Alex', company: 'Agency workspace', kind: 'employee', permissions: [], roles: ['Setup preview'], employeeLoginReady: false };
+  if (isSetupPreview()) return { preview: true, userId: '', membershipId: '', organizationId: '', name: 'Alex', company: 'Agency workspace', kind: 'employee', permissions: [], roles: ['Setup preview'], modules: [], employeeLoginReady: false };
   if (!hasBackend()) redirect('/login');
   const db = await serverClient();
   const { data: { user }, error: authError } = await db.auth.getUser();
@@ -29,7 +30,11 @@ export async function workspaceContext(): Promise<WorkspaceContext> {
     const { data: assurance, error: assuranceError } = await db.auth.mfa.getAuthenticatorAssuranceLevel();
     if (assuranceError || assurance?.currentLevel !== 'aal2') redirect('/auth/mfa');
   }
-  return { preview: false, userId: user.id, membershipId: membership.id, organizationId: membership.organization_id, name: profile?.display_name || 'Your workspace', company: org.display_name, kind: membership.kind, roles: typedGrants?.map(g => g.roles.name) || [], permissions: [...new Set(typedGrants?.flatMap(g => g.roles.role_permissions.map(p => p.permission_key)) || [])], employeeLoginReady: Boolean(process.env.SUPABASE_SECRET_KEY) };
+  // Campaigns, Finance and Analytics: the Owner has all three; employees only what the Owner granted (fails closed if the lookup fails).
+  const roles = typedGrants?.map(g => g.roles.name) || [];
+  const { data: granted } = roles.includes('Owner') ? { data: GRANTABLE_MODULES as readonly string[] } : await db.rpc('module_access_mine', { org_id: membership.organization_id });
+  const modules = (Array.isArray(granted) ? granted : []).filter((m): m is string => typeof m === 'string' && (GRANTABLE_MODULES as readonly string[]).includes(m));
+  return { preview: false, userId: user.id, membershipId: membership.id, organizationId: membership.organization_id, name: profile?.display_name || 'Your workspace', company: org.display_name, kind: membership.kind, roles, modules, permissions: [...new Set(typedGrants?.flatMap(g => g.roles.role_permissions.map(p => p.permission_key)) || [])], employeeLoginReady: Boolean(process.env.SUPABASE_SECRET_KEY) };
 }
 export async function requirePermission(permission: string) {
   const context = await workspaceContext();

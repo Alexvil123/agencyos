@@ -24,6 +24,7 @@ const TITLES:Record<string,(row:AuditRow,names:AuditNames)=>string>={
   work_task_order_changed:(r,n)=>withName('Task order changed',forMember(r,n)),
   sales_edit_confirmed:r=>{const v=value(r),tab=text(v.tab),row=text(v.row);return `Sales sheet edited${tab?` · ${tab}${row?` (row ${row})`:''}`:''}`;},
   sales_access_changed:()=>'Sales team access changed',
+  module_access_changed:r=>{const m=text(value(r).module);return `${m?m[0].toUpperCase()+m.slice(1):'Module'} access changed`;},
   employee_login_created:(r,n)=>withName('Employee login created',forMember(r,n)),
   manual_client_removed:()=>'Client removed from the directory',
   integration_saved:r=>suffix(r,'Integration saved'),
