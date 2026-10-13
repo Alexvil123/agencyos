@@ -8,7 +8,6 @@ import {SalesRecordEditor,type SalesEditor} from './sales-record-editor';
 import {SalesCellInput} from './sales-cell-input';
 import {SalesColumnFilter} from './sales-column-filter';
 import {SalesChoiceMenu,chipProps,type ChoiceColor} from './sales-choice-menu';
-import {SalesConversionPanel} from './sales-conversion-panel';
 import '../app/sales.css';
 import {salesNeighbor,salesWindow,type SalesDirection} from '@/lib/sales-grid-navigation';
 export function SalesPanel({owner,preview}:{owner:boolean;preview:boolean}){
@@ -72,7 +71,7 @@ export function SalesPanel({owner,preview}:{owner:boolean;preview:boolean}){
  const draftRow=draft&&current?draft&&current&&<tr className="sales-draft-row" ref={draftRef}><td className="sales-row-number" title={'Will be inserted below sheet row '+draft.row.number}>New</td>{columns.map(({label,index})=>{const cell=draft.row.cells[index],locked=cell.formula||cell.restricted||index===current.identityColumn;return <td key={index}>{locked?<span>{cell.formula?'Calculated':'Auto'}</span>:<SalesCellInput cell={cell} label={'New row '+label} focus={index===draftFocus} value={draft.values[index]||''} disabled={busy} saveOnBlur={false} onChange={value=>setDraft(previous=>previous?{...previous,values:{...previous.values,[index]:value}}:previous)} onCommit={submitDraft} onCancel={()=>setDraft(null)}/>}</td>;})}<td className="sales-actions-column"><button className="primary small" disabled={busy} onClick={submitDraft}>Save row</button><button className="icon-button" disabled={busy} aria-label="Cancel new row" onClick={()=>setDraft(null)}><X size={14}/></button></td></tr>:null;
  return <div className="sales-workspace">
   <section className="panel sales-bar" aria-label="Sheet connection"><div className="heading-actions"><span className={connection?.configured?'sales-live-badge':'workspace-state'}>{connection?.configured?'● Live Google connection':'Imported data'}</span><a className="secondary small" href={SALES_SHEET_URL+(current?.sheetId!==undefined?'#gid='+current.sheetId:'')} target="_blank" rel="noreferrer">Open sheet <ArrowUpRight size={15}/></a>{owner&&<button className="secondary small" onClick={()=>setSettings(!settings)}><ShieldCheck size={15}/> Connection & team</button>}</div></section>
-  <SalesConversionPanel owner={owner} preview={preview}/>
+
   {message&&<p className="notice" role="status">{message}</p>}
   {preview&&<p className="notice">Sign in as Owner to connect the spreadsheet.</p>}
   {connection?.available&&!connection.configured&&<p className="notice">Imported snapshot · Read only · Live Google connection is pending.</p>}
