@@ -1,9 +1,10 @@
 -- Module access. Calendar, Campaigns, Finance and Analytics are Owner-only unless the Owner grants an employee access in Settings.
 -- Finance keeps working for anyone who already has the finance.read permission. Nothing is readable or writable directly:
--- people go through the functions below.
+-- people go through the functions below. organization_id has no foreign key on purpose: with one, PostgREST sees a second path
+-- between memberships and organizations and every memberships→organizations embed fails as ambiguous.
 begin;
 create table public.module_access(
-  organization_id uuid not null references public.organizations(id) on delete cascade,
+  organization_id uuid not null,
   module text not null check (module in ('calendar','campaigns','finance','analytics')),
   membership_id uuid not null references public.memberships(id) on delete cascade,
   created_at timestamptz not null default now(),
