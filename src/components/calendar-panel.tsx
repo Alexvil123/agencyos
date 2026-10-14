@@ -158,7 +158,7 @@ function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeT
   return <section className="panel time-panel cal-drawer">
     <div className="time-heading"><div><span className="eyebrow">JIRA TASK</span><h2>{task.title}</h2></div><button className="secondary" onClick={onClose}>Close</button></div>
     <dl className="cal-meta">
-      <div><dt>Key</dt><dd>{task.jira_key?<a href={`${JIRA_SITE}/browse/${encodeURIComponent(task.jira_key)}`} target="_blank" rel="noopener noreferrer">{task.jira_key} ↗</a>:'Manual'}</dd></div>
+      <div><dt>Key</dt><dd><a href={`${JIRA_SITE}/browse/${encodeURIComponent(task.jira_key||'')}`} target="_blank" rel="noopener noreferrer">{task.jira_key} ↗</a></dd></div>
       <div><dt>Status</dt><dd>{taskDisplayStatus(task)}</dd></div>
       <div><dt>Assigned to</dt><dd>{who}</dd></div>
       <div><dt>Due</dt><dd>{day||'No due date'}</dd></div>
