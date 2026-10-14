@@ -1,6 +1,7 @@
 'use client';
 import {attendanceTotals,formatDuration,EXPECTED_SECONDS} from '@/lib/time-core';
 import Link from 'next/link';
+import Image from 'next/image';
 import {Coffee,LogIn,LogOut} from 'lucide-react';
 import {clockDuration} from '@/lib/work-report';
 import type {TimeData} from '@/lib/time-types';
@@ -17,7 +18,7 @@ export function AttendanceControls({data,now,busy,onEvent,compact=false}:{data:T
   const since=active?'Working since '+new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit'}).format(new Date(active.clock_in)):record?.clock_out?'Clocked out at '+new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',timeStyle:'short'}).format(new Date(record.clock_out)):'Ready for your workday';
   return <section className={`panel ov-clock ${tone}`}>
    <header><span className="ov-state"><i/>{active?(onBreak?'On break':'Clocked in'):'Clocked out'}</span><small>Daily target 9h 30m</small></header>
-   <div className="ov-clock-main"><strong className="ov-clock-time" aria-label="Time since clock in">{clockDuration(spent)}</strong><span>{since}</span></div>
+   <div className="ov-clock-main"><strong className="ov-clock-time" aria-label="Time since clock in">{clockDuration(spent)}</strong><span>{since}</span><Image className="ov-attendance-art" src="/images/attendance-illustration.png" alt="" width={260} height={130}/></div>
    <div className="ov-progress" role="progressbar" aria-label="Daily target progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><span style={{width:`${pct}%`}}/></div>
    <p className="ov-progress-label"><strong>{pct}%</strong> of the daily target · {spent>=EXPECTED_SECONDS?'target reached':`${clockDuration(EXPECTED_SECONDS-spent)} remaining`}</p>
    <div className="ov-actions">{!active?<button className="dash-action start" disabled={busy||(!canContinue&&data.attendance.some(a=>a.membership_id===data.self&&a.work_date===today))} onClick={()=>onEvent('clock_in')}><LogIn size={16}/>Clock In</button>:<><button className="dash-action break" disabled={busy} onClick={()=>onEvent(onBreak?'break_end':'break_start')}><Coffee size={16}/>{onBreak?'End Break':'Start Break'}</button><button className="dash-action end" disabled={busy} onClick={()=>onEvent('clock_out')}><LogOut size={16}/>Clock Out</button></>}</div>

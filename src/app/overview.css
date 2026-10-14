@@ -86,3 +86,121 @@ html[data-theme=dark] .ov-target{border-top-color:#66d9a799}
 .ov-bars li.long .ov-bar-value{color:#b4691b;font-weight:700}
 .ov-bars li.long .ov-bar{box-shadow:0 0 0 2px #f09a3e55}
 html[data-theme=dark] .ov-bars li.long .ov-bar-value{color:#f4b66e}
+
+/* Selected AgencyOS reference: illustration, compact cards, and three-part summary. */
+.overview-shell{--sidebar:248px}
+.overview-shell .main-content{padding:18px 28px}
+.overview-shell .topbar{height:62px;padding:0 28px}
+.overview-shell .main-shell{background:var(--bg) url('/images/overview-landscape.png') top 62px right/100% 165px no-repeat}
+.overview-shell .page-heading{margin-bottom:10px}
+.overview-shell .page-heading h1{font-size:30px;letter-spacing:-1px}
+.overview-shell .overview-greeting{color:#697296;font-size:24px;font-weight:600}
+.overview-shell .page-heading h1>strong{font-size:38px;color:var(--ink);font-weight:800}
+.overview-shell .page-heading h1{display:flex;align-items:baseline;gap:7px;line-height:1.12;margin-bottom:0}
+.overview-shell .page-heading p{margin-top:4px;line-height:1.4}
+.overview-shell .daily-overview h2{margin:0;line-height:1.3}
+.overview-shell .daily-overview .time-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.overview-greeting-hand{display:inline-block;vertical-align:middle;margin-left:12px;color:#efa72a;transform:rotate(-12deg)}
+.overview-shell .page-heading p{font-size:14px}
+.overview-shell .work-command-bar{margin-bottom:14px}
+.overview-shell .work-sync-bar>small{padding:7px 12px;background:#f3f0ff;border:1px solid #e8e3ff;border-radius:8px}
+.overview-shell .sync-indicator.idle{background:#e8fbf5;color:#07876d;border-color:#c6eee3}
+.overview-shell .daily-overview{gap:12px}
+.overview-shell .overview-top-row{grid-template-columns:1fr 1fr;gap:14px}
+.overview-shell .daily-overview .panel{border-radius:12px;box-shadow:0 3px 14px #4c36a006}
+.overview-shell .ov-clock{padding:18px 22px;gap:8px;border-top-width:1px;overflow:hidden}
+.overview-shell .ov-clock-main{position:relative;min-height:76px;padding-right:190px}
+.ov-attendance-art{position:absolute;right:0;bottom:-10px;max-width:42%;height:95px;object-fit:contain;object-position:right bottom;pointer-events:none}
+.overview-shell .ov-clock-time{font-size:44px;letter-spacing:-1.5px;position:relative;z-index:1}
+.overview-shell .ov-clock-main>span{position:relative;z-index:1}
+.overview-shell .ov-progress{height:10px}
+.overview-shell .ov-clock.live .ov-progress span{background:linear-gradient(90deg,#00b982,#527be5);animation:none}
+.overview-shell .ov-help{font-size:11px;line-height:1.5}
+.overview-shell .ov-actions .dash-action{min-height:38px;padding:9px 18px;font-size:12px}
+.overview-shell .overview-current{padding:18px 22px}
+.overview-shell h2{display:flex;gap:9px;align-items:center;font-size:15px}
+.overview-shell h2>svg{color:#6746d9;flex-shrink:0}
+.overview-task-info{display:flex;gap:14px;align-items:center;margin:14px 0 17px;min-width:0}
+.overview-folder{display:grid;place-items:center;width:54px;height:54px;background:#efe8ff;border:1px solid #e3d6ff;border-radius:50%;color:#7143ec;flex-shrink:0}
+.overview-task-info>div{min-width:0}
+.overview-shell .overview-task-title{font-size:17px;margin:0;overflow-wrap:anywhere}
+.overview-shell .overview-task-info p{font-size:12px;margin:5px 0 0}
+.overview-shell .overview-current .task-quick-work{padding:14px 16px;margin-top:0;border-color:#eee7ff;gap:12px}
+.overview-shell .task-quick-work strong{font-size:19px;margin-top:6px}
+.overview-shell .task-quick-work p{font-size:11px;margin:6px 0 0}
+.overview-shell .overview-metrics{gap:12px}
+.overview-shell .overview-metrics article{display:flex;align-items:center;gap:14px;padding:12px 18px;border-width:1px;min-width:0}
+.overview-shell .overview-metrics article:nth-child(1){border-color:#ba9fff;background:#fcfaff}
+.overview-shell .overview-metrics article:nth-child(2){border-color:#f7c99b;background:#fffdf9}
+.overview-shell .overview-metrics article:nth-child(3){border-color:#a7d4ff;background:#fafdff}
+.overview-shell .overview-metrics article:nth-child(4){border-color:#9ee4d0;background:#f9fffc}
+.overview-metric-icon{display:grid!important;place-items:center;width:50px;height:50px;border-radius:50%;background:#ebddff;color:#7540f4!important;flex-shrink:0}
+.overview-metrics article:nth-child(2) .overview-metric-icon{background:#ffecd5;color:#b76410!important}
+.overview-metrics article:nth-child(3) .overview-metric-icon{background:#daf0ff;color:#087acb!important}
+.overview-metrics article:nth-child(4) .overview-metric-icon{background:#d4f8ec;color:#087e62!important}
+.overview-shell .overview-metrics small{font-size:10px;letter-spacing:0}
+.overview-shell .overview-metrics strong{font-size:23px;margin-top:4px;letter-spacing:-.5px}
+.overview-shell .overview-metrics article span:not(.overview-metric-icon){font-size:11px;display:block;margin-top:3px}
+.overview-shell .ov-week{padding:16px 20px}
+.overview-shell .ov-week .time-heading p{font-size:11px}
+.overview-shell .ov-week-total strong{font-size:21px}
+.overview-shell .ov-bars{height:90px;margin-top:15px;gap:8px}
+.overview-shell .ov-bar{width:34px;border-radius:6px 6px 3px 3px}
+.overview-shell .ov-bar-track{background:transparent}
+.overview-shell .ov-bar-value,.overview-shell .ov-bars small{font-size:11px}
+.overview-shell .overview-bottom-row.with-team{grid-template-columns:1.1fr 1.1fr 1fr;gap:12px;align-items:stretch}
+.overview-shell .overview-bottom-row.employee-summary{grid-template-columns:1.25fr 1fr}
+.overview-shell .overview-next,.overview-shell .overview-day-note,.overview-shell .overview-team{padding:16px 18px;min-width:0}
+.overview-shell .overview-bottom-row .time-heading{gap:10px;margin-bottom:12px}
+.overview-shell .overview-bottom-row .time-heading a{font-size:11px;white-space:nowrap}
+.overview-shell .overview-next>button{padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+.overview-shell .overview-next strong{font-size:12px;overflow-wrap:anywhere}
+.overview-shell .overview-next small{font-size:10px}
+.overview-shell .overview-day-note p{font-size:11px;line-height:1.5;margin:6px 0}
+.overview-shell .overview-day-note .ov-stat{margin:8px 0;padding:10px 12px;font-size:11px;gap:8px}
+.overview-shell .ov-stat strong{font-size:15px;white-space:nowrap}
+.overview-shell .overview-day-note>small{font-size:10px;line-height:1.5;display:block}
+.overview-shell .overview-day-note>a{font-size:10px;margin-top:9px;padding:7px 10px;float:right}
+.overview-shell .overview-team .time-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.overview-shell .overview-team .time-stats>div{display:grid;grid-template-columns:28px 1fr;column-gap:8px;align-items:center;background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px;min-width:0}
+.overview-shell .overview-team .time-stats>div{grid-template-rows:13px 21px;row-gap:2px;padding:7px;min-height:0;max-width:none}
+.overview-shell .overview-team .time-stats svg{grid-row:span 2;color:#13a67b}
+.overview-shell .overview-team .time-stats>div:nth-child(2) svg{color:#3989e9}
+.overview-shell .overview-team .time-stats>div:nth-child(3) svg{color:#e89b36}
+.overview-shell .overview-team .time-stats>div:nth-child(4) svg{color:#ef607c}
+.overview-shell .overview-team .time-stats small{font-size:10px;margin:0;line-height:1.2}
+.overview-shell .overview-team .time-stats strong{font-size:19px;margin:2px 0 0;line-height:1.1}
+.overview-shell .workspace-footer{margin-top:22px}
+.overview-shell .overview-bottom-row>.panel{padding-top:10px;padding-bottom:10px}
+.overview-shell .overview-day-note>p{font-size:10.5px;line-height:1.4;margin:4px 0}
+.overview-shell .overview-day-note .ov-stat{margin:6px 0;padding:8px 12px}
+.overview-note-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px}
+.overview-note-footer small{font-size:9px!important;line-height:1.4;max-width:210px}
+.overview-note-footer a{font-size:10px;white-space:nowrap;padding:7px 9px;flex-shrink:0}
+.overview-shell .overview-team .time-stats{gap:6px}
+.overview-shell .overview-team .time-stats>div{padding:5px 7px}
+.overview-shell .ov-clock{padding:16px 20px;gap:7px}
+.overview-shell .overview-current{padding:16px 20px}
+.overview-shell .overview-task-info{margin:11px 0 13px}
+.overview-shell .ov-clock-main{min-height:70px}
+.overview-shell .ov-attendance-art{height:84px;bottom:-8px}
+.overview-shell .ov-clock header small,.overview-shell .ov-help,.overview-shell .task-quick-work small,.overview-shell .task-quick-work p{font-size:12px}
+.overview-shell .overview-metrics small,.overview-shell .overview-metrics article span:not(.overview-metric-icon){font-size:12px}
+.overview-shell .overview-metrics article{padding:11px 16px}
+.overview-shell .ov-week .time-heading p{font-size:12px}
+.overview-shell .overview-next small,.overview-shell .overview-team .time-stats small{font-size:11px}
+.overview-shell .overview-day-note>p{font-size:12px;line-height:1.45}
+.overview-shell .overview-note-footer small{font-size:11px!important;max-width:none}
+.overview-shell .overview-note-footer{flex-wrap:wrap;gap:6px}
+.overview-shell .overview-note-footer a{margin-left:auto;font-size:11px}
+.overview-shell .overview-team .time-stats>div{grid-template-rows:auto auto}
+html[data-theme=dark] .overview-shell .main-shell{background-image:none}
+html[data-theme=dark] .overview-shell .overview-metrics article{background:#171b2a}
+html[data-theme=dark] .overview-shell .work-sync-bar>small{background:#242039;border-color:#37304f}
+html[data-theme=dark] .overview-folder{background:#302740;border-color:#443554;color:#baa1df}
+html[data-theme=dark] .overview-shell .overview-greeting{color:#b3bbd3}
+html[data-theme=dark] .overview-shell h2>svg{color:#bba5f5}
+@media(max-width:1200px){.overview-shell .overview-metric-icon{width:40px;height:40px}.overview-shell .overview-metrics article{padding:13px;gap:10px}.overview-shell .ov-clock-main{padding-right:135px}.ov-attendance-art{height:102px}.overview-shell .overview-bottom-row.with-team{grid-template-columns:1fr 1fr}.overview-shell .overview-team{grid-column:1/-1}.overview-shell .overview-team .time-stats{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.overview-shell .overview-top-row{grid-template-columns:1fr}.overview-shell .overview-metrics{grid-template-columns:repeat(2,1fr)}.overview-shell .overview-bottom-row.with-team,.overview-shell .overview-bottom-row.employee-summary{grid-template-columns:1fr}.overview-shell .overview-team{grid-column:auto}.overview-shell .overview-team .time-stats{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.overview-shell .main-shell{margin-left:0}.overview-shell .main-content{padding:20px 16px}.overview-shell .topbar{padding:0 16px}.overview-shell .overview-metrics strong{font-size:19px}.overview-shell .overview-metric-icon{width:34px;height:34px}.overview-shell .ov-clock-time{font-size:36px}.overview-shell .ov-clock-main{padding-right:110px}.ov-attendance-art{height:95px}.overview-shell .ov-clock{padding:18px}.overview-shell .ov-week{padding:15px}.overview-shell .ov-bar-value{font-size:9px}.overview-shell .overview-bottom-row .time-heading{flex-wrap:wrap}}
+@media(min-width:1700px){.overview-shell .topbar{padding-inline:max(28px,calc((100% - 1440px)/2 + 28px))}}

@@ -32,6 +32,7 @@ import {useAnnouncements,Announcements} from './announcements';
 import {TeamChat} from './team-chat';
 import {useChatNotifications,ChatToasts} from './chat-notifications';
 import {ClientErrorReporter} from './client-error-reporter';
+import {WorkspaceGreeting} from './workspace-greeting';
 
 const icons = { calendar: CalendarDays, dashboard: LayoutDashboard, sales: Target, clients: Building2, work: Layers3, source: Library, attendance: Clock3, chat: MessageSquare, campaigns: Globe, analytics: Activity, finance: Wallet, team: Users, reports: FileBarChart2, settings: Settings2 };
 type Modal = 'search' | 'create' | 'employee' | 'department' | 'invite' | 'notifications' | 'help' | null;
@@ -76,7 +77,7 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
   const filteredEmployees = data.employees.filter(e => `${e.display_name} ${e.email} ${e.job_title}`.toLowerCase().includes(query.toLowerCase()));
   const menuAccess = { owner: ctx.roles.includes('Owner'), permissions: ctx.permissions, modules: ctx.modules };
   const filteredModules = modules.filter(m => moduleVisible(m.key, menuAccess) && `${m.name} ${m.description}`.toLowerCase().includes(query.toLowerCase()));
-  return <div className="app-shell">
+  return <div className={`app-shell ${!moduleKey ? 'overview-shell' : ''}`} data-module={moduleKey || 'overview'}>
     <aside className={`sidebar ${mobile ? 'is-open' : ''}`}>
       <Link className="brand" href="/"><span className="brand-mark">a</span> agency<span className="brand-os">os</span><span className="brand-dot"/></Link>
       <div className="workspace-switch"><span className="workspace-icon"><Zap size={18}/></span><div><strong>{ctx.company}</strong><small>Agency workspace</small></div><ChevronDown size={14}/></div>
@@ -88,7 +89,7 @@ export function Workspace({ context: ctx, data, moduleKey }: { context: Workspac
       <header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-toggle" aria-label="Open navigation" onClick={() => setMobile(true)}><Menu size={20}/></button><strong className="header-workspace-name">{current.name}</strong></div><div className="topbar-actions"><ThemeToggle/><button className="command-trigger" aria-label="Search workspace" onClick={() => open('search')}><Search size={16}/><span>Search workspace…</span><kbd>⌘ K</kbd></button><button className="icon-button notification-button" aria-label="Notifications" onClick={() => open('notifications')}><Bell size={19}/>{!!announcements.unread&&<span className="notification-count">{announcements.unread}</span>}</button><span className="topbar-date">{new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'short',day:'2-digit',month:'short',year:'numeric'}).format(new Date())}<small>India · Asia/Kolkata</small></span><button className="primary small" onClick={() => open('create')}><Plus size={16}/> Create</button></div></header>
       {ctx.preview && <div className="preview-banner"><span><span className="status-dot amber"/> Setup preview · Empty workspace · No real data connected</span><Link href="/settings">View setup <ArrowRight size={13}/></Link></div>}
       <main className="main-content">
-        <div className="page-heading"><div><div className="eyebrow">{moduleKey ? current.group.toUpperCase() : 'YOUR AGENCY AT A GLANCE'}</div><h1>{moduleKey ? current.name : `Good morning${ctx.name === 'Alex' ? ', Alex' : `, ${ctx.name.split(' ')[0]}`}`}<span className="heading-dot">.</span></h1><p>{moduleKey ? current.description : 'Let’s build something great today.'}</p></div><div className="heading-actions">{moduleKey === 'team' && manage ? <button className="primary" onClick={() => open('employee')}><Plus size={16}/> Add employee</button> : <span className="workspace-state"><span className="status-dot green"/>{ctx.preview ? 'Ready for setup' : 'Workspace connected'}</span>}</div></div>
+        <div className="page-heading"><div><div className="eyebrow">{moduleKey ? current.group.toUpperCase() : 'YOUR AGENCY AT A GLANCE'}</div><h1>{moduleKey ? current.name : <WorkspaceGreeting name={ctx.name}/>}<span className="heading-dot">.</span></h1><p>{moduleKey ? current.description : 'Let’s build something great today.'}</p></div><div className="heading-actions">{moduleKey === 'team' && manage ? <button className="primary" onClick={() => open('employee')}><Plus size={16}/> Add employee</button> : <span className="workspace-state"><span className="status-dot green"/>{ctx.preview ? 'Ready for setup' : 'Workspace connected'}</span>}</div></div>
         {moduleKey === 'work' && <WorkPanel preview={ctx.preview}/>}
         {moduleKey === 'calendar' && <CalendarPanel preview={ctx.preview}/>}
         {moduleKey === 'sales' && <SalesPanel owner={ctx.roles.includes('Owner')} preview={ctx.preview}/>}
