@@ -1,5 +1,5 @@
 import type {WorkData} from './work-report';
-import {closedSeconds,indiaDate,rangeBounds} from './work-report';
+import {indiaDate,rangeBounds} from './work-report';
 import {teamDay} from './day-insights';
 import {EXPECTED_SECONDS,attendanceTotals} from './time-core';
 export function employeeDay(data:WorkData,now:string){const day=teamDay(data,now).find(p=>p.id===data.self),bounds=rangeBounds(indiaDate(now),indiaDate(now));
