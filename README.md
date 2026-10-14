@@ -8,7 +8,7 @@ team chat and announcements, reports, analytics, campaign reporting and invoicin
 | --- | --- | --- |
 | Overview | Clock in/out, breaks, current task, daily target | Supabase |
 | Sales | The Business Development sheet, Excel-style: column filters, dropdown chips, date/time shortcuts, live edit/add/delete | Google Sheets |
-| Clients | Client labels and their Jira work, Sales → Jira onboarding automation | Jira labels |
+| Clients | Client labels and their Jira work | Jira labels |
 | Work | Assigned and team tasks, timers, Jira status and edits (two-way) | Jira + Supabase |
 | Calendar | Tasks by due date. The Owner creates, assigns and reschedules Jira tasks here | Jira |
 | Source | Jira SOURCE reference records | Jira |
@@ -28,7 +28,7 @@ Copy `.env.example` to `.env.local` and fill the values (Supabase, Jira OAuth, G
 Without Supabase configuration, development shows a read-only empty preview.
 
 ## Database
-Apply the files in `supabase/migrations/` in order (Supabase SQL editor). Recent ones: `202610100029_finance.sql` (Finance), `202610140033_module_access.sql` (Settings → Module access), `202610100030_integration_credentials.sql` (Settings → Integrations) `202610120031_task_read_policy_speed.sql` (about 19x faster task loading, same access rules) and `202610130032_month_projects.sql` (Jira month projects JAN–DEC, so a new month such as NOV syncs by itself);
+Apply the files in `supabase/migrations/` in order (Supabase SQL editor). Recent ones: `202610100029_finance.sql` (Finance), `202610140033_module_access.sql` (Settings → Module access), `202610140034_cleanup.sql` (removes the old Sales→Jira automation tables, tightens signed-out grants), `202610100030_integration_credentials.sql` (Settings → Integrations) `202610120031_task_read_policy_speed.sql` (about 19x faster task loading, same access rules) and `202610130032_month_projects.sql` (Jira month projects JAN–DEC, so a new month such as NOV syncs by itself);
 until it is applied the Finance menu shows a setup message. Each migration is tested against an in-memory PostgreSQL (PGlite).
 
 ## Hosting (free)

@@ -25,3 +25,6 @@ docs/backups/
 
 # Supabase CLI link state
 supabase/.temp/
+
+# Design screenshots can show live data
+design-references/
