@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   // Development credentials are never part of a deployable server trace.
   outputFileTracingExcludes:{'/*':['./.env*','./.*.local.json*','./test-results/**/*']},
-  experimental:{serverActions:{bodySizeLimit:'3mb'}},
+  experimental:{serverActions:{bodySizeLimit:'6mb'}},
   distDir: process.env.CRM_DESIGN_PREVIEW === '1' && process.env.NODE_ENV === 'development' ? '.next-preview' : '.next',
   poweredByHeader: false,
   logging: {serverFunctions:false,incomingRequests:{ignore:[/\/integrations\/jira\/callback/]}},
