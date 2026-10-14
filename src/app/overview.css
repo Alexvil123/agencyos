@@ -91,7 +91,12 @@ html[data-theme=dark] .ov-bars li.long .ov-bar-value{color:#f4b66e}
 .overview-shell{--sidebar:248px}
 .overview-shell .main-content{padding:18px 28px}
 .overview-shell .topbar{height:62px;padding:0 28px}
-.overview-shell .main-shell{background:var(--bg) url('/images/overview-landscape.png') top 62px right/100% 165px no-repeat}
+.overview-shell{--overview-header-image:none}
+.overview-shell:has(.overview-greeting[data-daypart="morning"]){--overview-header-image:url('/images/overview-landscape.png')}
+.overview-shell:has(.overview-greeting[data-daypart="afternoon"]){--overview-header-image:url('/images/overview-afternoon.png')}
+.overview-shell:has(.overview-greeting[data-daypart="evening"]){--overview-header-image:url('/images/overview-evening.png')}
+.overview-shell:has(.overview-greeting[data-daypart="night"]){--overview-header-image:url('/images/overview-night.png')}
+.overview-shell .main-shell{background:var(--bg) var(--overview-header-image) top 62px right/100% 165px no-repeat}
 .overview-shell .page-heading{margin-bottom:10px}
 .overview-shell .page-heading h1{font-size:30px;letter-spacing:-1px}
 .overview-shell .overview-greeting{color:#697296;font-size:24px;font-weight:600}
@@ -116,7 +121,15 @@ html[data-theme=dark] .ov-bars li.long .ov-bar-value{color:#f4b66e}
 .overview-shell .ov-progress{height:10px}
 .overview-shell .ov-clock.live .ov-progress span{background:linear-gradient(90deg,#00b982,#527be5);animation:none}
 .overview-shell .ov-help{font-size:11px;line-height:1.5}
-.overview-shell .ov-actions .dash-action{min-height:38px;padding:9px 18px;font-size:12px}
+.overview-shell .ov-clock .ov-actions .dash-action{min-height:44px;padding:11px 20px;font-size:13px;font-weight:700;border-width:1px}
+.overview-shell .ov-clock .ov-actions .dash-action.break{background:#8b62df;color:#fff;border-color:#8054d5;box-shadow:0 2px 6px #6d3bd11a}
+.overview-shell .ov-clock .ov-actions .dash-action.end{background:#e34f6a;color:#fff;border-color:#d9425e;box-shadow:0 2px 6px #ce23431a}
+.overview-shell .ov-clock .ov-actions .dash-action.break:hover:not(:disabled){background:#7b4cdb;box-shadow:0 5px 12px #6d3bd12b;transform:translateY(-2px);filter:none}
+.overview-shell .ov-clock .ov-actions .dash-action.end:hover:not(:disabled){background:#db3453;box-shadow:0 5px 12px #ce23432b;transform:translateY(-2px);filter:none}
+.overview-shell .ov-clock .ov-actions .dash-action:active:not(:disabled){transform:translateY(0);box-shadow:0 1px 3px #25305220}
+@media(prefers-reduced-motion:reduce){.overview-shell .ov-clock .ov-actions .dash-action{transition:none}.overview-shell .ov-clock .ov-actions .dash-action:hover:not(:disabled){transform:none}}
+.overview-shell .ov-clock .ov-actions .dash-action:focus-visible{outline:3px solid #275dce;outline-offset:3px}
+.overview-shell .ov-clock .ov-actions .dash-action:disabled{opacity:.55;box-shadow:none;cursor:wait}
 .overview-shell .overview-current{padding:18px 22px}
 .overview-shell h2{display:flex;gap:9px;align-items:center;font-size:15px}
 .overview-shell h2>svg{color:#6746d9;flex-shrink:0}
@@ -194,7 +207,7 @@ html[data-theme=dark] .ov-bars li.long .ov-bar-value{color:#f4b66e}
 .overview-shell .overview-note-footer{flex-wrap:wrap;gap:6px}
 .overview-shell .overview-note-footer a{margin-left:auto;font-size:11px}
 .overview-shell .overview-team .time-stats>div{grid-template-rows:auto auto}
-html[data-theme=dark] .overview-shell .main-shell{background-image:none}
+html[data-theme=dark] .overview-shell .main-shell{background-image:linear-gradient(#101322b3,#101322b3),var(--overview-header-image)}
 html[data-theme=dark] .overview-shell .overview-metrics article{background:#171b2a}
 html[data-theme=dark] .overview-shell .work-sync-bar>small{background:#242039;border-color:#37304f}
 html[data-theme=dark] .overview-folder{background:#302740;border-color:#443554;color:#baa1df}

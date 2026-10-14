@@ -22,6 +22,14 @@ UI sizing refinement: sidebar measured 248px on Overview, nav 15px at 1920px (14
 
 ## All-page visual system and individual AI headers — 13 October 2026
 
+### 14 October follow-up: Overview attendance actions and timed banner
+
+User-provided Screenshot (1957).png shows attendance actions blending into the card. Found a later global `!important` neutral button rule in workspace-system.css overriding their semantic colors. Excluded only `.ov-actions .dash-action` from that rule and its hover/dark variants; added scoped purple break and red clock-out styles, white labels, 44px minimum height and focus outline. White-text contrast calculations: break6.57:1, clock-out5.32:1. Click handlers, disabled conditions and attendance calculations unchanged.
+
+Greeting text and decorative banner now share indiaGreetingPeriod using Asia/Kolkata: morning05:00, afternoon12:00, evening17:00, night21:00. Existing30-second/focus/visibility updates retained. Three new built-in ImageGen landscapes generated and visually inspected after proportionate crop to1400x180; morning retains the original asset. No banner is shown before client period resolution, avoiding a wrong sunrise flash. Dark appearance overlays the matching image for readable text. Evidence: test-results/greeting-banners-2026-10-14.png (asset comparison, not a rendered application screenshot).
+
+Focused greeting tests2/2 passed, targeted ESLint and TypeScript noEmit passed, CSS parses. Current rendered UI could not be recaptured because browser access remained policy-blocked; button appearance is verified through source/cascade review and contrast calculation, not claimed visually verified. Local-only change, no deployment or business-data writes.
+
 Implemented workspace-system.css, imported after existing module styles, and a presentation-only data-module attribute. All 14 module routes now inherit Overview's white/lavender surfaces, violet controls, consistent typography, card radius, borders, spacing and responsive layout. Spreadsheet cell colors and virtual row dimensions, workflow status colors, existing data, controls, permissions and handlers were preserved. No server/API/database changes in this pass.
 
 Sunrise remains Overview only. Fourteen separate built-in ImageGen calls created page-specific 1400x200 PNG headers in public/images/headers/: sales pipeline, client network, work workflow, calendar planning, source folders, attendance clocks, reports charts, campaign megaphone, analytics charts, finance invoice/calculator, announcement megaphone/bell, chat bubbles, team profiles and settings controls. Each has an empty pale left area and restrained right artwork. All assets visually inspected by producing agents; all file dimensions verified locally.

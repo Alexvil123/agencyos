@@ -141,3 +141,162 @@ html[data-theme=dark] .app-shell .sales-filter-chip{background:#302544;color:#d0
  .app-shell .team-chat .chat-content{padding:16px}
 }
 @media(prefers-reduced-motion:reduce){.app-shell:not(.overview-shell) :is(.panel,.an-card,.an-chart,.an-kpi,.integ-card,.person-card){transition:none}}
+
+/* ==========================================================================
+   AgencyOS Visual Modernization: Ultra-Clean Enterprise SaaS UI
+   Pure presentation upgrade: glassmorphic topbar, soft elevation,
+   smooth hover states, crisp typography, and refined controls.
+   ========================================================================== */
+
+/* 1. Sleek Modern Scrollbars */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(148,163,184,0.4);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.65)}
+
+/* 2. Glassmorphic Topbar & Polished Command Search */
+.topbar{backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);background:rgba(255,255,255,0.82)!important;border-bottom:1px solid rgba(228,231,243,0.85)!important;box-shadow:0 1px 3px 0 rgba(0,0,0,0.02)}
+.topbar .command-trigger{border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;box-shadow:inset 0 1px 2px rgba(0,0,0,0.02);transition:all 0.2s cubic-bezier(0.16,1,0.3,1)}
+.topbar .command-trigger:hover{background:#f1f5f9;border-color:#cbd5e1}
+.topbar .command-trigger kbd{font-family:inherit;font-size:11px;font-weight:600;padding:2px 6px;border-radius:6px;background:#fff;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(0,0,0,0.05);color:#64748b}
+
+/* 3. Refined Sidebar Navigation */
+.sidebar{background:#fff;border-right:1px solid #edf0f7}
+.sidebar .nav-item{border-radius:10px;transition:all 0.18s cubic-bezier(0.16,1,0.3,1);font-weight:500}
+.sidebar .nav-item:hover{background:#f5f3ff;color:#6d28d9;transform:translateX(2px)}
+.sidebar .nav-item.selected,.sidebar .nav-item[aria-current="page"]{background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%);color:#6d28d9;font-weight:600;box-shadow:inset 0 0 0 1px rgba(124,58,237,0.15)}
+
+/* 4. Layered Shadows & Card Elevation */
+:is(.panel,.an-card,.an-chart,.an-kpi,.integ-card,.module-access-card,.person-card,.department-card,.permission-card,.dash-summary-grid>.panel){border-radius:14px!important;border:1px solid rgba(228,231,243,0.9)!important;box-shadow:0 1px 3px 0 rgba(15,23,42,0.03),0 4px 14px -2px rgba(124,58,237,0.04)!important;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)!important}
+:is(.panel,.an-card,.an-chart,.an-kpi,.integ-card,.person-card):hover{box-shadow:0 4px 6px -1px rgba(15,23,42,0.04),0 12px 24px -4px rgba(124,58,237,0.08)!important}
+
+/* 5. Modern Button States & Micro-Interactions */
+:is(.primary,.dash-action.primary){background:linear-gradient(135deg,#7c3aed 0%,#6366f1 100%)!important;border:1px solid rgba(255,255,255,0.15)!important;box-shadow:0 2px 8px rgba(124,58,237,0.25),inset 0 1px 0 rgba(255,255,255,0.2)!important;font-weight:600!important;letter-spacing:-0.01em!important;transition:all 0.2s cubic-bezier(0.16,1,0.3,1)!important}
+:is(.primary,.dash-action.primary):hover:not(:disabled){background:linear-gradient(135deg,#6d28d9 0%,#4f46e5 100%)!important;box-shadow:0 4px 16px rgba(124,58,237,0.35),inset 0 1px 0 rgba(255,255,255,0.25)!important;transform:translateY(-1px)}
+:is(.primary,.dash-action.primary):active:not(:disabled){transform:translateY(0);box-shadow:0 2px 6px rgba(124,58,237,0.2)!important}
+:is(.secondary,.dash-action:not(.primary):not(.ov-actions .dash-action)){border-radius:9px!important;border:1px solid #e2e8f0!important;background:#fff!important;color:#475569!important;font-weight:500!important;transition:all 0.2s ease!important}
+:is(.secondary,.dash-action:not(.primary):not(.ov-actions .dash-action)):hover:not(:disabled){background:#f8fafc!important;border-color:#cbd5e1!important;color:#1e293b!important;transform:translateY(-0.5px)}
+
+/* 6. Form Controls & Focus Halos */
+:is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){border-radius:9px!important;border:1px solid #e2e8f0!important;background:#fff!important;transition:all 0.2s ease!important}
+:is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea):focus{border-color:#8b5cf6!important;box-shadow:0 0 0 3px rgba(139,92,246,0.15)!important;outline:none!important}
+
+/* 7. Modern Status Indicators & Badges */
+.sync-indicator{padding:3px 10px;border-radius:999px;background:#ecfdf5;border:1px solid #d1fae5;font-weight:600;transition:all 0.2s ease}
+.sync-indicator.warning{background:#fffbeb;border-color:#fef3c7}
+
+/* 8. Table Styling Polish */
+:is(.table-scroll,.table-wrap):not(.sales-table) th{text-transform:uppercase;font-size:11px!important;letter-spacing:0.04em!important;font-weight:600!important}
+:is(.table-scroll,.table-wrap):not(.sales-table) tbody tr{transition:background-color 0.15s ease}
+:is(.table-scroll,.table-wrap):not(.sales-table) tbody tr:hover td{background:#faf8ff!important}
+
+/* 9. Glassmorphic Auth / Login Experience */
+.auth-page{background:radial-gradient(circle at 15% 30%,rgba(196,181,253,0.35) 0%,transparent 45%),radial-gradient(circle at 85% 70%,rgba(167,243,208,0.25) 0%,transparent 45%),#f8fafc!important}
+.auth-card{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(255,255,255,0.88)!important;border:1px solid rgba(226,232,240,0.8)!important;box-shadow:0 20px 45px -10px rgba(124,58,237,0.12),0 8px 16px -6px rgba(0,0,0,0.04)!important;border-radius:20px!important}
+
+/* 10. Dark Mode Harmony */
+html[data-theme=dark] .topbar{background:rgba(19,23,36,0.82)!important;border-bottom:1px solid rgba(52,49,73,0.6)!important}
+html[data-theme=dark] .sidebar{background:#131724;border-right-color:#242039}
+html[data-theme=dark] .sidebar .nav-item:hover{background:#242039;color:#c4b5fd}
+html[data-theme=dark] .sidebar .nav-item.selected,html[data-theme=dark] .sidebar .nav-item[aria-current="page"]{background:#2a2344;color:#ddd6fe;box-shadow:inset 0 0 0 1px rgba(167,139,250,0.25)}
+html[data-theme=dark] .topbar .command-trigger{background:#1e2436;border-color:#2d354d}
+html[data-theme=dark] .topbar .command-trigger kbd{background:#171b2a;border-color:#2d354d;color:#94a3b8}
+html[data-theme=dark] :is(.panel,.an-card,.an-chart,.an-kpi,.integ-card,.module-access-card,.person-card,.department-card,.permission-card,.dash-summary-grid>.panel){background:#171b2a!important;border-color:#242039!important;box-shadow:0 4px 20px rgba(0,0,0,0.3)!important}
+html[data-theme=dark] :is(.secondary,.dash-action:not(.primary):not(.ov-actions .dash-action)){background:#1e2436!important;border-color:#2d354d!important;color:#cbd5e1!important}
+html[data-theme=dark] :is(.secondary,.dash-action:not(.primary):not(.ov-actions .dash-action)):hover:not(:disabled){background:#283048!important;border-color:#3e4866!important;color:#f1f5f9!important}
+html[data-theme=dark] :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){background:#171b2a!important;border-color:#2d354d!important;color:#f1f5f9!important}
+html[data-theme=dark] .auth-card{background:rgba(23,27,42,0.88)!important;border-color:rgba(45,53,77,0.8)!important;box-shadow:0 20px 50px -10px rgba(0,0,0,0.5)!important}
+
+/* ==========================================================================
+   AgencyOS All-Menu Creative Visual System Upgrade
+   100% Pure CSS - Preserves all logic, schemas, and functionality.
+   ========================================================================== */
+
+/* --- 1. Creative Hero Banners & Section Headings --- */
+.app-shell:not(.overview-shell) .page-heading{position:relative;padding:12px 18px;border-radius:16px;background:linear-gradient(90deg,rgba(255,255,255,0.95) 0%,rgba(255,255,255,0.7) 60%,rgba(255,255,255,0) 100%);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.app-shell:not(.overview-shell) .page-heading .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:rgba(124,58,237,0.08);color:#7c3aed;font-weight:700;font-size:10.5px;letter-spacing:1px}
+.app-shell:not(.overview-shell) .page-heading h1{font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,#1e1b4b 0%,#312e81 60%,#4338ca 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* --- 2. Work & Tasks Menu: Interactive Jira Status Badges & Priority Accents --- */
+.dash-task-panel{border-radius:16px!important;overflow:hidden;box-shadow:0 4px 20px -2px rgba(124,58,237,0.06),0 1px 3px rgba(0,0,0,0.04)!important}
+.dash-task-toolbar{background:linear-gradient(180deg,#fff 0%,#faf9fe 100%);border-bottom:1px solid #edf0f7}
+.dash-task-tabs button{position:relative;font-weight:600;transition:color 0.2s ease}
+.dash-task-tabs button.selected{color:#6d28d9!important}
+.dash-task-tabs button.selected::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2.5px;border-radius:999px;background:linear-gradient(90deg,#7c3aed,#6366f1);box-shadow:0 2px 6px rgba(124,58,237,0.4)}
+.dash-task-table tr{transition:all 0.2s cubic-bezier(0.16,1,0.3,1)}
+.dash-task-table tr:hover{background:#fbf9ff!important;transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,0.04)}
+.dash-title-link{color:#1e293b;transition:color 0.15s ease}
+.dash-title-link:hover{color:#7c3aed!important;text-decoration:none!important}
+
+/* --- 3. Sales & Spreadsheets: Modern Financial Workspace --- */
+.sales-workspace .sales-bar{background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-radius:14px;border:1px solid rgba(228,231,243,0.9);box-shadow:0 2px 10px rgba(0,0,0,0.03)}
+.sales-filter-chip{font-weight:600;border-radius:8px;box-shadow:0 1px 3px rgba(124,58,237,0.1);transition:all 0.18s ease}
+.sales-filter-chip:hover{background:#e4d8ff;transform:scale(1.02)}
+
+/* --- 4. Calendar: Radiant Event Cards & Today Highlight --- */
+.cal-weekday{font-weight:700;letter-spacing:0.05em;font-size:11.5px;color:#6b7280}
+.cal-day{transition:all 0.2s cubic-bezier(0.16,1,0.3,1);border-radius:8px}
+.cal-day:hover{background:#fdfcff}
+.cal-day.today{box-shadow:inset 0 0 0 2px #8b5cf6,0 4px 14px rgba(139,92,246,0.15)!important;background:#faf8ff!important}
+.cal-chip{border-radius:8px!important;padding:3px 8px!important;font-weight:600!important;font-size:11px!important;box-shadow:0 1px 3px rgba(0,0,0,0.06);transition:transform 0.15s ease,box-shadow 0.15s ease}
+.cal-chip:hover{transform:translateY(-1px) scale(1.01);box-shadow:0 3px 8px rgba(0,0,0,0.1)}
+
+/* --- 5. Attendance & Time Tracking: Neon Glow & Live Counters --- */
+.time-stats>div{position:relative;overflow:hidden;border-top-width:3.5px!important}
+.time-stats>div::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#10b981)}
+.ov-clock.live{box-shadow:0 4px 20px rgba(16,185,129,0.12)!important}
+.ov-clock.break{box-shadow:0 4px 20px rgba(245,158,11,0.12)!important}
+
+/* --- 6. Analytics & Campaigns: Dynamic KPI Cards & Visual Accents --- */
+.an-kpis>.an-kpi{position:relative;overflow:hidden;border-radius:14px}
+.an-kpis>.an-kpi:nth-child(4n+1)::before{content:'';position:absolute;top:0;left:0;right:0;height:3.5px;background:linear-gradient(90deg,#8b5cf6,#c084fc)}
+.an-kpis>.an-kpi:nth-child(4n+2)::before{content:'';position:absolute;top:0;left:0;right:0;height:3.5px;background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.an-kpis>.an-kpi:nth-child(4n+3)::before{content:'';position:absolute;top:0;left:0;right:0;height:3.5px;background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.an-kpis>.an-kpi:nth-child(4n)::before{content:'';position:absolute;top:0;left:0;right:0;height:3.5px;background:linear-gradient(90deg,#10b981,#34d399)}
+
+/* --- 7. Team & Chat: Social Cards & Message Bubbles --- */
+.team-hero{border-radius:16px!important;background:linear-gradient(135deg,#ede9fe 0%,#e0e7ff 50%,#f0fdf4 100%)!important;border:1px solid #ddd6fe!important;box-shadow:0 4px 16px rgba(124,58,237,0.06)}
+.person-card{border-radius:14px!important;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)!important}
+.person-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px -4px rgba(124,58,237,0.12)!important}
+.team-chat .chat-layout{border-radius:16px!important;box-shadow:0 4px 20px -2px rgba(0,0,0,0.05)}
+.team-chat .chat-messages article{border-radius:14px!important;box-shadow:0 1px 3px rgba(0,0,0,0.03)}
+.team-chat .chat-messages article.mine{background:linear-gradient(135deg,#7c3aed 0%,#6366f1 100%)!important;color:#fff!important;box-shadow:0 2px 8px rgba(124,58,237,0.25)}
+.team-chat .chat-messages article.mine *{color:#fff!important}
+
+/* --- 8. Dark Mode Refinements for All Menus --- */
+html[data-theme=dark] .app-shell:not(.overview-shell) .page-heading{background:linear-gradient(90deg,rgba(23,27,42,0.95) 0%,rgba(23,27,42,0.7) 60%,transparent 100%)}
+html[data-theme=dark] .app-shell:not(.overview-shell) .page-heading h1{background:linear-gradient(135deg,#fff 0%,#c7d2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+html[data-theme=dark] .team-hero{background:linear-gradient(135deg,#1e1b4b 0%,#172554 60%,#064e3b 100%)!important;border-color:#312e81!important}
+html[data-theme=dark] .dash-title-link{color:#e2e8f0}
+html[data-theme=dark] .dash-title-link:hover{color:#a78bfa!important}
+html[data-theme=dark] .cal-day.today{background:#2a2344!important}
+html[data-theme=dark] .dash-task-toolbar{background:#171b2a;border-bottom-color:#242039}
+html[data-theme=dark] .sales-workspace .sales-bar{background:rgba(23,27,42,0.95);border-color:#2d354d}
+
+/* Colour-coded menu badges use the existing icon family. */
+.sidebar .nav-item{--menu-ink:#7546ce;--menu-tint:#efe7ff;gap:11px;padding:8px 12px;min-height:48px}
+.sidebar .nav-item[href='/sales']{--menu-ink:#c25a24;--menu-tint:#fff0df}
+.sidebar .nav-item[href='/clients']{--menu-ink:#aa6a19;--menu-tint:#fff3d9}
+.sidebar .nav-item[href='/work']{--menu-ink:#3474d9;--menu-tint:#e7f0ff}
+.sidebar .nav-item[href='/calendar']{--menu-ink:#8c4cbf;--menu-tint:#f3e9ff}
+.sidebar .nav-item[href='/source']{--menu-ink:#508091;--menu-tint:#e5f3f7}
+.sidebar .nav-item[href='/attendance']{--menu-ink:#13866f;--menu-tint:#ddf6ed}
+.sidebar .nav-item[href='/communication']{--menu-ink:#c66430;--menu-tint:#ffeddf}
+.sidebar .nav-item[href='/chat']{--menu-ink:#4b66c8;--menu-tint:#e9edff}
+.sidebar .nav-item[href='/campaigns']{--menu-ink:#b64590;--menu-tint:#fde6f4}
+.sidebar .nav-item[href='/analytics']{--menu-ink:#118294;--menu-tint:#ddf5f8}
+.sidebar .nav-item[href='/finance']{--menu-ink:#268353;--menu-tint:#e0f5e7}
+.sidebar .nav-item[href='/team']{--menu-ink:#bb4d7d;--menu-tint:#fce7ef}
+.sidebar .nav-item[href='/reports']{--menu-ink:#7951c9;--menu-tint:#eee7ff}
+.sidebar .nav-item[href='/settings']{--menu-ink:#5d718f;--menu-tint:#e9eef5}
+.sidebar-menu-icon{width:32px;height:32px;display:grid;place-items:center;flex:0 0 32px;border-radius:10px;color:var(--menu-ink);background:linear-gradient(145deg,#fff,var(--menu-tint) 85%);border:1px solid color-mix(in srgb,var(--menu-ink) 15%,transparent);box-shadow:0 2px 4px #32305108,inset 0 1px #ffffffc0;transition:transform 180ms ease,box-shadow 180ms ease,background 180ms ease}
+.sidebar .sidebar-menu-icon>svg{width:19px;height:19px;stroke-width:1.9}
+.sidebar .nav-item:hover .sidebar-menu-icon{transform:translateY(-1px) rotate(-5deg);background:var(--menu-tint);box-shadow:0 3px 7px color-mix(in srgb,var(--menu-ink) 18%,transparent)}
+.sidebar .nav-item.active .sidebar-menu-icon{background:linear-gradient(135deg,color-mix(in srgb,var(--menu-ink) 75%,white),var(--menu-ink));color:#fff;border-color:transparent;box-shadow:0 3px 8px color-mix(in srgb,var(--menu-ink) 25%,transparent)}
+.sidebar .nav-item:focus-visible{outline:2px solid var(--purple);outline-offset:-2px}
+html[data-theme=dark] .sidebar-menu-icon{color:color-mix(in srgb,var(--menu-ink) 45%,white);background:color-mix(in srgb,var(--menu-ink) 18%,#191b2c);border-color:color-mix(in srgb,var(--menu-ink) 30%,transparent);box-shadow:inset 0 1px #ffffff0a}
+html[data-theme=dark] .sidebar .nav-item:hover .sidebar-menu-icon{background:color-mix(in srgb,var(--menu-ink) 30%,#191b2c)}
+html[data-theme=dark] .sidebar .nav-item.active .sidebar-menu-icon{background:var(--menu-ink);color:#fff}
+@media(prefers-reduced-motion:reduce){.sidebar .sidebar-menu-icon{transition:none}.sidebar .nav-item:hover .sidebar-menu-icon{transform:none}}
+
+
