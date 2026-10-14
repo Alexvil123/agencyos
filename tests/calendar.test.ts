@@ -22,10 +22,9 @@ test('navigation moves by month or week and labels read naturally',()=>{
   assert.match(dayLabel('2026-10-10'),/Saturday/);
   assert.equal(validIsoDate('2026-02-30'),false);assert.equal(validIsoDate('2026-10-10'),true);assert.equal(validIsoDate('10/10/2026'),false);
 });
-test('tasks land on their India due day, manual tasks on their work date',()=>{
+test('tasks land on their India due day',()=>{
   assert.equal(taskDay(task({due_at:'2026-10-09T18:30:00Z'})),'2026-10-10');
   assert.equal(istDay('2026-10-09T18:29:00Z'),'2026-10-09');
-  assert.equal(taskDay(task({source:'manual',work_date:'2026-10-12'})),'2026-10-12');
   assert.equal(taskDay(task({due_at:null})),null);
 });
 test('tone, filters, grouping and the unscheduled tray',()=>{
@@ -34,16 +33,16 @@ test('tone, filters, grouping and the unscheduled tray',()=>{
   const late=task({id:'b',jira_key:'OCT-2',jira_status_category:'new',due_at:'2026-10-05T00:00:00+05:30'});
   const doing=task({id:'c',jira_key:'OCT-3',jira_status_category:'indeterminate',due_at:'2026-10-10T00:00:00+05:30',membership_id:'m2'});
   const none=task({id:'d',jira_key:'OCT-4',jira_status_category:'new'});
-  const manual=task({id:'e',source:'manual',jira_project:null,work_status:'on_hold',work_date:'2026-10-12'});
+  const manual=task({id:'e',source:'manual',jira_project:null,work_status:'on_hold',work_date:'2026-10-12',due_at:'2026-10-12T00:00:00+05:30'});
   const source=task({id:'f',jira_project:'SOURCE',due_at:'2026-10-10T00:00:00+05:30'});
   const gone=task({id:'g',jira_available:false,due_at:'2026-10-10T00:00:00+05:30'});
-  assert.deepEqual([done,late,doing,none,manual].map(t=>taskTone(t,today)),['done','overdue','progress','todo','hold']);
+  assert.deepEqual([done,late,doing,none].map(t=>taskTone(t,today)),['done','overdue','progress','todo']);
   const all=[done,late,doing,none,manual,source,gone];
-  assert.deepEqual(calendarTasks(all,{employee:'all',project:'all',state:'all'},today).map(t=>t.id),['a','b','c','d','e']);
+  assert.deepEqual(calendarTasks(all,{employee:'all',project:'all',state:'all'},today).map(t=>t.id),['a','b','c','d']);
   assert.deepEqual(calendarTasks(all,{employee:'m2',project:'all',state:'all'},today).map(t=>t.id),['c']);
-  assert.deepEqual(calendarTasks(all,{employee:'all',project:'manual',state:'all'},today).map(t=>t.id),['e']);
+  assert.ok(!calendarTasks(all,{employee:'all',project:'all',state:'all'},today).some(t=>t.id==='e'),'manual tasks never appear in the Calendar');
   assert.deepEqual(calendarTasks(all,{employee:'all',project:'all',state:'done'},today).map(t=>t.id),['a']);
-  assert.deepEqual(calendarTasks(all,{employee:'all',project:'all',state:'open'},today).map(t=>t.id),['b','c','d','e']);
+  assert.deepEqual(calendarTasks(all,{employee:'all',project:'all',state:'open'},today).map(t=>t.id),['b','c','d']);
   const days=tasksByDay(all);assert.deepEqual([...days.keys()].sort(),['2026-10-01','2026-10-05','2026-10-10','2026-10-12']);
   assert.deepEqual(unscheduledTasks(all,today).map(t=>t.id),['d']);
 });

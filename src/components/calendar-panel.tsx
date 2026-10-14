@@ -85,7 +85,7 @@ export function CalendarPanel({preview}:{preview:boolean}){
       </div>
       <div className="cal-filters">
         {data.manager&&filterSelect('Employee',filters.employee,[['all','Everyone'],...data.people.map(p=>[p.id,p.display_name] as [string,string])],v=>setFilters(f=>({...f,employee:v})))}
-        {filterSelect('Project',filters.project,[['all','All projects'],...projectsInUse.map(p=>[p,p] as [string,string]),['manual','Manual tasks']],v=>setFilters(f=>({...f,project:v})))}
+        {filterSelect('Project',filters.project,[['all','All projects'],...projectsInUse.map(p=>[p,p] as [string,string])],v=>setFilters(f=>({...f,project:v})))}
         {filterSelect('Status',filters.state,[['all','All'],['open','Open'],['done','Done']],v=>setFilters(f=>({...f,state:v as CalendarFilters['state']})))}
         <ul className="cal-legend" aria-label="Legend"><li className="tone-todo">To do</li><li className="tone-progress">In progress</li><li className="tone-hold">On hold</li><li className="tone-overdue">Overdue</li><li className="tone-done">Done</li></ul>
       </div>
@@ -142,10 +142,10 @@ export function CalendarPanel({preview}:{preview:boolean}){
 }
 
 function TaskChip({task,tone,who,draggable,onDragStart,onOpen}:{task:TimeTask;tone:string;who:string;draggable:boolean;onDragStart:()=>void;onOpen:()=>void}){
-  return <button type="button" className={`cal-chip tone-${tone}`} draggable={draggable} title={`${task.jira_key||'Manual'} · ${task.title} · ${who}`}
+  return <button type="button" className={`cal-chip tone-${tone}`} draggable={draggable} title={`${task.jira_key} · ${task.title} · ${who}`}
     onDragStart={e=>{onDragStart();e.dataTransfer.setData('text/plain',task.id);e.dataTransfer.effectAllowed='move';}}
     onClick={e=>{e.stopPropagation();onOpen();}}>
-    <span className="cal-chip-key">{task.jira_key||'Manual'}</span><span className="cal-chip-title">{task.title}</span><span className="cal-avatar" aria-hidden="true">{initials(who)}</span>
+    <span className="cal-chip-key">{task.jira_key}</span><span className="cal-chip-title">{task.title}</span><span className="cal-avatar" aria-hidden="true">{initials(who)}</span>
   </button>;
 }
 
@@ -156,7 +156,7 @@ function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeT
   const [due,setDue]=useState(day),[assignee,setAssignee]=useState(current);
   const changed=due!==day||assignee!==current;
   return <section className="panel time-panel cal-drawer">
-    <div className="time-heading"><div><span className="eyebrow">{task.source==='jira'?'JIRA TASK':'MANUAL CRM TASK'}</span><h2>{task.title}</h2></div><button className="secondary" onClick={onClose}>Close</button></div>
+    <div className="time-heading"><div><span className="eyebrow">JIRA TASK</span><h2>{task.title}</h2></div><button className="secondary" onClick={onClose}>Close</button></div>
     <dl className="cal-meta">
       <div><dt>Key</dt><dd>{task.jira_key?<a href={`${JIRA_SITE}/browse/${encodeURIComponent(task.jira_key)}`} target="_blank" rel="noopener noreferrer">{task.jira_key} ↗</a>:'Manual'}</dd></div>
       <div><dt>Status</dt><dd>{taskDisplayStatus(task)}</dd></div>
@@ -183,7 +183,7 @@ function TaskDetails({task,data,setup,owner,busy,who,onClose,onSave}:{task:TimeT
       {setup&&!setup.ok&&<p role="alert" className="form-message error">{setup.message}</p>}
       <button className="primary" disabled={busy||!changed||!setup?.ok}>Save to Jira</button>
       <p className="subtle">Changes are sent to Jira, read back, then shown here. Work timers and recorded time are not affected.</p>
-    </form>:task.source==='jira'?<p className="subtle">The Owner can reschedule or reassign this task.</p>:null}
+    </form>:<p className="subtle">The Owner can reschedule or reassign this task.</p>}
     <div className="time-controls"><Link className="secondary" href={`/work?task=${task.id}`}>Open in Work</Link></div>
   </section>;
 }

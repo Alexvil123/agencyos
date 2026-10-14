@@ -24,24 +24,21 @@ export function rangeLabel(day:string,view:CalendarView){
   const days=weekDays(day);return `${f(days[0],{day:'numeric',month:'short'})} – ${f(days[6],{day:'numeric',month:'short',year:'numeric'})}`;
 }
 export function dayLabel(day:string){return new Intl.DateTimeFormat('en-IN',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(utc(day)));}
-// Jira tasks sit on their Jira due date; manual CRM tasks on their work date (or due date).
-export function taskDay(task:Pick<TimeTask,'source'|'due_at'|'work_date'>):string|null{
-  if(task.source==='jira')return task.due_at?istDay(task.due_at):null;
-  return task.work_date||(task.due_at?istDay(task.due_at):null);
-}
-const isDone=(task:TimeTask)=>task.source==='jira'?task.jira_status_category==='done':['completed','cancelled'].includes(task.work_status||'pending');
+// The Calendar shows Jira tasks only, each on its Jira due date. Manual CRM tasks live in Work.
+export function taskDay(task:Pick<TimeTask,'due_at'>):string|null{return task.due_at?istDay(task.due_at):null;}
+const isDone=(task:TimeTask)=>task.jira_status_category==='done';
 export function taskTone(task:TimeTask,today:string):CalendarTone{
   if(isDone(task))return 'done';
   const day=taskDay(task);if(day&&day<today)return 'overdue';
-  if(task.source==='jira'?task.jira_status_category==='indeterminate':task.work_status==='in_progress')return 'progress';
+  if(task.jira_status_category==='indeterminate')return 'progress';
   if(task.work_status==='on_hold')return 'hold';
   return 'todo';
 }
 export type CalendarFilters={employee:string;project:string;state:'all'|'open'|'done'};
 export function calendarTasks(tasks:TimeTask[],filters:CalendarFilters,today:string){
-  return tasks.filter(task=>task.jira_available!==false&&task.jira_project!=='SOURCE'
+  return tasks.filter(task=>task.source==='jira'&&task.jira_available!==false&&task.jira_project!=='SOURCE'
     &&(filters.employee==='all'||task.membership_id===filters.employee)
-    &&(filters.project==='all'||(filters.project==='manual'?task.source!=='jira':task.jira_project===filters.project))
+    &&(filters.project==='all'||task.jira_project===filters.project)
     &&(filters.state==='all'||(filters.state==='done')===(taskTone(task,today)==='done')));
 }
 export function tasksByDay(tasks:TimeTask[]){
