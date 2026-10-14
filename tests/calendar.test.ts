@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {addDays,calendarTasks,dayLabel,monthDays,monthEnd,monthStart,rangeLabel,shiftAnchor,taskDay,taskTone,tasksByDay,unscheduledTasks,validIsoDate,weekDays,weekStart,istDay,teamWeek,teamLoad,HEAVY_DAY} from '../src/lib/calendar';
+import {addDays,calendarTasks,dayLabel,monthDays,monthEnd,monthStart,rangeLabel,shiftAnchor,taskDay,taskTone,tasksByDay,unscheduledTasks,validIsoDate,weekDays,weekStart,istDay} from '../src/lib/calendar';
 import {calendarCreateSchema,calendarUpdateSchema} from '../src/lib/calendar-input';
 import {assignIssue,createIssue,createIssueFields,setIssueDueDate,type JiraCall} from '../src/lib/calendar-jira';
 import type {TimeTask} from '../src/lib/time-types';
@@ -73,31 +73,4 @@ test('Jira calls: fields, assignment and due date use the documented endpoints',
     ['PUT','/rest/api/3/issue/OCT-9','{"fields":{"duedate":"2026-10-20"}}'],['PUT','/rest/api/3/issue/OCT-9','{"fields":{"duedate":null}}']]);
   await assert.rejects(()=>assignIssue(call,'SOURCE-1','x'));
   await assert.rejects(()=>createIssue((async()=>({})) as JiraCall,{project:'OCT',issue_type:'1',summary:'S',description:'',label:'',due_date:''}));
-});
-
-test('team week: a row per person (free people too), an Unassigned row, load, overdue and no-date backlog',()=>{
-  const today='2026-10-14',days=weekDays(today),people=[{id:'m2',display_name:'Barath'},{id:'m1',display_name:'Ajith'},{id:'m3',display_name:'Sneha'}];
-  const t=(id:string,member:string|null,due:string|null,cat='new')=>task({id,jira_key:'OCT-'+id,membership_id:member as string,jira_status_category:cat,due_at:due?due+'T00:00:00+05:30':null});
-  const tasks=[t('1','m1','2026-10-14'),t('2','m1','2026-10-14'),t('3','m1','2026-10-14'),t('4','m1','2026-10-14'),t('5','m1','2026-10-14'),t('6','m1','2026-10-14','done'),
-    t('7','m1','2026-09-30'),t('8','m1',null),t('9','m1',null,'done'),t('10','m2','2026-10-15','indeterminate'),t('11',null,'2026-10-16'),t('12','ghost','2026-10-16')];
-  const {rows,totals}=teamWeek(tasks,days,people,today);
-  assert.deepEqual(rows.map(r=>r.name),['Ajith','Barath','Sneha','Unassigned']);
-  const ajith=rows[0];
-  assert.equal(ajith.cells[2].tasks.length,6,'a done task still shows on its day');
-  assert.equal(ajith.cells[2].open,5);assert.equal(ajith.cells[2].load,'heavy');
-  assert.equal(ajith.open,7,'open = 5 today + 1 overdue + 1 without a date; done tasks never count');
-  assert.equal(ajith.overdue,1,'overdue counts tasks outside the visible week too');
-  assert.deepEqual(ajith.noDate.map(x=>x.id),['8'],'only open tasks without a date');
-  assert.equal(rows[1].cells[3].load,'light');assert.equal(rows[2].cells.every(c=>c.load==='none')&&rows[2].open===0,true,'a free person is still listed');
-  assert.deepEqual(rows[3].cells[4].tasks.map(x=>x.id),['11','12'],'unassigned and unknown-member tasks share the Unassigned row');
-  assert.equal(totals[2],6);assert.equal(totals[3],1);assert.equal(totals[4],2);assert.equal(totals.length,7);
-});
-test('team week: one employee filter, no Unassigned row, load thresholds and week navigation',()=>{
-  const today='2026-10-14',people=[{id:'m1',display_name:'Ajith'},{id:'m2',display_name:'Barath'}];
-  const only=teamWeek([task({id:'x',jira_key:'OCT-1',membership_id:'m2',due_at:'2026-10-14T00:00:00+05:30'}),task({id:'y',jira_key:'OCT-2',membership_id:null as unknown as string,due_at:'2026-10-14T00:00:00+05:30'})],weekDays(today),people,today,'m2');
-  assert.deepEqual(only.rows.map(r=>r.name),['Barath']);assert.equal(only.rows[0].cells[2].tasks.length,1);
-  assert.deepEqual([0,1,2,3,4,5,9].map(teamLoad),['none','light','light','normal','normal','heavy','heavy']);assert.equal(HEAVY_DAY,5);
-  assert.equal(shiftAnchor('2026-10-14','team',1),'2026-10-21');assert.equal(shiftAnchor('2026-10-14','team',-1),'2026-10-07');
-  assert.equal(rangeLabel('2026-10-14','team'),rangeLabel('2026-10-14','week'));
-  assert.deepEqual(teamWeek([],weekDays(today),[],today).rows,[],'no people and no tasks: no rows');
 });

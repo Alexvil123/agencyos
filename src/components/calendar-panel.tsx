@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {CalendarDays,ChevronLeft,ChevronRight,Plus} from 'lucide-react';
 import type {loadWorkData} from '@/app/work-actions';
 import {calendarCreateTask,calendarRequirements,calendarSetup,calendarUpdateTask,type CalendarResult,type CalendarSetup} from '@/app/calendar-actions';
-import {calendarTasks,dayLabel,istDay,monthDays,rangeLabel,shiftAnchor,taskDay,taskTone,tasksByDay,teamWeek,unscheduledTasks,weekDays,type CalendarFilters,type CalendarView} from '@/lib/calendar';
+import {calendarTasks,dayLabel,istDay,monthDays,rangeLabel,shiftAnchor,taskDay,taskTone,tasksByDay,unscheduledTasks,weekDays,type CalendarFilters,type CalendarView} from '@/lib/calendar';
 import {MONTH_PROJECTS} from '@/lib/jira-types';
 import {JIRA_SITE} from '@/lib/jira-types';
 import {taskClientLabel,taskDisplayStatus} from '@/lib/work-jira-sync';
@@ -22,7 +22,7 @@ export function CalendarPanel({preview}:{preview:boolean}){
   const [data,setData]=useState<WorkData>(),[today,setToday]=useState(''),[error,setError]=useState('');
   const [view,setView]=useState<CalendarView>('month'),[anchor,setAnchor]=useState('');
   const [filters,setFilters]=useState<CalendarFilters>({employee:'all',project:'all',state:'all'});
-  const [openDay,setOpenDay]=useState<string>(),[openWho,setOpenWho]=useState<string|null>(),[selected,setSelected]=useState<TimeTask>(),[creating,setCreating]=useState<string|null>(null);
+  const [openDay,setOpenDay]=useState<string>(),[selected,setSelected]=useState<TimeTask>(),[creating,setCreating]=useState<string|null>(null);
   const [setup,setSetup]=useState<CalendarSetup>(),[result,setResult]=useState<CalendarResult>(),[busy,start]=useTransition();
   const dragged=useRef<string|undefined>(undefined),setupRequested=useRef(false);
   const [readWork]=useState(()=>conditionalReader<Loaded>('/api/work'));
@@ -49,7 +49,6 @@ export function CalendarPanel({preview}:{preview:boolean}){
   // Only the month projects that actually have tasks are offered as a filter.
   const projectsInUse=useMemo(()=>MONTH_PROJECTS.filter(p=>(data?.tasks||[]).some(t=>t.jira_project===p)),[data]);
   const labels=useMemo(()=>[...new Set((data?.tasks||[]).flatMap(t=>t.jira_labels||[]))].sort((a,b)=>a.localeCompare(b)),[data]);
-  const team=useMemo(()=>data&&anchor&&view==='team'?teamWeek(visible,weekDays(anchor),data.people,today,filters.employee):undefined,[data,anchor,view,visible,today,filters.employee]);
   const name=(id:string)=>data?.people.find(p=>p.id===id)?.display_name||'Unassigned';
   if(preview)return <section className="panel time-panel"><h2>Calendar</h2><p>Sign in to see your tasks on the calendar.</p></section>;
   if(!data||!anchor)return <section className="panel time-panel" role="status"><h2>Calendar</h2><p>{error||'Loading your calendar…'}</p>{error&&<button className="secondary" onClick={()=>void reload()}>Retry</button>}</section>;
@@ -58,7 +57,6 @@ export function CalendarPanel({preview}:{preview:boolean}){
   const monthKey=anchor.slice(0,7);
   const inView=days.flatMap(day=>byDay.get(day)||[]);
   const overdue=inView.filter(t=>taskTone(t,today)==='overdue').length;
-  const drawerTasks=!openDay?[]:(openDay==='nodate'?unscheduled:byDay.get(openDay)||[]).filter(t=>openWho===undefined||(t.membership_id||null)===openWho);
   function finish(next:CalendarResult){setResult(next);notifyWorkspaceChange();void reload();}
   function reschedule(taskId:string,day:string){
     const task=data?.tasks.find(t=>t.id===taskId);
@@ -82,7 +80,7 @@ export function CalendarPanel({preview}:{preview:boolean}){
           <button className="secondary small" onClick={()=>setAnchor(today)}>Today</button>
           <button className="icon-button" aria-label="Next" onClick={()=>setAnchor(shiftAnchor(anchor,view,1))}><ChevronRight size={18}/></button>
         </div>
-        <div className="tabs cal-view" role="group" aria-label="Calendar view">{(data.manager?['month','week','team'] as const:['month','week'] as const).map(v=><button key={v} className={view===v?'selected':''} aria-pressed={view===v} onClick={()=>setView(v)}>{v==='month'?'Month':v==='week'?'Week':'Team'}</button>)}</div>
+        <div className="tabs cal-view" role="group" aria-label="Calendar view">{(['month','week'] as const).map(v=><button key={v} className={view===v?'selected':''} aria-pressed={view===v} onClick={()=>setView(v)}>{v==='month'?'Month':'Week'}</button>)}</div>
         {owner&&<button className="primary small" onClick={()=>setCreating(today)}><Plus size={15}/> New Jira task</button>}
       </div>
       <div className="cal-filters">
@@ -94,11 +92,9 @@ export function CalendarPanel({preview}:{preview:boolean}){
     </section>
     {error&&<p role="alert" className="notice">{error}</p>}
     {result&&<p role="status" className={`form-message ${result.ok?'success':'error'}`}>{busy?'Saving to Jira…':result.message}</p>}
-    {team&&<p className="subtle cal-team-hint">Each row is one person; the number is their open tasks that day (5 or more is a heavy day). {owner?'Drag a task to another day in the same row to reschedule it in Jira. Open a task to change who it is assigned to.':'Open a task to see its details.'}</p>}
     {!owner&&<p className="notice">Your assigned tasks appear on their due date. The Owner creates and assigns Jira tasks from this calendar; changes sync to Jira.</p>}
     <div className="cal-layout">
-      {team?<TeamBoard rows={team.rows} totals={team.totals} days={days} today={today} owner={owner} taskById={id=>data.tasks.find(t=>t.id===id)}
-        dragged={dragged} onReschedule={reschedule} onOpenTask={setSelected} onOpenCell={(day,who)=>{setOpenWho(who);setOpenDay(day);}}/>:<section className={`panel cal-board cal-${view}`} aria-label="Calendar">
+      <section className={`panel cal-board cal-${view}`} aria-label="Calendar">
         <div className="cal-grid" role="grid" aria-label={rangeLabel(anchor,view)}>
           {WEEKDAYS.map(d=><div className="cal-weekday" role="columnheader" key={d}>{d}</div>)}
           {days.map(day=>{
@@ -116,7 +112,7 @@ export function CalendarPanel({preview}:{preview:boolean}){
             </div>;
           })}
         </div>
-      </section>}
+      </section>
       {owner&&<aside className="panel cal-tray" aria-label="Tasks without a due date">
         <h3>No due date</h3>
         <p className="subtle">Drag a task onto a day to schedule it in Jira.</p>
@@ -124,11 +120,11 @@ export function CalendarPanel({preview}:{preview:boolean}){
       </aside>}
     </div>
 
-    {openDay&&<WorkDrawer label={openDay==='nodate'?'No due date':dayLabel(openDay)} busy={busy} onClose={()=>{setOpenDay(undefined);setOpenWho(undefined);}}>
+    {openDay&&<WorkDrawer label={dayLabel(openDay)} busy={busy} onClose={()=>setOpenDay(undefined)}>
       <section className="panel time-panel cal-drawer">
-        <div className="time-heading"><div><span className="eyebrow">{openWho!==undefined?(openWho?name(openWho):'UNASSIGNED').toUpperCase():openDay===today?'TODAY':'DAY'}</span><h2>{openDay==='nodate'?'No due date':dayLabel(openDay)}</h2></div><button className="secondary" onClick={()=>{setOpenDay(undefined);setOpenWho(undefined);}}>Close</button></div>
-        {owner&&openDay!=='nodate'&&<button className="primary small" onClick={()=>{setCreating(openDay);setOpenDay(undefined);setOpenWho(undefined);}}><Plus size={15}/> New Jira task on this day</button>}
-        {drawerTasks.length?<ul className="cal-day-list">{drawerTasks.map(t=><li key={t.id}><TaskChip task={t} tone={taskTone(t,today)} who={name(t.membership_id)} draggable={false} onDragStart={()=>undefined} onOpen={()=>{setOpenDay(undefined);setOpenWho(undefined);setSelected(t);}}/><small>{taskDisplayStatus(t)} · {name(t.membership_id)}</small></li>)}</ul>:<p className="subtle">No tasks on this day.</p>}
+        <div className="time-heading"><div><span className="eyebrow">{openDay===today?'TODAY':'DAY'}</span><h2>{dayLabel(openDay)}</h2></div><button className="secondary" onClick={()=>setOpenDay(undefined)}>Close</button></div>
+        {owner&&<button className="primary small" onClick={()=>{setCreating(openDay);setOpenDay(undefined);}}><Plus size={15}/> New Jira task on this day</button>}
+        {(byDay.get(openDay)||[]).length?<ul className="cal-day-list">{(byDay.get(openDay)||[]).map(t=><li key={t.id}><TaskChip task={t} tone={taskTone(t,today)} who={name(t.membership_id)} draggable={false} onDragStart={()=>undefined} onOpen={()=>{setOpenDay(undefined);setSelected(t);}}/><small>{taskDisplayStatus(t)} · {name(t.membership_id)}</small></li>)}</ul>:<p className="subtle">No tasks on this day.</p>}
       </section>
     </WorkDrawer>}
 
@@ -145,11 +141,11 @@ export function CalendarPanel({preview}:{preview:boolean}){
   </div>;
 }
 
-function TaskChip({task,tone,who,draggable,onDragStart,onOpen,plain=false}:{task:TimeTask;tone:string;who:string;draggable:boolean;onDragStart:()=>void;onOpen:()=>void;plain?:boolean}){
+function TaskChip({task,tone,who,draggable,onDragStart,onOpen}:{task:TimeTask;tone:string;who:string;draggable:boolean;onDragStart:()=>void;onOpen:()=>void}){
   return <button type="button" className={`cal-chip tone-${tone}`} draggable={draggable} title={`${task.jira_key} · ${task.title} · ${who}`}
     onDragStart={e=>{onDragStart();e.dataTransfer.setData('text/plain',task.id);e.dataTransfer.effectAllowed='move';}}
     onClick={e=>{e.stopPropagation();onOpen();}}>
-    <span className="cal-chip-key">{task.jira_key}</span><span className="cal-chip-title">{task.title}</span>{!plain&&<span className="cal-avatar" aria-hidden="true">{initials(who)}</span>}
+    <span className="cal-chip-key">{task.jira_key}</span><span className="cal-chip-title">{task.title}</span><span className="cal-avatar" aria-hidden="true">{initials(who)}</span>
   </button>;
 }
 
@@ -227,32 +223,5 @@ function CreateTask({day,setup,labels,busy,onClose,onSubmit}:{day:string;setup?:
       <label className="checkbox-label"><input name="confirmed" type="checkbox" value="yes" required/>Create this task in Jira now. The assignee will see it in their Work list.</label>
       <button className="primary" disabled={busy||!setup?.ok||!types.length||blocked}>{busy?'Creating in Jira…':'Create in Jira'}</button>
     </form>
-  </section>;
-}
-
-type TeamData=NonNullable<ReturnType<typeof teamWeek>>;
-const LOAD_TEXT={none:'free',light:'light',normal:'busy',heavy:'heavy'} as const;
-function TeamBoard({rows,totals,days,today,owner,taskById,dragged,onReschedule,onOpenTask,onOpenCell}:{rows:TeamData['rows'];totals:number[];days:string[];today:string;owner:boolean;taskById:(id:string)=>TimeTask|undefined;dragged:{current:string|undefined};onReschedule:(taskId:string,day:string)=>void;onOpenTask:(task:TimeTask)=>void;onOpenCell:(day:string,who:string|null)=>void}){
-  if(!rows.length)return <section className="panel cal-team"><p className="subtle">No people to show for these filters.</p></section>;
-  // A task can only be dropped on a day in its own person's row: moving it to someone else is an assignment, done from the task.
-  const sameRow=(id:string|null)=>{const t=dragged.current?taskById(dragged.current):undefined;return Boolean(owner&&t&&(t.membership_id||null)===id);};
-  return <section className="panel cal-team" aria-label="Team week">
-    <div className="cal-team-scroll"><table className="cal-team-table">
-      <thead><tr><th scope="col" className="cal-team-who">Team</th>{days.map((day,i)=><th scope="col" key={day} className={`${day===today?'today ':''}${i>=5?'weekend':''}`}>{WEEKDAYS[i]} <b>{Number(day.slice(8))}</b></th>)}<th scope="col">No date</th></tr></thead>
-      <tbody>{rows.map(row=><tr key={row.id||'unassigned'}>
-        <th scope="row" className="cal-team-who"><span className="cal-avatar" aria-hidden="true">{initials(row.name)}</span><span className="cal-who-text"><strong>{row.name}</strong><small>{row.open} open{row.overdue?<> · <em>{row.overdue} overdue</em></>:null}</small></span></th>
-        {row.cells.map((cell,i)=><td key={cell.day} tabIndex={0} className={`cal-team-cell load-${cell.load}${cell.day===today?' today':''}${i>=5?' weekend':''}`}
-          aria-label={`${row.name}, ${dayLabel(cell.day)}: ${cell.tasks.length} task${cell.tasks.length===1?'':'s'}, ${LOAD_TEXT[cell.load]}`}
-          onClick={()=>onOpenCell(cell.day,row.id)} onKeyDown={e=>{if(e.key==='Enter'&&e.target===e.currentTarget)onOpenCell(cell.day,row.id);}}
-          onDragOver={e=>{if(sameRow(row.id))e.preventDefault();}}
-          onDrop={e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain')||dragged.current;const wasAllowed=sameRow(row.id);dragged.current=undefined;if(id&&wasAllowed)onReschedule(id,cell.day);}}>
-          {cell.tasks.length>0&&<span className="cal-team-count" aria-hidden="true">{cell.open}</span>}
-          <div className="cal-chips">{cell.tasks.slice(0,2).map(t=><TaskChip key={t.id} plain task={t} tone={taskTone(t,today)} who={row.name} draggable={owner} onDragStart={()=>{dragged.current=t.id;}} onOpen={()=>onOpenTask(t)}/>)}
-            {cell.tasks.length>2&&<button className="cal-more" onClick={e=>{e.stopPropagation();onOpenCell(cell.day,row.id);}}>+{cell.tasks.length-2} more</button>}</div>
-        </td>)}
-        <td className="cal-team-nodate">{row.noDate.length?<button className="cal-more" onClick={()=>onOpenCell('nodate',row.id)}>{row.noDate.length} open</button>:<span className="subtle">—</span>}</td>
-      </tr>)}</tbody>
-      <tfoot><tr><th scope="row" className="cal-team-who">All tasks</th>{totals.map((n,i)=><td key={days[i]} className={days[i]===today?'today':''}>{n||'—'}</td>)}<td/></tr></tfoot>
-    </table></div>
   </section>;
 }

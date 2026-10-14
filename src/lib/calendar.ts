@@ -1,6 +1,6 @@
 import type {TimeTask} from './time-types';
 // Pure calendar helpers. All days are India calendar days written as YYYY-MM-DD.
-export type CalendarView='month'|'week'|'team';
+export type CalendarView='month'|'week';
 export type CalendarTone='done'|'progress'|'hold'|'overdue'|'todo';
 const DAY=86400000;
 const utc=(iso:string)=>Date.parse(`${iso}T00:00:00Z`);
@@ -15,7 +15,7 @@ export function monthEnd(day:string){const d=new Date(utc(monthStart(day)));retu
 // Whole weeks (Monday first) that cover the month containing `day`.
 export function monthDays(day:string){const start=weekStart(monthStart(day)),end=monthEnd(day),weeks=Math.ceil(((utc(end)-utc(start))/DAY+1)/7);return Array.from({length:weeks*7},(_,i)=>addDays(start,i));}
 export function shiftAnchor(day:string,view:CalendarView,delta:number){
-  if(view!=='month')return addDays(day,delta*7);
+  if(view==='week')return addDays(day,delta*7);
   const d=new Date(utc(monthStart(day)));return iso(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+delta,1));
 }
 export function rangeLabel(day:string,view:CalendarView){
@@ -49,27 +49,3 @@ export function tasksByDay(tasks:TimeTask[]){
 }
 // Open Jira tasks with no due date can be dragged onto a day to schedule them.
 export function unscheduledTasks(tasks:TimeTask[],today:string){return tasks.filter(t=>t.source==='jira'&&!taskDay(t)&&taskTone(t,today)!=='done');}
-
-// Team week: one row per person, one column per day, so the Owner can see who has what and who is free.
-// Rows come from the people list (a person with no tasks is still shown: free capacity matters), plus an Unassigned row.
-export const HEAVY_DAY=5;
-export type TeamLoad='none'|'light'|'normal'|'heavy';
-export type TeamCell={day:string;tasks:TimeTask[];open:number;load:TeamLoad};
-export type TeamRow={id:string|null;name:string;cells:TeamCell[];open:number;overdue:number;noDate:TimeTask[]};
-export const teamLoad=(open:number):TeamLoad=>open<=0?'none':open<=2?'light':open<HEAVY_DAY?'normal':'heavy';
-const byKey=(a:TimeTask,b:TimeTask)=>(a.jira_key||a.title).localeCompare(b.jira_key||b.title,undefined,{numeric:true});
-export function teamWeek(tasks:TimeTask[],days:string[],people:{id:string;display_name:string}[],today:string,employee='all'){
-  const mine=new Map<string,TimeTask[]>(),known=new Set(people.map(p=>p.id));
-  for(const task of tasks){const key=task.membership_id&&known.has(task.membership_id)?task.membership_id:'';const list=mine.get(key);if(list)list.push(task);else mine.set(key,[task]);}
-  const row=(id:string|null,name:string):TeamRow=>{
-    const list=mine.get(id||'')||[];
-    const cells=days.map(day=>{const dayTasks=list.filter(t=>taskDay(t)===day).sort(byKey),open=dayTasks.filter(t=>taskTone(t,today)!=='done').length;return {day,tasks:dayTasks,open,load:teamLoad(open)};});
-    const noDate=list.filter(t=>!taskDay(t)&&taskTone(t,today)!=='done').sort(byKey);
-    return {id,name,cells,open:list.filter(t=>taskTone(t,today)!=='done').length,overdue:list.filter(t=>taskTone(t,today)==='overdue').length,noDate};
-  };
-  const chosen=employee==='all'?people:people.filter(p=>p.id===employee);
-  const rows=[...chosen].sort((a,b)=>a.display_name.localeCompare(b.display_name)).map(p=>row(p.id,p.display_name));
-  if(employee==='all'&&(mine.get('')||[]).length)rows.push(row(null,'Unassigned'));
-  const totals=days.map((_,i)=>rows.reduce((n,r)=>n+r.cells[i].tasks.length,0));
-  return {rows,totals};
-}
