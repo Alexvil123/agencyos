@@ -1,7 +1,7 @@
 import type {TimeTask} from './time-types';
 // Pure calendar helpers. All days are India calendar days written as YYYY-MM-DD.
 export type CalendarView='month'|'week';
-export type CalendarTone='done'|'progress'|'hold'|'overdue'|'todo';
+type CalendarTone='done'|'progress'|'hold'|'overdue'|'todo';
 const DAY=86400000;
 const utc=(iso:string)=>Date.parse(`${iso}T00:00:00Z`);
 const iso=(ms:number)=>new Date(ms).toISOString().slice(0,10);

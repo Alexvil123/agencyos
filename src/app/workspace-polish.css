@@ -181,9 +181,7 @@ html[data-theme=dark] :is(.work-drawer input,.work-drawer select,.work-drawer te
 @media(prefers-reduced-motion:reduce){
 .sync-spinning{animation:none}
 }
-@media(min-width:721px) and (max-width:1050px){
-.dash-summary-grid:not(.work-task-summary)>.dash-today{grid-column:auto;display:block}
-}
+
 .jira-client-search{display:flex;gap:9px;align-items:center;padding:0 22px 18px;color:var(--muted)}
 .jira-client-search input{max-width:420px}
 .jira-client-link{display:inline-flex;align-items:center;gap:7px;color:var(--purple);font-size:12px;font-weight:600}

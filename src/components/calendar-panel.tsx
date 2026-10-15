@@ -11,12 +11,12 @@ import {taskClientLabel,taskDisplayStatus} from '@/lib/work-jira-sync';
 import type {WorkData} from '@/lib/work-report';
 import type {TimeTask} from '@/lib/time-types';
 import {conditionalReader} from '@/lib/conditional-read';
+import {initials} from '@/lib/text';
 import {useAutoRefresh,notifyWorkspaceChange} from './use-auto-refresh';
 import {WorkDrawer} from './work-drawer';
 
 type Loaded=Awaited<ReturnType<typeof loadWorkData>>;
 const WEEKDAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const initials=(name:string)=>name.trim().split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase();
 
 export function CalendarPanel({preview}:{preview:boolean}){
   const [data,setData]=useState<WorkData>(),[today,setToday]=useState(''),[error,setError]=useState('');

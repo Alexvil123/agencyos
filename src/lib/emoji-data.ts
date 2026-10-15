@@ -1,6 +1,6 @@
 // Emojis for Team Chat, grouped like a phone keyboard. Plain text characters: nothing is downloaded, and they render with the
 // device's own emoji font. Only emojis that every current phone and Windows 11 can draw are listed (no very new ones).
-export type EmojiGroup={id:string;label:string;icon:string;emojis:string[]};
+type EmojiGroup={id:string;label:string;icon:string;emojis:string[]};
 const split=(value:string)=>[...new Intl.Segmenter('en',{granularity:'grapheme'}).segment(value.replace(/\s+/g,''))].map(part=>part.segment);
 export const EMOJI_GROUPS:EmojiGroup[]=[
   {id:'smileys',label:'Smileys',icon:'😀',emojis:split(`

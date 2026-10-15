@@ -5,7 +5,7 @@ export const PAYMENT_METHODS=['bank','upi','cash','card','other'] as const;
 export const INVOICE_STATUSES=['draft','sent','partial','overdue','paid','void'] as const;
 export type InvoiceStatus=typeof INVOICE_STATUSES[number];
 export type FinanceItem={description:string;quantity:number;unit_price:number};
-export type FinancePayment={id:string;amount:number;paid_on:string;method:string;reference:string|null;voided_at:string|null;void_reason:string|null};
+type FinancePayment={id:string;amount:number;paid_on:string;method:string;reference:string|null;voided_at:string|null;void_reason:string|null};
 export type FinanceInvoice={id:string;number:string;client_name:string;client_email:string|null;issue_date:string;due_date:string;currency:string;tax_percent:number;discount:number;notes:string|null;status:'draft'|'sent'|'void';display_status:InvoiceStatus;subtotal:number;tax:number;total:number;paid:number;balance:number;items:FinanceItem[];payments:FinancePayment[]};
 
 const round=(value:number)=>Math.round((value+Number.EPSILON)*100)/100;

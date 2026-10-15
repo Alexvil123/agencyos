@@ -4,7 +4,7 @@ import {serverClient} from '@/lib/supabase/server';
 import {readTimeData} from '@/lib/time-data-server';
 import {salesConnection,loadSales} from './sales-actions';
 import {workAlerts,salesFollowups,type WorkspaceAlert} from '@/lib/day-insights';
-export type SyncHealth={integration:string;last_checked_at:string;last_success_at:string|null;state:'ok'|'attention'};
+type SyncHealth={integration:string;last_checked_at:string;last_success_at:string|null;state:'ok'|'attention'};
 export async function loadWorkspaceInsights(){
  try{const ctx=await workspaceContext();if(ctx.preview||ctx.kind!=='employee')throw new Error('Employee sign-in required.');const db=await serverClient(),owner=ctx.roles.includes('Owner');
  const [work,sales,health]=await Promise.all([readTimeData(ctx,db),salesConnection(),db.from('workspace_sync_health').select('integration,last_checked_at,last_success_at,state').eq('organization_id',ctx.organizationId).or(`scope_key.eq.${ctx.membershipId}${owner?',scope_key.eq.organization':''}`).order('last_checked_at',{ascending:false})]);

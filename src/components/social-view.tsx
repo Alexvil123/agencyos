@@ -6,16 +6,16 @@ import type {SocialResult} from '@/app/social-actions';
 import {ANALYTICS_PRESETS,analyticsDays,type AnalyticsPreset,type AnalyticsRange} from '@/lib/analytics';
 import {byKind,byPlatform,engagement,postingTimes,socialTotals,viewsByDay,type SocialPlatform,type SocialPost} from '@/lib/social';
 import {csvCell} from '@/lib/work-report';
+import {shortDay} from '@/lib/display-time';
 import {BarChart} from './analytics-charts';
 
-export type SocialSortKey='published'|'views'|'reach'|'likes'|'comments'|'shares'|'engagement';
+type SocialSortKey='published'|'views'|'reach'|'likes'|'comments'|'shares'|'engagement';
 export type SocialSort={key:SocialSortKey;direction:1|-1};
 const NAME:Record<SocialPlatform,string>={instagram:'Instagram',facebook:'Facebook',youtube:'YouTube'};
 const count=(value:number|null)=>value===null?'—':new Intl.NumberFormat('en-IN').format(Math.round(value));
 const short=(value:number)=>value>=1e7?`${(value/1e7).toFixed(1)}Cr`:value>=1e5?`${(value/1e5).toFixed(1)}L`:value>=1e3?`${(value/1e3).toFixed(1)}K`:String(Math.round(value));
 const percent=(value:number|null)=>value===null?'—':`${value.toFixed(1)}%`;
 const dayText=(iso:string)=>Number.isFinite(Date.parse(iso))?new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric'}).format(new Date(iso)):'—';
-const shortDay=(day:string)=>new Intl.DateTimeFormat('en-IN',{timeZone:'UTC',day:'numeric',month:'short'}).format(new Date(`${day}T00:00:00Z`));
 const sortValue=(post:SocialPost,key:SocialSortKey)=>key==='published'?Date.parse(post.publishedAt)||0:key==='engagement'?engagement(post)??-1:key==='shares'?(post.shares||0)+(post.saves||0):(post[key]??-1);
 const SETUP:{platform:SocialPlatform;vars:string[];note:string}[]=[
   {platform:'instagram',vars:['META_SOCIAL_ACCESS_TOKEN','INSTAGRAM_ACCOUNT_IDS'],note:'Instagram Business or Creator account linked to a Facebook Page. The token needs instagram_basic and instagram_manage_insights.'},

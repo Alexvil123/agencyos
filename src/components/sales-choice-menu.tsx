@@ -4,7 +4,7 @@ import {useEffect,useRef} from 'react';
 export type ChoiceColor={background?:string;color?:string};
 const HUES:[RegExp,number][]=[[/not interested|negative|reject|lost|cancel|declin|no response|fail|not reachable|^no$/,355],[/complet|done|won|success|positive|interested|closed|convert|approved|^yes$/,145],[/pending|hold|wait|follow|call ?back|later|progress|process|review/,38],[/appoint|schedul|visit|meeting|demo|book/,215],[/new|lead|open/,270]];
 // Google does not expose a dropdown chip's colour through the Sheets API, so the CRM picks a stable colour from the option text.
-export function chipHue(text:string){const value=text.trim().toLowerCase();for(const [pattern,hue] of HUES)if(pattern.test(value))return hue;let hash=0;for(const ch of value)hash=(hash*31+ch.charCodeAt(0))%360;return hash;}
+function chipHue(text:string){const value=text.trim().toLowerCase();for(const [pattern,hue] of HUES)if(pattern.test(value))return hue;let hash=0;for(const ch of value)hash=(hash*31+ch.charCodeAt(0))%360;return hash;}
 export function chipProps(text:string,sheet?:ChoiceColor):{className:string;style?:React.CSSProperties;'data-hue'?:number}{
   if(sheet?.background&&sheet.background.toLowerCase()!=='#ffffff')return {className:'sales-chip',style:{backgroundColor:sheet.background,color:sheet.color||undefined}};
   const hue=chipHue(text);return {className:'sales-chip','data-hue':hue,style:{'--h':hue} as React.CSSProperties};

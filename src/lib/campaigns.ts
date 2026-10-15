@@ -1,13 +1,13 @@
 // Meta Ads and Google Ads campaign reporting. This file is pure (no environment, no secrets): request building,
 // parsing and totals. The network calls take an injectable `fetcher` so they can be tested without real credentials.
 export type CampaignPlatform='meta'|'google';
-export type CampaignStatus='active'|'paused'|'ended'|'other';
+type CampaignStatus='active'|'paused'|'ended'|'other';
 export type CampaignRow={platform:CampaignPlatform;account:string;id:string;name:string;status:CampaignStatus;objective:string;currency:string;spend:number;impressions:number;clicks:number;conversions:number};
 export type CampaignRange={from:string;to:string};
 export type Fetcher=typeof fetch;
 
 // Meta reports most failures as HTTP 400 with an error code in the body (190 = expired or invalid token, 10/200-299 = permission, 4/17/32/613 = rate limit).
-export function metaEffectiveStatus(status:number,code?:number){
+function metaEffectiveStatus(status:number,code?:number){
   if(code===undefined)return status;
   if(code===190||code===102||code===467)return 401;
   if(code===10||(code>=200&&code<300))return 403;
@@ -68,7 +68,7 @@ export function metaStatus(value:string|undefined):CampaignStatus{
   return 'other';
 }
 export function normalizeMetaAccount(value:string){const id=value.trim().replace(/^act_/i,'');if(!/^\d{5,20}$/.test(id))throw new Error('Meta ad account IDs must be numbers (for example act_1234567890).');return `act_${id}`;}
-export function metaRequestUrls(config:MetaConfig,account:string,range:CampaignRange){
+function metaRequestUrls(config:MetaConfig,account:string,range:CampaignRange){
   const base=`https://${META_HOST}/${config.version}/${account}`,time=encodeURIComponent(JSON.stringify({since:range.from,until:range.to}));
   return {
     campaigns:`${base}/campaigns?fields=${encodeURIComponent('id,name,effective_status,objective')}&limit=500`,

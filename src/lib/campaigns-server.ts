@@ -8,7 +8,7 @@ import {credentialValues} from './integrations-server';
 //   GOOGLE_ADS_CUSTOMER_IDS (comma separated), optional GOOGLE_ADS_LOGIN_CUSTOMER_ID, GOOGLE_ADS_API_VERSION (default v25)
 // They never reach the browser and are never logged.
 const list=(value:string|undefined)=>(value||'').split(',').map(v=>v.trim()).filter(Boolean);
-export type PlatformConfig<T>={configured:false}|{configured:true;error:string}|{configured:true;error?:undefined;config:T};
+type PlatformConfig<T>={configured:false}|{configured:true;error:string}|{configured:true;error?:undefined;config:T};
 const WHERE='Add them in Settings → Integrations.';
 export async function metaConfig(org:string):Promise<PlatformConfig<MetaConfig>>{
   const {values}=await credentialValues(org,'meta_ads'),token=values.token,ids=list(values.account_ids);
@@ -17,7 +17,7 @@ export async function metaConfig(org:string):Promise<PlatformConfig<MetaConfig>>
   try{const version=/^v\d+\.\d+$/.test(values.version||'')?values.version!:'v25.0';return {configured:true,config:{token,accounts:ids.map(normalizeMetaAccount),version}};}
   catch(error){return {configured:true,error:error instanceof Error?error.message:'Meta settings are invalid.'};}
 }
-export async function googleConfig(org:string):Promise<PlatformConfig<GoogleConfig>>{
+async function googleConfig(org:string):Promise<PlatformConfig<GoogleConfig>>{
   const {values}=await credentialValues(org,'google_ads'),parts={developerToken:values.developer_token,clientId:values.client_id,clientSecret:values.client_secret,refreshToken:values.refresh_token},ids=list(values.customer_ids);
   if(!Object.values(parts).some(Boolean)&&!ids.length)return {configured:false};
   if(!parts.developerToken||!parts.clientId||!parts.clientSecret||!parts.refreshToken||!ids.length)return {configured:true,error:`The developer token, OAuth client ID and secret, refresh token and customer IDs are all needed. ${WHERE}`};

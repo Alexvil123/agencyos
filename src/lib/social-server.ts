@@ -8,7 +8,7 @@ import {credentialValues} from './integrations-server';
 //   FACEBOOK_PAGE_IDS, INSTAGRAM_ACCOUNT_IDS (comma separated numeric IDs), optional META_GRAPH_VERSION (default v25.0)
 //   YOUTUBE_API_KEY, YOUTUBE_CHANNEL_IDS (comma separated, UC...)
 const list=(value:string|undefined)=>(value||'').split(',').map(v=>v.trim()).filter(Boolean);
-export type SocialConfig<T>={configured:false}|{configured:true;error:string}|{configured:true;error?:undefined;config:T};
+type SocialConfig<T>={configured:false}|{configured:true;error:string}|{configured:true;error?:undefined;config:T};
 const WHERE='Add them in Settings → Integrations.';
 async function metaConfig(org:string,kind:'instagram'|'facebook'):Promise<SocialConfig<MetaSocialConfig>>{
   const {values}=await credentialValues(org,'meta_social'),token=values.token,pages=list(values.facebook_page_ids),accounts=list(values.instagram_account_ids),ids=kind==='instagram'?accounts:pages;

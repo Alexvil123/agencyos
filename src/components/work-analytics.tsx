@@ -6,13 +6,13 @@ import {Download,RefreshCw} from 'lucide-react';
 import type {loadWorkData} from '@/app/work-actions';
 import {conditionalReader} from '@/lib/conditional-read';
 import {workRecordScope} from '@/lib/work-record-scope';
+import {shortDay} from '@/lib/display-time';
 import {clockDuration,csvCell,indiaDate,type WorkData} from '@/lib/work-report';
 import {ANALYTICS_PRESETS,analyticsRange,analyticsSummary,completedByDay,openMix,trackedBy,trackedByDay,type AnalyticsPreset,type Breakdown} from '@/lib/analytics';
 import {useAutoRefresh} from './use-auto-refresh';
 
 const hours=(seconds:number)=>Math.round(seconds/360)/10;
 const hm=(seconds:number)=>{const value=Math.max(0,Math.round(seconds/60));return `${Math.floor(value/60)}h ${String(value%60).padStart(2,'0')}m`;};
-const shortDay=(day:string)=>new Intl.DateTimeFormat('en-IN',{timeZone:'UTC',day:'numeric',month:'short'}).format(new Date(`${day}T00:00:00Z`));
 
 function Bars({title,rows,empty}:{title:string;rows:Breakdown[];empty:string}){
   const max=Math.max(1,...rows.map(r=>r.seconds));

@@ -1,11 +1,11 @@
 import {createHash} from 'node:crypto';
 import {salesColumn,salesValue,type SalesCell,type SalesGrid,type SalesRow} from './sales-sheet';
 export type NativeCell={formattedValue?:string;userEnteredValue?:{stringValue?:string;numberValue?:number;boolValue?:boolean;formulaValue?:string};effectiveValue?:{stringValue?:string;numberValue?:number;boolValue?:boolean};effectiveFormat?:{numberFormat?:{type?:string};backgroundColor?:{red?:number;green?:number;blue?:number};textFormat?:{bold?:boolean;foregroundColor?:{red?:number;green?:number;blue?:number}}};dataValidation?:{condition?:{type?:string;values?:{userEnteredValue?:string}[]}};chipRuns?:unknown[];textFormatRuns?:unknown[];[key:string]:unknown};
-export type GridRange={sheetId?:number;startRowIndex?:number;endRowIndex?:number;startColumnIndex?:number;endColumnIndex?:number};
+type GridRange={sheetId?:number;startRowIndex?:number;endRowIndex?:number;startColumnIndex?:number;endColumnIndex?:number};
 export type NativeSheet={properties:{sheetId:number;title:string;hidden?:boolean;gridProperties:{rowCount:number;columnCount:number;frozenRowCount?:number}};merges?:GridRange[];protectedRanges?:{range?:GridRange;warningOnly?:boolean}[];data?:{rowData?:{values?:NativeCell[]}[]}[]};
 export type NativeWorkbook={properties:{title:string};sheets:NativeSheet[]};
 export type NativeSales={grid:SalesGrid;native:NativeSheet};
-export const hashSales=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const hashSales=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const populated=(c:NativeCell)=>Boolean(c.formattedValue||c.userEnteredValue||c.effectiveValue);
 const inside=(r:number,c:number,range:GridRange)=>r>=(range.startRowIndex||0)&&r<(range.endRowIndex??Infinity)&&c>=(range.startColumnIndex||0)&&c<(range.endColumnIndex??Infinity);
 const arrayFormula=(value:string)=>/\b(ARRAYFORMULA|QUERY|FILTER|IMPORTRANGE|SEQUENCE|UNIQUE|SORT)\s*\(/i.test(value);

@@ -1,7 +1,7 @@
 // Shared display calculations. Persisted clock events must use database/server time.
 export const EXPECTED_SECONDS=9.5*60*60;
-export type TimeSpan={start:string;end:string|null;excluded?:boolean};
-export type OvertimeBasis='combined'|'working';
+type TimeSpan={start:string;end:string|null;excluded?:boolean};
+type OvertimeBasis='combined'|'working';
 function instant(value:string){const result=Date.parse(value);if(!Number.isFinite(result)||!/(Z|[+-]\d\d:\d\d)$/.test(value))throw new Error('Timestamp requires a timezone');return result;}
 export function attendanceTotals(clockIn:string,clockOut:string|null,breaks:TimeSpan[],now:string,basis:OvertimeBasis){
  const start=instant(clockIn),finish=instant(clockOut||now);if(finish<start)throw new Error('Clock out precedes clock in');

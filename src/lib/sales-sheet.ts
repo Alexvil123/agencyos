@@ -70,7 +70,7 @@ export function salesColumnValues(rows:SalesRow[],column:number){
  for(const row of rows){const c=row.cells[column];const text=c?.text||'';const key=text;const entry=counts.get(key);const raw=c?.raw??c?.effective;if(entry)entry.count++;else counts.set(key,{text,count:1,order:typeof raw==='number'?raw:text.toLowerCase()});}
  return [...counts.values()].sort((a,b)=>(a.text===''?1:0)-(b.text===''?1:0)||(typeof a.order==='number'&&typeof b.order==='number'?a.order-b.order:String(a.order).localeCompare(String(b.order),undefined,{numeric:true})));
 }
-export const SALES_FILTER_LABELS:Record<SalesFilterOp,string>={is:'is',contains:'contains',empty:'is empty',notempty:'is not empty',gte:'on or after',lte:'on or before',in:'is one of',isnot:'is not',notcontains:'does not contain',startswith:'starts with',endswith:'ends with',exact:'is exactly',eq:'is',neq:'is not',gt:'is after / greater than',lt:'is before / less than',between:'is between',notbetween:'is not between'};
+const SALES_FILTER_LABELS:Record<SalesFilterOp,string>={is:'is',contains:'contains',empty:'is empty',notempty:'is not empty',gte:'on or after',lte:'on or before',in:'is one of',isnot:'is not',notcontains:'does not contain',startswith:'starts with',endswith:'ends with',exact:'is exactly',eq:'is',neq:'is not',gt:'is after / greater than',lt:'is before / less than',between:'is between',notbetween:'is not between'};
 export function describeSalesFilter(header:string,f:SalesFilter){
  if(f.op==='in'){const values=f.values||[];const shown=values.slice(0,2).map(v=>v||'(Blanks)').join(', ');return `${header}: ${shown}${values.length>2?` +${values.length-2}`:''}`;}
  const label=SALES_FILTER_LABELS[f.op];
@@ -79,7 +79,7 @@ export function describeSalesFilter(header:string,f:SalesFilter){
  return `${header} ${label} ${f.value}`;
 }
 // Google Sheets shortcuts: Ctrl+; date, Ctrl+Shift+; time, Ctrl+Alt+Shift+; date and time (Cmd on Mac).
-export type SalesStamp='date'|'time'|'datetime';
+type SalesStamp='date'|'time'|'datetime';
 export function salesStampShortcut(e:{ctrlKey:boolean;metaKey:boolean;shiftKey:boolean;altKey:boolean;code:string;key?:string}):SalesStamp|null{
  if(!(e.ctrlKey||e.metaKey)||!(e.code==='Semicolon'||e.key===';'||e.key===':'))return null;
  if(e.altKey&&e.shiftKey)return 'datetime';

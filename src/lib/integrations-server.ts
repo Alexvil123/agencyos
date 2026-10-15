@@ -15,11 +15,11 @@ export const masterKeyBase64=()=>masterKey()?.toString('base64')||null;
 const missingTable=(error:{code?:string;message?:string}|null)=>Boolean(error&&(error.code==='42P01'||error.code==='PGRST205'||/integration_credentials/.test(error.message||'')&&/does not exist|schema cache/i.test(error.message||'')));
 
 type Stored={payload:Payload;updatedAt:string;hint:string};
-export type StoredState={state:'none'}|{state:'unreadable';updatedAt:string}|{state:'ok';stored:Stored};
+type StoredState={state:'none'}|{state:'unreadable';updatedAt:string}|{state:'ok';stored:Stored};
 type Cached=StoredState&{setupRequired?:boolean};
 const cache=new Map<string,{expires:number;value:Cached}>();
 const cacheKey=(org:string,provider:ProviderKey)=>`${org}:${provider}`;
-export function forgetCredentials(org:string,provider:ProviderKey){cache.delete(cacheKey(org,provider));}
+function forgetCredentials(org:string,provider:ProviderKey){cache.delete(cacheKey(org,provider));}
 
 export async function readStored(org:string,provider:ProviderKey,fresh=false):Promise<StoredState&{setupRequired?:boolean}>{
   const key=cacheKey(org,provider),hit=cache.get(key);

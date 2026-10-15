@@ -12,7 +12,7 @@ import {salesTeamMembers} from './sales-team-server';
 import {credentialValues,saveCredentials} from './integrations-server';
 const file=join(process.cwd(),'.sales-google.local.json');
 const schema=z.object({organizationId:z.uuid(),email:z.email().refine(v=>v.endsWith('.iam.gserviceaccount.com')),key:z.string().max(10000).refine(v=>v.includes('PRIVATE KEY')),members:z.array(z.uuid()).max(500)});
-export type SalesConfig=z.infer<typeof schema>;
+type SalesConfig=z.infer<typeof schema>;
 const authClients=new Map<string,JWT>();
 const snapshots=new Map<string,{expires:number;pending?:boolean;promise:Promise<NativeSales>}>();
 const metadataCache=new Map<string,{expires:number;pending?:boolean;promise:Promise<{sheets:NativeSheet[]}>}>();

@@ -7,8 +7,8 @@ import {z} from 'zod';
 import {sealTokens,openTokens,type OAuthTokens} from './jira-oauth-core';
 import {credentialValues,masterKeyBase64} from './integrations-server';
 import type {JiraCredentials} from './jira-http';
-export const oauthAppFile=join(process.cwd(),'.jira-oauth-app.local.json');
-export type OAuthApp={clientId:string;clientSecret:string;encryptionKey:string;organizationId:string};
+const oauthAppFile=join(process.cwd(),'.jira-oauth-app.local.json');
+type OAuthApp={clientId:string;clientSecret:string;encryptionKey:string;organizationId:string};
 export function oauthDb() {
  if(!process.env.SUPABASE_SECRET_KEY)throw new Error('Jira server setup missing');
  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false,autoRefreshToken:false}});

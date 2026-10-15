@@ -75,7 +75,6 @@ nav{overflow-y:auto}
 .page-heading p{font-size:12px;color:var(--muted);line-height:1.7}
 .workspace-state{display:flex;align-items:center;gap:7px;font-size:10px;color:#9095a3;padding:9px 11px;background:white;border:1px solid var(--line);border-radius:7px}
 .label-pill{display:inline-flex;align-items:center;gap:6px;font-size:8px;letter-spacing:1.3px;color:#8c77c3;background:#e9e2fa;border:1px solid #e2daf5;padding:5px 8px;border-radius:5px;margin-bottom:13px;font-weight:600}
-.s2{bottom:28px;left:103px;width:4px;height:4px}
 .panel{background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .panel-title{padding:21px 22px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .panel-title h2{font-size:14px}
@@ -502,8 +501,6 @@ html[data-theme=dark] .command-trigger{border-color:#333448}
 .dash-card-head button,.dash-card-head a{color:var(--purple);font-size:11px;display:flex;gap:5px;align-items:center;white-space:nowrap}
 .dash-dot{display:inline-block;flex-shrink:0;width:7px;height:7px;border-radius:50%;background:currentColor}
 .dash-dot.green{background:#21b77e}
-.dash-dot.orange{background:#ff8b31}
-.dash-dot.gray{background:#a9afc0}
 .dash-dot.blue{background:#438dff}
 .dash-action{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid;border-radius:7px;padding:10px 12px;font-size:11px;font-weight:600;white-space:nowrap}
 .dash-action.break{color:var(--purple);background:#f3f0ff;border-color:#e8e1ff}
@@ -584,7 +581,6 @@ html[data-theme=dark] .command-trigger{border-color:#333448}
 .tone-2{background:#e6f2ff;color:#3f91f6}
 .tone-3{background:#eeebff;color:#8363e9}
 .tone-4{background:#e5f6ed;color:#38ac78}
-.dash-activity-item:not(:last-child):before{content:'';position:absolute;left:15px;top:35px;height:28px;width:1px;background:var(--line)}
 .dash-layout+.panel{margin-top:20px}
 html[data-theme=dark] :is(.dash-view-switch,.dash-filters select,.dash-summary-grid>.panel,.dash-rail>.panel){background:#171b2a}
 html[data-theme=dark] .dash-task-table th{background:#1c2031}
@@ -674,9 +670,6 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 .dash-summary-grid.work-task-summary{grid-template-columns:1fr}
 }
 .sales-workspace{display:grid;gap:20px}
-.sales-summary{padding:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(120deg,var(--surface,#fff),rgba(124,92,255,.08))}
-.sales-summary h2{margin:8px 0}
-.sales-summary p{color:var(--muted,#78809b)}
 .sales-data{overflow:hidden}
 .sales-data>.panel-title{padding:16px 20px}
 .sales-filters{display:flex;gap:12px;flex-wrap:wrap;padding:0 20px}
@@ -688,19 +681,11 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 .sales-table td{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sales-table tr:hover{background:rgba(124,92,255,.04)}
 .sales-pagination{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 20px}
-.sales-team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.sales-team-grid label{padding:12px;border:1px solid var(--border,#ebedf5);border-radius:10px}
-.sales-team-grid small{display:block;color:var(--muted,#78809b)}
-.sales-editor{border:1px solid #a08bff}
-.sales-editor textarea{min-height:90px}
 @media(max-width:760px){
-.sales-summary{align-items:flex-start;flex-direction:column}
 .sales-filters>*{width:100%}
 .sales-pagination{justify-content:center}
 }
-:root .sales-editor textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px 13px;font:inherit;color:var(--ink);background:#fff}
 html[data-theme=dark] .sales-table th{background:#171b2a}
-html[data-theme=dark] .sales-editor textarea{background:#1b2032;border-color:#35364e}
 html[data-theme=dark] .sales-table :is(th,td),html[data-theme=dark] .sales-team-grid label{border-color:var(--line)}
 .sales-data .tabs{display:flex;flex-wrap:wrap;gap:4px;margin:0;border:0}
 .sales-data>.panel-title{align-items:flex-start}
@@ -766,14 +751,12 @@ html[data-theme=dark] .sales-table :is(th,.sales-row-number,.sales-actions-colum
 html[data-theme=dark] .sales-table :is(th,td){border-color:#354058}
 html[data-theme=dark] .sales-inline-input,html[data-theme=dark] .sales-record-modal{background:#1b2032;color:#e7ecfa}
 html[data-theme=dark] .sales-draft-row td{background:#2c2345!important}
-@media(max-width:1000px){
-}
+
 @media(max-width:760px){
 .sales-edit-fields{grid-template-columns:1fr}
 .sales-editor-footer{flex-wrap:wrap}
 .sales-editor-footer p{flex-basis:100%}
 .sales-data>.panel-title{flex-direction:column;gap:12px}
-.sales-summary .heading-actions{display:flex;flex-wrap:wrap;gap:8px}
 }
 .sales-draft-notice{margin:0;padding:10px 20px;background:var(--soft);color:var(--purple);font-size:12px;border-top:1px solid var(--line)}
 .settings-panel:empty{display:none}

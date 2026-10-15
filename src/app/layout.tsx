@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
 import '@fontsource/dm-sans/600.css';
@@ -19,5 +20,5 @@ export const metadata: Metadata = { title: 'Agency OS · Your agency, connected'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Applies the saved appearance before first paint (also on the sign-in pages, which have no theme button).
   const theme = "try{if(localStorage.getItem('agency-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}";
-  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: theme}}/></head><body>{children}</body></html>;
+  return <html lang="en" suppressHydrationWarning><body>{children}<Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{__html: theme}}/></body></html>;
 }

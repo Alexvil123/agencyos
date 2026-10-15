@@ -4,7 +4,7 @@ import {normalizeChannelId,normalizeMetaId} from './social';
 // Integration credentials that the Owner enters in Settings. This module is pure (no environment, no database):
 // provider definitions, validation, masking and encryption. Secrets are sealed with AES-256-GCM and are never returned to the browser.
 export type ProviderKey='meta_social'|'youtube'|'meta_ads'|'google_ads'|'google_sheets'|'jira_oauth_app';
-export type FieldSpec={key:string;label:string;secret?:boolean;required?:boolean;multiline?:boolean;placeholder?:string;help?:string};
+type FieldSpec={key:string;label:string;secret?:boolean;required?:boolean;multiline?:boolean;placeholder?:string;help?:string};
 export type ProviderSpec={key:ProviderKey;title:string;description:string;env:Record<string,string>;fields:FieldSpec[];guide:string};
 
 export const PROVIDERS:ProviderSpec[]=[
@@ -97,8 +97,8 @@ export function publicIntegration(spec:ProviderSpec,source:PublicIntegration['so
   return {provider:spec.key,source,hint:hint||(payload?hintFor(spec.key,payload):''),updatedAt,values,has,accounts:payload?accountsOf(spec.key,payload):[]};
 }
 // ---------- accounts (several Pages / channels / ad accounts per integration) ----------
-export type AccountKind={field:string;noun:string;normalize:(value:string)=>string;placeholder:string};
-export type AccountEntry={field:string;id:string;label:string};
+type AccountKind={field:string;noun:string;normalize:(value:string)=>string;placeholder:string};
+type AccountEntry={field:string;id:string;label:string};
 export const ACCOUNT_KINDS:Partial<Record<ProviderKey,AccountKind[]>>={
   meta_social:[{field:'facebook_page_ids',noun:'Facebook Page',normalize:normalizeMetaId,placeholder:'Page ID, e.g. 1234567890'},{field:'instagram_account_ids',noun:'Instagram account',normalize:normalizeMetaId,placeholder:'Instagram account ID, e.g. 17841400000000000'}],
   youtube:[{field:'channel_ids',noun:'YouTube channel',normalize:normalizeChannelId,placeholder:'Channel ID starting with UC'}],

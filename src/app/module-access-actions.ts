@@ -8,7 +8,7 @@ import {salesTeamMembers} from '@/lib/sales-team-server';
 // Settings → Module access. Only the Owner can read or change who may open Sales, Calendar, Campaigns, Finance and Analytics;
 // the database functions enforce the same rule.
 export type AccessPerson={membershipId:string;name:string};
-export type ModuleAccessResult={ok:boolean;message:string;people:AccessPerson[];granted:Record<string,string[]>};
+type ModuleAccessResult={ok:boolean;message:string;people:AccessPerson[];granted:Record<string,string[]>};
 const none={people:[] as AccessPerson[],granted:{} as Record<string,string[]>};
 async function ownerContext(){const ctx=await workspaceContext();if(ctx.preview||ctx.kind!=='employee'||!ctx.roles.includes('Owner'))throw new Error('Only the Owner can manage module access.');return ctx;}
 

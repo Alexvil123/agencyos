@@ -35,7 +35,7 @@ const num=(value:unknown)=>{const n=typeof value==='string'||typeof value==='num
 const trim=(text:string|undefined,max=140)=>{const clean=(text||'').replace(/\s+/g,' ').trim();return clean.length>max?`${clean.slice(0,max-1)}…`:clean;};
 // Meta writes offsets as +0000 (no colon), which Safari cannot parse; every timestamp is stored as a standard ISO string, or '' when invalid.
 export function isoTime(value:string|undefined){const t=Date.parse(value||'');return Number.isFinite(t)?new Date(t).toISOString():'';}
-export function istBounds(range:CampaignRange){validateRange(range);return {start:Date.parse(`${range.from}T00:00:00+05:30`),end:Date.parse(`${range.to}T23:59:59.999+05:30`)};}
+function istBounds(range:CampaignRange){validateRange(range);return {start:Date.parse(`${range.from}T00:00:00+05:30`),end:Date.parse(`${range.to}T23:59:59.999+05:30`)};}
 async function mapLimit<T,R>(items:T[],limit:number,work:(item:T)=>Promise<R>){
   const results:R[]=new Array(items.length);let next=0;
   await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(next<items.length){const index=next++;results[index]=await work(items[index]);}}));

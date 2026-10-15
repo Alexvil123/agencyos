@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useTransition } from 'rea
 import { Activity, ArrowDownLeft, CalendarDays, ArrowRight, ArrowUpRight, Bell, Building2, ChevronDown, CircleHelp, Clock3, Command, FileBarChart2, Globe, Library, Layers3, LayoutDashboard, LockKeyhole, Megaphone, Menu, MessageSquare, MessagesSquare, MoreHorizontal, Plus, Search, Settings2, ShieldCheck, Target, Users, Wallet, X, Zap } from 'lucide-react';
 import type { WorkspaceContext } from '@/lib/access';
 import type { WorkspaceData } from '@/lib/data';
+import { initials } from '@/lib/text';
 import { modules, moduleFor, moduleVisible } from '@/lib/modules';
 import { createDepartment, saveCompany } from '@/app/actions';
 import { inviteMember, changeMember } from '@/app/user-actions';
@@ -132,7 +133,6 @@ function MemberControl({ member, roles, isOwner, onResult }: {member: WorkspaceD
   const [role, setRole] = useState(''); const [action, setAction] = useState('grant'); const [busy, start] = useTransition();
   return <form className="member-controls" action={f => start(async () => onResult(await changeMember(f)))}><input type="hidden" name="membership_id" value={member.id}/><select name="action" aria-label="Account action" value={action} onChange={e => setAction(e.target.value)}><option value="grant">Grant role</option><option value="revoke">Remove role</option><option value="activate">Activate</option><option value="deactivate">Deactivate</option>{isOwner && <option value="transfer">Transfer ownership</option>}</select>{['grant','revoke'].includes(action) && <select name="role_key" aria-label="Role" value={role} onChange={e => setRole(e.target.value)} required><option value="">Select role</option>{roles.map(r => <option value={r.key} key={r.key}>{r.name}</option>)}</select>}<label className="checkbox-label"><input type="checkbox" name="confirmed" value="yes" required/>Confirm change</label><button className="secondary small" disabled={busy}>{busy ? 'Saving…' : 'Apply'}</button></form>;
 }
-function initials(name: string) { return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase(); }
 function PanelTitle({title, subtitle, right}: {title: string; subtitle: string; right?: React.ReactNode}) {return <div className="panel-title"><div><h2>{title}</h2><p>{subtitle}</p></div>{right}</div>;}
 function Empty({icon, title, text, action}: {icon: React.ReactNode; title: string; text: string; action?: React.ReactNode}) {return <div className="empty-state"><div className="empty-icon">{icon}</div><h3>{title}</h3><p>{text}</p>{action}</div>;}
 

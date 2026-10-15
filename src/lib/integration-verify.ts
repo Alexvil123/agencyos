@@ -1,7 +1,7 @@
 import type {Payload,ProviderKey} from './integrations';
 // Light live checks run when the Owner saves an integration. They prove the credentials are accepted before they replace working ones.
 // 'rejected' blocks the save; 'unknown' (network trouble) still saves with a warning. Messages never contain secrets or raw API text.
-export type VerifyResult={ok:boolean;level:'accepted'|'rejected'|'unknown';message:string};
+type VerifyResult={ok:boolean;level:'accepted'|'rejected'|'unknown';message:string};
 type Fetcher=typeof fetch;
 const list=(value:string|undefined)=>(value||'').split(',').map(v=>v.trim()).filter(Boolean);
 const accepted=(message:string):VerifyResult=>({ok:true,level:'accepted',message});

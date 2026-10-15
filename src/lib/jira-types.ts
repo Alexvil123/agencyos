@@ -2,7 +2,7 @@ export const JIRA_SITE = 'https://vilpowerdigitalmarketing.atlassian.net';
 // Work lives in one Jira project per month (JAN … DEC); SOURCE is the reference library. A month project only appears once it exists in Jira.
 export const MONTH_PROJECTS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] as const;
 export const JIRA_PROJECTS = [...MONTH_PROJECTS, 'SOURCE'] as const;
-export type MonthProject = typeof MONTH_PROJECTS[number];
+type MonthProject = typeof MONTH_PROJECTS[number];
 export const isMonthProject = (value: string): value is MonthProject => (MONTH_PROJECTS as readonly string[]).includes(value);
 const keyPattern = (projects: readonly string[]) => new RegExp('^(' + projects.join('|') + ')-[1-9][0-9]*$');
 /** Any CRM Jira key (month projects and SOURCE) / a key in a month project only. */

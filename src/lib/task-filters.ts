@@ -1,7 +1,7 @@
 import type {TimeTask} from './time-types';
 import {taskMatchesClient} from './work-jira-sync';
 
-export type TaskFilters={source:string;query:string;status:string;client:string;project:string;sort:string;dateField?:'due'|'created'|'updated';from?:string;to?:string;missingDate?:boolean};
+type TaskFilters={source:string;query:string;status:string;client:string;project:string;sort:string;dateField?:'due'|'created'|'updated';from?:string;to?:string;missingDate?:boolean};
 export function filterWorkTasks(tasks:TimeTask[],f:TaskFilters):TimeTask[]{
  return tasks.filter(t=>taskMatchesDate(t,f)&&t.jira_available!==false&&(f.source==='all'||(t.source||'manual')===f.source)
   &&(f.status==='all'||(t.source==='jira'?f.status===`jira:${t.jira_status_id}`:f.status===`manual:${t.work_status||'pending'}`))

@@ -5,7 +5,7 @@ import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ArrowRight, Building2, Check, Database, Grid2X2, List, Mail, Plus, Search, ShieldCheck, UserRound, Users, X } from 'lucide-react';
 import { RecordEditor,RecordEditButton,PasswordChangeForm } from './record-editor';
 import type { WorkspaceData } from '@/lib/data';
-function initials(name: string) { return name.trim().split(/\s+/).map(n=>n[0]).slice(0,2).join('').toUpperCase(); }
+import { initials } from '@/lib/text';
 export function TeamPanel({ data, canManage, isOwner, preview, initialQuery, onAddEmployee, onAddDepartment }: { data: WorkspaceData; canManage: boolean; isOwner: boolean; preview: boolean; initialQuery: string; onAddEmployee: ()=>void; onAddDepartment: ()=>void }) {
   const [tab,setTab]=useState('employees');const [query,setQuery]=useState(initialQuery);const [department,setDepartment]=useState('');const [view,setView]=useState('grid');const [selectedId,setSelectedId]=useState<string|null>(null);const dialog=useRef<HTMLDialogElement>(null);
   const selected=data.employees.find(e=>e.id===selectedId)||null;

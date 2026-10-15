@@ -72,7 +72,7 @@ export function trackedBy(data:WorkData,range:AnalyticsRange,by:'client'|'employ
   return [...rows.entries()].map(([key,row])=>({key,label:row.label,seconds:row.seconds,tasks:row.tasks.size})).sort((a,b)=>b.seconds-a.seconds||a.label.localeCompare(b.label));
 }
 
-export type OpenMix={pending:number;in_progress:number;on_hold:number;overdue:number};
+type OpenMix={pending:number;in_progress:number;on_hold:number;overdue:number};
 /** Open work right now, with overdue split out (a task is overdue when its due date has passed and it is not finished). */
 export function openMix(data:WorkData,now:string,employee='all'):OpenMix{
   const mix:OpenMix={pending:0,in_progress:0,on_hold:0,overdue:0};

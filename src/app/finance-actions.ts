@@ -7,7 +7,7 @@ import {invoiceInput,paymentInput,statusInput,voidPaymentInput,type FinanceInvoi
 
 // Invoices and payments live in the database and are only reachable through audited functions that allow the Owner
 // and Finance roles. These actions add input validation and friendly messages; the database re-checks everything.
-export type FinanceResult={ok:boolean;message:string;id?:string};
+type FinanceResult={ok:boolean;message:string;id?:string};
 async function access(){
   const ctx=await workspaceContext();
   if(ctx.preview||ctx.kind!=='employee'||!(ctx.roles.includes('Owner')||ctx.permissions.includes('finance.read')||ctx.modules.includes('finance')))throw new Error('Finance access required');

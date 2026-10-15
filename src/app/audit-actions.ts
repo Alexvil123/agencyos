@@ -5,7 +5,7 @@ import {AUDIT_ACTIONS,describeAudit,type AuditLine,type AuditNames,type AuditRow
 
 // Settings → Audit history. Read-only; the database policy already limits audit_logs to people with audit.read.
 const LIMIT=50;
-export type AuditResult={ok:boolean;message:string;lines:AuditLine[]};
+type AuditResult={ok:boolean;message:string;lines:AuditLine[]};
 
 async function names(db:Awaited<ReturnType<typeof serverClient>>,org:string):Promise<AuditNames>{
   const [members,employees]=await Promise.all([db.from('memberships').select('id,user_id,email').eq('organization_id',org).limit(1000),db.from('employees').select('membership_id,display_name').eq('organization_id',org).not('membership_id','is',null).limit(1000)]);

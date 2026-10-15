@@ -3,7 +3,7 @@
 // 5 MB: a server action carries the file in one request, and Netlify's functions accept about 6 MB per request.
 export const MAX_CHAT_FILE_BYTES=5*1024*1024;
 export const CHAT_FILE_ACCEPT='.jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv';
-export type ChatFileInfo={ok:true;name:string;extension:string;contentType:string;image:boolean}|{ok:false;message:string};
+type ChatFileInfo={ok:true;name:string;extension:string;contentType:string;image:boolean}|{ok:false;message:string};
 const OFFICE:Record<string,string>={
   docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
