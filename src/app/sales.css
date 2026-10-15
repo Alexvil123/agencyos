@@ -5,3 +5,37 @@
 .sales-workspace .settings-panel{display:grid;align-content:start;gap:10px}
 .sales-workspace .settings-panel h2{margin:0}
 .sales-workspace .settings-panel>p{margin:0}
+
+/* Sales: the sheet fills the page width and height; sheet tabs sit under the grid like Excel */
+.app-shell[data-module=sales] .page-heading{margin:0;padding:0 2px;min-height:0}
+.app-shell[data-module=sales] .page-heading :is(.eyebrow,p,.heading-actions){display:none}
+.app-shell[data-module=sales] .page-heading h1{margin:0;font-size:24px}
+.app-shell[data-module=sales] .workspace-footer{display:none}
+.sales-workspace{gap:10px}
+.sales-sheet-layout{display:flex;flex-direction:column;min-width:0}
+.sales-sheet-layout>.sales-data{margin:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.sales-data>.panel-title{align-items:center;padding:10px 16px}
+.sales-data>.panel-title h2{margin:0;font-size:16px}
+.sales-data>.panel-title p{margin:2px 0 0}
+.sales-filters{align-items:center;padding:0 16px 10px}
+.sales-filters select{max-width:150px;min-width:110px}
+.sales-filters .sales-date-filter{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:0;border:0;background:transparent}
+.sales-filters .sales-date-filter input{width:128px}
+.sales-workspace .sales-table{height:max(360px,calc(100dvh - 450px));max-height:none}
+.sales-pagination{padding:8px 16px}
+.sales-tabs{position:sticky;bottom:0;z-index:5;display:flex;align-items:flex-end;gap:2px;min-height:42px;padding:0 10px;overflow-x:auto;scrollbar-width:thin;background:var(--soft);border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px}
+.sales-tabs-label{display:inline-flex;align-items:center;align-self:center;flex:0 0 auto;gap:6px;padding:0 14px 0 4px;color:var(--muted);font-size:12px;font-weight:700}
+.sales-tabs-label small{padding:1px 7px;border-radius:9px;background:var(--line);font-weight:600}
+.sales-tabs>button{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:0;border-radius:0 0 9px 9px;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;white-space:nowrap;cursor:pointer}
+.sales-tabs>button:hover:not(:disabled){background:color-mix(in srgb,var(--purple) 10%,transparent);color:var(--ink)}
+.sales-tabs>button.selected{background:#fff;color:var(--purple-dark);font-weight:700;box-shadow:inset 0 -3px 0 var(--purple),0 2px 6px #2024361a}
+.sales-tabs>button:disabled{opacity:.5;cursor:not-allowed}
+html[data-theme=dark] .sales-tabs>button.selected{background:#171b2a;color:#d2bfff}
+@media(max-width:760px){
+  .sales-workspace .sales-table{height:max(320px,calc(100dvh - 430px))}
+  .sales-filters .sales-date-filter{flex-wrap:wrap}
+}
+.sales-workspace .sales-filters>*{width:auto}
+.sales-workspace .sales-filters>.search-field{flex:1 1 220px}
+.app-shell[data-module=sales] .sales-workspace .sales-bar{padding:8px 14px}
+.sales-data>.panel-title>div:first-child{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px}

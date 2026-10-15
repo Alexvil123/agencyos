@@ -682,8 +682,6 @@ html[data-theme=dark] .topbar .command-trigger{background:#25213c}
 .sales-filters{display:flex;gap:12px;flex-wrap:wrap;padding:0 20px}
 .sales-filters input,.sales-filters select{min-width:160px}
 .sales-filters .search-field{display:flex;gap:8px;align-items:center}
-.sales-sync{padding:12px 20px;margin:0;font-size:12px}
-.sales-table{overflow:auto;max-height:620px}
 .sales-table table{border-collapse:collapse;min-width:100%;font-size:13px}
 .sales-table th,.sales-table td{padding:13px 16px;text-align:left;min-width:140px;border-bottom:1px solid var(--border,#ebedf5)}
 .sales-table th{position:sticky;top:0;background:var(--surface,#fff);z-index:1;white-space:nowrap}
@@ -708,14 +706,6 @@ html[data-theme=dark] .sales-table :is(th,td),html[data-theme=dark] .sales-team-
 .sales-data>.panel-title{align-items:flex-start}
 .sales-data .panel-title>.secondary{flex-shrink:0}
 /* Native sales spreadsheet workspace */
-.sales-sheet-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;align-items:start}
-.sales-sheet-nav{padding:12px;position:sticky;top:90px}
-.sales-sheet-nav-title{display:flex;align-items:center;gap:8px;padding:8px 10px 16px;color:var(--ink)}
-.sales-sheet-nav-title small{margin-left:auto;color:var(--muted)}
-.sales-sheet-nav>button{display:flex;align-items:center;gap:9px;width:100%;padding:11px 10px;border-radius:8px;text-align:left;color:var(--muted);font-size:12px}
-.sales-sheet-nav>button span{flex:1;overflow-wrap:anywhere}
-.sales-sheet-nav>button.selected{color:var(--purple);background:var(--soft);font-weight:650}
-.sales-sheet-nav>button:hover{background:var(--soft)}
 .sales-live-badge{font-size:11px;color:#078455;background:#e8faf1;border:1px solid #b4e8ce;border-radius:20px;padding:7px 11px;white-space:nowrap}
 .sales-data>.panel-title h2{font-size:19px;margin-bottom:5px}
 .sales-data>.panel-title p{font-size:11px;color:var(--muted)}
@@ -731,9 +721,7 @@ html[data-theme=dark] .sales-table :is(th,td),html[data-theme=dark] .sales-team-
 .sales-filter-row :is(input,select){min-width:0;flex:1;font-size:12px}
 .sales-column-picker{display:flex;gap:12px 20px;flex-wrap:wrap;font-size:11px}
 .sales-column-picker label{gap:6px}
-.sales-sync{color:var(--muted);font-size:10px;line-height:1.8}
-.sales-sync span{display:block}
-.sales-table{border-top:1px solid var(--line);border-bottom:1px solid var(--line);max-height:65vh;background:#fff}
+.sales-table{overflow:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
 .sales-table table{table-layout:fixed;width:max-content;min-width:100%;font-size:12px}
 .sales-table :is(th,td){padding:0;border:1px solid #e2e8ef;min-width:155px;width:155px;max-width:300px;height:36px}
 .sales-table th{background:#f1f5f9;z-index:2;color:#59677e;font-size:11px}
@@ -779,12 +767,6 @@ html[data-theme=dark] .sales-table :is(th,td){border-color:#354058}
 html[data-theme=dark] .sales-inline-input,html[data-theme=dark] .sales-record-modal{background:#1b2032;color:#e7ecfa}
 html[data-theme=dark] .sales-draft-row td{background:#2c2345!important}
 @media(max-width:1000px){
-.sales-sheet-layout{grid-template-columns:1fr}
-.sales-sheet-nav{position:static;display:flex;gap:5px;overflow:auto}
-.sales-sheet-nav-title{padding:8px;flex-shrink:0}
-.sales-sheet-nav>button{width:auto;flex-shrink:0}
-.sales-sheet-nav>button span{white-space:nowrap}
-.sales-sheet-nav-title small{margin-left:5px}
 }
 @media(max-width:760px){
 .sales-edit-fields{grid-template-columns:1fr}
