@@ -300,3 +300,38 @@ html[data-theme=dark] .sidebar .nav-item.active .sidebar-menu-icon{background:va
 @media(prefers-reduced-motion:reduce){.sidebar .sidebar-menu-icon{transition:none}.sidebar .nav-item:hover .sidebar-menu-icon{transform:none}}
 
 
+
+/* Dark theme corrections found by the page-by-page contrast audit */
+html[data-theme=dark] .app-shell .sync-indicator.idle{background:#1c2031;border-color:#2d3247;color:#a3a3bc}
+html[data-theme=dark] .overview-metric-icon{background:#35285f;color:#cdb8ff!important}
+html[data-theme=dark] .overview-metrics article:nth-child(2) .overview-metric-icon{background:#4a3318;color:#ffc680!important}
+html[data-theme=dark] .overview-metrics article:nth-child(3) .overview-metric-icon{background:#1c3a52;color:#8fd0ff!important}
+html[data-theme=dark] .overview-metrics article:nth-child(4) .overview-metric-icon{background:#17402f;color:#7fe3bf!important}
+html[data-theme=dark] .dash-icon-action.start{background:#16352a;color:#5fe0a8;border-color:#2c5a46}
+html[data-theme=dark] .dash-icon-action.hold{background:#3d2d1b;color:#ffb36b;border-color:#6b4a2a}
+html[data-theme=dark] .dash-icon-action.end{background:#431f27;color:#ff8c9b;border-color:#6e3340}
+html[data-theme=dark] .dash-task-tabs .selected{color:#d2bfff;border-color:#b493ff}
+html[data-theme=dark] .chat-avatar{background:#33285a;color:#cdb8ff}
+html[data-theme=dark] .sales-live-badge{background:#14342b;color:#7fe0b6;border-color:#27604b}
+html[data-theme=dark] .sales-empty-cell{color:#8d96ad}
+html[data-theme=dark] .sales-table th button{color:#d9def0}
+.tabs button.selected>span{background:rgba(255,255,255,.25);color:#fff}
+html[data-theme=dark] .dash-task-tabs button.selected{color:#d2bfff!important;border-color:#b493ff!important}
+html[data-theme=dark] .sales-table th.sales-actions-column,html[data-theme=dark] .sales-table .sales-actions-column{color:#b9c0d8}
+html[data-theme=dark] .photo-drop{background:#1f2236;border-color:#5a4b9a;color:#dcdff0}
+html[data-theme=dark] .photo-drop.dragging{background:#2b2550;border-color:#b493ff}
+html[data-theme=dark] .photo-drop :is(strong,span,small){color:#b4bad0}
+html[data-theme=dark] .photo-drop strong{color:#e6e8f5}
+html[data-theme=dark] .search-results a strong{color:#e8eaf6}
+html[data-theme=dark] .search-results a small{color:#aab1cd}
+html[data-theme=dark] .command-input kbd{color:#cfd4ea;background:#2a2f44;border-color:#3b4260}
+html[data-theme=dark] .group-photo-field{background:#1f2236;border-color:#5a4b9a;color:#dcdff0}
+html[data-theme=dark] .group-photo-field :is(span,small){color:#b4bad0}
+html[data-theme=dark] .group-photo-field strong{color:#e6e8f5}
+html[data-theme=dark] .auth-page{background:radial-gradient(circle at 15% 30%,rgba(120,82,245,0.22) 0%,transparent 45%),radial-gradient(circle at 85% 70%,rgba(48,191,162,0.12) 0%,transparent 45%),#0e111d!important}
+html[data-theme=dark] .auth-story h1{color:#eceefb}
+html[data-theme=dark] .auth-story .brand{color:#eceefb}
+html[data-theme=dark] .auth-story .brand-os{color:#b493ff}
+html[data-theme=dark] .auth-story .eyebrow{color:#a99bd6}
+html[data-theme=dark] .auth-story p{color:#b7bdd6}
+html[data-theme=dark] .auth-story small{color:#8f97b4}

@@ -92,3 +92,4 @@ html[data-theme=dark] .tone-done{--tone-bg:#17382a;--tone-ink:#c8f0da}
 html[data-theme=dark] .cal-day.today{background:#241f3a}
 html[data-theme=dark] .cal-title-icon{background:#2b2646}
 html[data-theme=dark] .cal-view button.selected{background:#2d3247}
+html[data-theme=dark] .cal-day.today .cal-daynum{background:var(--purple);color:#1a1230}

@@ -65,3 +65,10 @@ test('date and time shortcuts write India time in the right format for each cell
  assert.equal(key({ctrlKey:true,shiftKey:true,altKey:true}),'datetime');
  assert.equal(key({code:'',key:';',ctrlKey:true}),'date');assert.equal(key({code:'',key:':',ctrlKey:true,shiftKey:true}),'time');assert.equal(key({}),null);assert.equal(key({ctrlKey:true,code:'KeyA'}),null);assert.equal(key({ctrlKey:true,altKey:true}),null);
 });
+test('default sheet white and black follow the app theme, real colours are kept',async()=>{
+  const {sheetBackground,sheetTextColor}=await import('../src/lib/sales-sheet');
+  assert.equal(sheetBackground('#ffffff'),undefined);assert.equal(sheetBackground(undefined),undefined);assert.equal(sheetBackground('nonsense'),undefined);
+  assert.equal(sheetBackground('#fff2cc'),'#fff2cc');assert.equal(sheetBackground('#d9ead3'),'#d9ead3');
+  assert.equal(sheetTextColor('#000000'),undefined);assert.equal(sheetTextColor('#ffffff'),undefined);
+  assert.equal(sheetTextColor('#cc0000'),'#cc0000');
+});

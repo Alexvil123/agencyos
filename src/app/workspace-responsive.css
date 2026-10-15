@@ -1,0 +1,53 @@
+/* Shared device layout. Keep wide datasets scrollable inside their own panels. */
+.app-shell[data-module] :is(.main-content,.panel,.settings-panel,.sales-workspace,.sales-data,.chat-content,.an-card,.an-chart,.time-form,.work-form-grid)>*{min-width:0}
+.app-shell[data-module] :is(.table-scroll,.table-wrap){max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.app-shell[data-module] :is(.settings-form,.time-form,.integ-form,.work-form-grid,.fin-form) :is(input,select,textarea){max-width:100%;min-width:0}
+.app-shell[data-module] .module-access-grid{grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))}
+.app-shell[data-module] :is(.settings-detail,.integ-card header,.jira-connection header){flex-wrap:wrap}
+.app-shell[data-module] :is(.settings-detail strong,.integ-hint,.integ-guide,.time-request p){overflow-wrap:anywhere}
+
+@media(min-width:1025px) and (max-width:1280px){
+ .app-shell[data-module] .main-content{padding-inline:22px}
+ .app-shell[data-module] .heading-actions{max-width:none;flex-wrap:wrap}
+ .app-shell[data-module] .page-heading{gap:16px}
+}
+@media(max-width:1180px){
+ .app-shell.overview-shell .overview-top-row{grid-template-columns:minmax(0,1fr)}
+ .app-shell.overview-shell .overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .app-shell[data-module] .integ-add{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .app-shell[data-module] .integ-add>button{grid-column:1/-1;justify-self:start}
+}
+
+/* Tablet portrait and landscape use the existing navigation drawer. */
+@media(max-width:1024px){
+ .app-shell[data-module] .sidebar{width:248px;max-width:calc(100vw - 40px);transform:translateX(-100%);visibility:hidden;transition:transform 180ms ease,visibility 180ms ease}
+ .app-shell[data-module] .sidebar.is-open{transform:translateX(0);visibility:visible}
+ .app-shell[data-module] .sidebar-overlay{display:block;position:fixed;inset:0;z-index:29;background:#27213755}
+ .app-shell[data-module] .main-shell{margin-left:0}
+ .app-shell[data-module] .mobile-toggle{display:inline-grid;flex-shrink:0}
+ .app-shell[data-module] .breadcrumb>span{display:none}
+ .app-shell[data-module] .topbar{padding-inline:20px;gap:10px}
+ .app-shell[data-module] .topbar-actions{gap:12px;min-width:0}
+ .app-shell[data-module] .main-content{padding:22px 20px}
+ .app-shell[data-module] .heading-actions{display:flex;flex-wrap:wrap;max-width:none;gap:8px}
+ .app-shell[data-module] .page-heading{flex-wrap:wrap;gap:12px}
+ .app-shell[data-module] :is(.settings-panel,.time-panel){padding:18px}
+ .app-shell[data-module] .settings-form{padding-inline:0}
+ .app-shell[data-module] .panel-title{flex-wrap:wrap}
+ .app-shell[data-module] :is(.work-command-bar,.work-command-actions,.cal-filters,.an-controls){flex-wrap:wrap}
+ .app-shell[data-module] .tabs{flex-wrap:wrap;gap:5px;overflow:visible}
+ .app-shell:not(.overview-shell) .main-shell{background-size:auto 80px;background-position:top 68px right 16px}
+}
+@media(max-width:720px){
+ .app-shell[data-module] .main-content{padding:20px 16px}
+ .app-shell[data-module] .topbar{padding-inline:16px}
+ .app-shell[data-module] .topbar-actions{gap:8px}
+ .app-shell[data-module] .heading-actions{width:100%}
+ .app-shell[data-module] .permission-grid{padding-inline:0}
+ .app-shell[data-module] .integ-add{grid-template-columns:minmax(0,1fr)}
+ .app-shell[data-module] :is(.team-hero,.jira-client-hero){flex-wrap:wrap}
+ .app-shell[data-module] .settings-detail{align-items:flex-start;gap:8px}
+ .app-shell[data-module] .settings-detail strong{max-width:100%}
+ .app-shell:not(.overview-shell) .main-shell{background-size:auto 48px;background-position:top 72px right 12px}
+}
+@media(prefers-reduced-motion:reduce){.app-shell[data-module] .sidebar{transition:none}}

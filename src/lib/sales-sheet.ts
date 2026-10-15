@@ -7,6 +7,10 @@ export type SalesGrid={title:string; tab:string; headers:string[]; rows:SalesRow
 export type SalesFilterOp='is'|'contains'|'empty'|'notempty'|'gte'|'lte'|'in'|'isnot'|'notcontains'|'startswith'|'endswith'|'exact'|'eq'|'neq'|'gt'|'lt'|'between'|'notbetween';
 export type SalesFilter={column:number;op:SalesFilterOp;value:string;value2?:string;values?:string[]};
 export type SalesSort={column:number;direction:'asc'|'desc'};
+// Sheet cells report white as their background and black as their text colour when nothing was set. Those defaults must follow the app theme (dark mode), so only real colours are kept.
+const hexLuminance=(hex:string)=>{const h=hex.replace('#','');if(!/^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(h))return null;const [r,g,b]=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16));return (0.299*r+0.587*g+0.114*b)/255;};
+export const sheetBackground=(value?:string)=>{const l=value?hexLuminance(value):null;return value&&l!==null&&l<0.985?value:undefined;};
+export const sheetTextColor=(value?:string)=>{const l=value?hexLuminance(value):null;return value&&l!==null&&l>0.16&&l<0.985?value:undefined;};
 export function salesTabAccess(owner:boolean,tab:string,kind:string,membership:string,allowed:string[]){return tab.length>0&&tab.length<=150&&salesAccess(owner,kind,membership,allowed);}
 export function salesAccess(owner:boolean,kind:string,membership:string,allowed:string[]){return kind==='employee'&&(owner||allowed.includes(membership));}
 const SHEET_EPOCH=Date.UTC(1899,11,30),DAY=86400000;

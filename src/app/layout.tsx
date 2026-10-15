@@ -14,7 +14,10 @@ import './workspace-colour.css';
 import './employee-workspace.css';
 import './calendar.css';
 import './workspace-system.css';
+import './workspace-responsive.css';
 export const metadata: Metadata = { title: 'Agency OS · Your agency, connected', description: 'An agency operations workspace for people, clients and production.' };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body>{children}</body></html>;
+  // Applies the saved appearance before first paint (also on the sign-in pages, which have no theme button).
+  const theme = "try{if(localStorage.getItem('agency-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}";
+  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{__html: theme}}/></head><body>{children}</body></html>;
 }
