@@ -5,7 +5,7 @@ const path = require('node:path');
 if (process.platform !== 'win32') throw Error('This helper is for local Windows builds only');
 const adapter = path.resolve('.netlify/plugins/node_modules/@netlify/plugin-nextjs');
 const pkg = JSON.parse(fs.readFileSync(path.join(adapter, 'package.json'), 'utf8'));
-if (pkg.version !== '5.16.2') throw Error('Review the new adapter version before applying compatibility changes');
+if (!['5.16.2', '5.16.3'].includes(pkg.version)) throw Error('Review the new adapter version before applying compatibility changes');
 const contentPath = path.join(adapter, 'dist/build/content/server.js');
 const content = fs.readFileSync(contentPath, 'utf8');
 fs.writeFileSync(contentPath, content.replaceAll('verbatimSymlinks: true', 'dereference: true')
