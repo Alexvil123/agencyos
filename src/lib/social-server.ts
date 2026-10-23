@@ -26,17 +26,23 @@ async function youtubeConfig(org:string):Promise<SocialConfig<YouTubeConfig>>{
 }
 
 export type SocialPlatformResult={platform:SocialPlatform;configured:boolean;ok:boolean;error?:string};
-const cache=new Map<string,{expires:number;data:SocialFetch}>();
+type CacheEntry={expires:number;at:number;data:SocialFetch};
+const cache=new Map<string,CacheEntry>();
+// Shorter than the page's 5-minute automatic refresh, so every automatic refresh reads fresh numbers; several viewers still share one read.
+const CACHE_MS=240000;
 // The key includes a fingerprint of the saved credentials, so saving or removing them in Settings takes effect immediately everywhere.
 const fingerprint=(config:unknown)=>createHash('sha256').update(JSON.stringify(config)).digest('hex').slice(0,12);
-async function cached(platform:SocialPlatform,config:unknown,range:CampaignRange,fresh:boolean,load:()=>Promise<SocialFetch>){
-  const key=`${platform}:${fingerprint(config)}:${range.from}:${range.to}`,hit=cache.get(key);
-  if(!fresh&&hit&&hit.expires>Date.now())return hit.data;
-  const data=await load();cache.set(key,{expires:Date.now()+900000,data});return data;
+async function cached(platform:SocialPlatform,config:unknown,range:CampaignRange,fresh:boolean,load:()=>Promise<SocialFetch>):Promise<CacheEntry>{
+  const key=`${platform}:${fingerprint(config)}:${range.from}:${range.to}`,hit=cache.get(key),now=Date.now();
+  if(!fresh&&hit&&hit.expires>now)return hit;
+  const data=await load(),entry={expires:Date.now()+CACHE_MS,at:Date.now(),data};
+  for(const [name,old] of cache)if(old.expires<now-3600000)cache.delete(name);
+  cache.set(key,entry);return entry;
 }
 export async function socialData(range:CampaignRange,org:string,fresh=false){
   validateRange(range);
   const posts:SocialPost[]=[],accounts:SocialAccount[]=[],platforms:SocialPlatformResult[]=[];
+  let oldest=Date.now();
   const jobs:[SocialPlatform,SocialConfig<unknown>,(config:never)=>Promise<SocialFetch>][]=[
     ['instagram',await metaConfig(org,'instagram'),(c:MetaSocialConfig)=>fetchInstagram(c,range)],
     ['facebook',await metaConfig(org,'facebook'),(c:MetaSocialConfig)=>fetchFacebook(c,range)],
@@ -45,8 +51,9 @@ export async function socialData(range:CampaignRange,org:string,fresh=false){
   for(const [platform,config,load] of jobs){
     if(!config.configured){platforms.push({platform,configured:false,ok:false});continue;}
     if(config.error!==undefined){platforms.push({platform,configured:true,ok:false,error:config.error});continue;}
-    try{const data=await cached(platform,config.config,range,fresh,()=>load(config.config as never));posts.push(...data.posts);accounts.push(...data.accounts);platforms.push({platform,configured:true,ok:true});}
+    try{const entry=await cached(platform,config.config,range,fresh,()=>load(config.config as never));posts.push(...entry.data.posts);accounts.push(...entry.data.accounts);oldest=Math.min(oldest,entry.at);platforms.push({platform,configured:true,ok:true});}
     catch(error){platforms.push({platform,configured:true,ok:false,error:error instanceof SocialApiError?error.message:'The platform did not return post data.'});}
   }
-  return {posts,accounts,platforms,fetchedAt:new Date().toISOString()};
+  // fetchedAt is when the numbers were read from the platforms (the oldest one), not when this page asked.
+  return {posts,accounts,platforms,fetchedAt:new Date(oldest).toISOString()};
 }

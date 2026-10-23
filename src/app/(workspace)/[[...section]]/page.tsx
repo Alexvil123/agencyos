@@ -9,7 +9,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ sect
   const key = section?.join('/') || '';
   if (!moduleFor(key)) notFound();
   const ctx = await workspaceContext();
-  if (!moduleVisible(key, { owner: ctx.roles.includes('Owner'), permissions: ctx.permissions, modules: ctx.modules })) notFound();
+  if (!moduleVisible(key, { owner: ctx.roles.includes('Owner'), permissions: ctx.permissions, modules: ctx.modules, preview: ctx.preview })) notFound();
   const data = await workspaceData(ctx);
   return <Workspace context={ctx} data={data} moduleKey={key}/>;
 }

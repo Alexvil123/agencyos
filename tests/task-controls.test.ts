@@ -19,8 +19,18 @@ test('task controls show one Start/Hold/Resume action plus End with permission a
  assert.deepEqual(buttons(undefined,{mine:false}),{Start:false,End:false});
 });
 test('ending work shows only the issue’s actual Jira transitions and preserves a saved-time message on failure',()=>{
- const html=renderToStaticMarkup(createElement(TaskEndStatus,{task,details:{ok:true,message:'',issue:{status_name:'Design In Progress',jira_updated:'2026-10-08T10:00:00Z'} as never,transitions:[{id:'42',name:'Send for review',to:{id:'review',name:'Client Design Approval'}}]},loading:false,busy:false,message:{ok:false,message:'Task changed in Jira. Refresh status choices before saving. Recorded work is preserved.'},onRefresh:()=>{},onSave:()=>{},onClose:()=>{}}));
+ const html=renderToStaticMarkup(createElement(TaskEndStatus,{task,details:{ok:true,message:'',issue:{status_name:'Design In Progress',jira_updated:'2026-10-08T10:00:00Z'} as never,transitions:[{id:'42',name:'Send for review',to:{id:'review',name:'Client Design Approval'}}]},loading:false,busy:false,ended:true,message:{ok:false,message:'Task changed in Jira. Refresh status choices before saving. Recorded work is preserved.'},onRefresh:()=>{},onSubmit:()=>{},onClose:()=>{}}));
  assert.match(html,/WORK TIME SAVED/);assert.match(html,/Client Design Approval/);assert.match(html,/value="42"/);assert.match(html,/Keep current status/);assert.match(html,/Recorded work is preserved/);assert.doesNotMatch(html,/>Done</);
+});
+test('End on a Jira task asks for the status first: every reachable status once, current status as the default, nothing ended yet',()=>{
+ const issue={status_id:'progress',status_name:'Design In Progress',jira_updated:'2026-10-08T10:00:00Z'} as never;
+ const transitions=[{id:'41',name:'Stay',to:{id:'progress',name:'Design In Progress'}},{id:'42',name:'Send for review',to:{id:'review',name:'Client Design Approval'}},{id:'43',name:'Hold',to:{id:'hold',name:'Design Hold'}},{id:'44',name:'Hold again',to:{id:'hold',name:'Design Hold'}}];
+ const html=renderToStaticMarkup(createElement(TaskEndStatus,{task,details:{ok:true,message:'',issue,transitions},loading:false,busy:false,ended:false,onRefresh:()=>{},onSubmit:()=>{},onClose:()=>{}}));
+ assert.match(html,/END TASK/);assert.doesNotMatch(html,/WORK TIME SAVED/);assert.match(html,/Keep current status \(Design In Progress\)/);
+ assert.match(html,/value="42"/);assert.match(html,/value="43"/);assert.doesNotMatch(html,/value="41"/);assert.doesNotMatch(html,/value="44"/);
+ assert.match(html,/>End task</);assert.doesNotMatch(html,/Save status to Jira/);
+ const offline=renderToStaticMarkup(createElement(TaskEndStatus,{task,details:{ok:false,message:'Jira is unreachable.',issue:undefined,transitions:[]},loading:false,busy:false,ended:false,onRefresh:()=>{},onSubmit:()=>{},onClose:()=>{}}));
+ assert.match(offline,/Jira is unreachable/);assert.match(offline,/You can still end the task/);assert.match(offline,/>End task</);
 });
 test('completed manual work can Start again, but closed Jira and cancelled work remain blocked',()=>{
  const manual={...task,source:'manual',work_status:'completed'} as TimeTask;

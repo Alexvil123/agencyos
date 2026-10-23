@@ -21,7 +21,7 @@ Netlify shows Public production site and Private project. The immutable URL for 
 
 ## Background automation boundary
 
-Current local Jira and Sales conversion workers run inside the persistent Node process. Serverless instances can freeze or terminate, so those timers do not guarantee unattended production synchronization. Before enabling unattended live automation, configure a supported scheduler/background job with access checks and execution limits. The existing Jira webhook requires a signed request and server-only secret; do not expose an unsigned import endpoint. Jira Automatic Fetch remains Off until the Owner changes it.
+The local Jira background worker runs inside the persistent Node process. Serverless instances can freeze or terminate, so those timers do not guarantee unattended production synchronization. Before enabling unattended live automation, configure a supported scheduler/background job with access checks and execution limits. The existing Jira webhook requires a signed request and server-only secret; do not expose an unsigned import endpoint. Jira Automatic Fetch remains Off until the Owner changes it.
 
 Production instrumentation no longer imports the development-only workers. Global server-trace exclusions also remove local environment/credential/test files. A completed production rebuild and an all-trace scan confirmed zero private local files, including the instrumentation trace. Retain this scan after adapter builds before uploading.
 

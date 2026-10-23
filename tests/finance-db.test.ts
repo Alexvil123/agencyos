@@ -6,7 +6,7 @@ const db=new PGlite();
 const owner='50000000-0000-4000-8000-000000000001',worker='50000000-0000-4000-8000-000000000002',finance='50000000-0000-4000-8000-000000000003';
 let org:string;
 async function as(user:string){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user]);await db.exec('set role authenticated');}
-const invoice=(extra:Record<string,unknown>={})=>JSON.stringify({client_name:'NTT Traders',client_email:'accounts@ntt.example',issue_date:'2026-10-01',due_date:'2026-10-15',currency:'INR',tax_percent:18,discount:50,notes:'Thank you',items:[{description:'Social media management',quantity:2,unit_price:500},{description:'Poster design',quantity:1,unit_price:250.5}],...extra});
+const invoice=(extra:Record<string,unknown>={})=>JSON.stringify({client_name:'NTT Traders',client_email:'accounts@ntt.example',issue_date:'2026-10-01',due_date:'2099-12-31',currency:'INR',tax_percent:18,discount:50,notes:'Thank you',items:[{description:'Social media management',quantity:2,unit_price:500},{description:'Poster design',quantity:1,unit_price:250.5}],...extra});
 const save=async(payload=invoice(),id:string|null=null)=>(await db.query<{finance_save_invoice:string}>('select public.finance_save_invoice($1,$2,$3)',[org,id,payload])).rows[0].finance_save_invoice;
 type Row={id:string;number:string;status:string;display_status:string;subtotal:number;tax:number;total:number;paid:number;balance:number;items:unknown[];payments:{id:string;voided_at:string|null}[]};
 const overview=async()=>(await db.query<{finance_overview:Row[]}>('select public.finance_overview($1)',[org])).rows[0].finance_overview;

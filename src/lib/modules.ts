@@ -19,7 +19,15 @@ export function moduleFor(key: string) { return modules.find(module => module.ke
 // Sales is for the Sales team the Owner picks. Calendar, Campaigns, Finance and Analytics are Owner-only unless the Owner grants an employee access in Settings (modules). Announcements are Owner-only.
 // Menus are hidden from people who cannot use them; the server still enforces access.
 export const GRANTABLE_MODULES = ['calendar', 'campaigns', 'finance', 'analytics'] as const;
-export function moduleVisible(key: string, access: { owner: boolean; permissions: string[]; modules: string[] }) {
+// Settings has something to show only to the Owner and to people holding a settings, user-management or audit permission. The setup preview (no workspace connected yet) shows it so the setup steps can be reached.
+const SETTINGS_PERMISSIONS = ['settings.read', 'settings.manage', 'users.manage', 'audit.read'];
+// The sidebar shows a group heading only when at least one menu under it is visible to this person.
+const MODULE_GROUPS = ['Workspace', 'Management', 'System'] as const;
+export function visibleGroups(access: { owner: boolean; permissions: string[]; modules: string[]; preview?: boolean }) {
+  return MODULE_GROUPS.filter(group => modules.some(m => m.group === group && moduleVisible(m.key, access)));
+}
+export function moduleVisible(key: string, access: { owner: boolean; permissions: string[]; modules: string[]; preview?: boolean }) {
+  if (key === 'settings') return Boolean(access.preview) || access.owner || SETTINGS_PERMISSIONS.some(p => access.permissions.includes(p));
   if (key === 'communication') return access.owner;
   if (key === 'sales') return access.owner || access.modules.includes('sales');
   if (key === 'finance') return access.owner || access.permissions.includes('finance.read') || access.modules.includes('finance');

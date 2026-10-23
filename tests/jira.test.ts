@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {jiraRequest,JiraError,verifyJiraCredentials,JIRA_GATEWAY} from '../src/lib/jira-http';
-import {descriptionText,plainDescription} from '../src/lib/jira-types';
+import {descriptionText,plainDescription,statusChoices} from '../src/lib/jira-types';
 const credentials={email:'test@example.com',token:'test-token-not-real',organizationId:'test'};
 test('Jira requests constrain destination and forbid credential-bearing redirects',async()=>{
   let observed:RequestInit|undefined;
@@ -34,4 +34,11 @@ test('classic tokens use one probe; network failures and writes never trigger au
   await assert.rejects(verifyJiraCredentials(credentials,failure));assert.equal(calls,1);
   calls=0;const denied=(async()=>{calls++;return new Response('',{status:401});}) as typeof fetch;
   await assert.rejects(jiraRequest({...credentials,tokenType:'scoped'},'/rest/api/3/issue',{},'POST',denied));assert.equal(calls,1);
+});
+test('End status choices list each reachable Jira status once and never the current one',()=>{
+  const move=(id:string,name:string,to:string,toName:string)=>({id,name,to:{id:to,name:toName}});
+  const offered=[move('1','Start','10','Design In Progress'),move('2','Hold','11','Design Hold'),move('3','Pause','11','Design Hold'),move('4','Done','12','Design Completed')];
+  assert.deepEqual(statusChoices(offered,'10').map(c=>c.to.name),['Design Hold','Design Completed']);
+  assert.deepEqual(statusChoices(offered,'10').map(c=>c.id),['2','4']);
+  assert.deepEqual(statusChoices([],'10'),[]);
 });

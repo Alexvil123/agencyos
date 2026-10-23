@@ -34,7 +34,7 @@ until it is applied the Finance menu shows a setup message. Each migration is te
 ## Hosting (free)
 Netlify Free for the app, Supabase Free for data. Secrets live only in the hosting environment (never `NEXT_PUBLIC_`).
 - `docs/FREE-HOSTING-LAUNCH.md` — deploying to Netlify
-- `docs/SCHEDULED-SYNC.md` — the external scheduler for background Jira sync and Sales → client onboarding (`CRON_SECRET`)
+- `docs/SCHEDULED-SYNC.md` — the external scheduler for background Jira sync (`CRON_SECRET`)
 - `docs/CAMPAIGNS-SETUP.md` — Meta Ads and Google Ads credentials
 - `docs/SOCIAL-SETUP.md` — Instagram, Facebook and YouTube credentials for Analytics
 
@@ -44,7 +44,13 @@ npm run check:deploy   # typecheck, lint, all tests, and a scan of build output 
 ```
 The suite covers permissions and row-level security, time and Jira rules, Sales sheet parsing and editing, reports, analytics, finance and
 the campaign connectors (with simulated API responses). Live round trips against Jira, Google and the ad platforms are run by hand
-with the scripts in `scripts/`.
+with the scripts in `scripts/`:
+- `scripts/bootstrap-owner.ts` — creates the first Owner in a new Supabase project: `npx tsx scripts/bootstrap-owner.ts OWNER_EMAIL AGENCY_NAME AUTH_USER_UUID`
+- `scripts/verify-live-hosting.cjs` — read-only smoke test of the published site: `node scripts/verify-live-hosting.cjs --origin=https://…`
+- `scripts/scan-secrets.cjs` (run by `check:secrets`), `scripts/netlify-package-privacy.cjs` and `scripts/netlify-windows-adapter.cjs` (used by the Netlify build)
 
 ## More documentation
 `docs/decisions.md` (approved business rules), `docs/architecture.md`, `docs/jira-integration.md`, `docs/sales-google-sheets.md`, `docs/time-management.md`.
+Also in `docs/`: `jira-first-workspace.md` (Jira-first decisions), `overview-jira-time.md` (Overview timers and Jira status), `day-and-sync-health.md`,
+`work-order-navigation.md`, `workspace-page-responsibilities.md`, `employee-onboarding.md`, `employee-password-login.md`, `password-login-clients.md`,
+`database-deployment.md` and `verification.md`.

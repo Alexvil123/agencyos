@@ -18,6 +18,22 @@ export function acceptedProjects(inJira: Iterable<string>): string[] {
 export const projectClause = (keys: string[]) => 'project in (' + keys.join(', ') + ')';
 export type JiraIssue = { id: string; key: string; project_key: string; summary: string; description: unknown; status_id: string; status_name: string; assignee_id: string | null; assignee_name: string | null; jira_updated: string };
 export type JiraTransition = { id: string; name: string; to: { id: string; name: string } };
+// Jira keeps a separate status, with its own category, in every month project. SEP has the pipeline statuses set up correctly, but OCT's were never
+// categorised (only "Done" is Done, the rest are "To Do"), so Posted looked open and could be started. The SEP category per status name is applied to
+// every month project; statuses not listed here, and the SOURCE project, keep the category Jira reports.
+const PIPELINE_CATEGORY: Record<string, 'done' | 'indeterminate' | 'new'> = {
+  'done': 'done', 'posted': 'done', 'client approved': 'done', 'design completed': 'done',
+  'client content approval': 'indeterminate', 'client sent': 'indeterminate', 'design hold': 'indeterminate', 'design in progress': 'indeterminate',
+  'to do': 'new', 'design to do': 'new', 'shoot needed': 'new',
+};
+export function statusCategoryFor(project: string, statusName: string, jiraCategory?: string) {
+  return isMonthProject(project) ? PIPELINE_CATEGORY[statusName.trim().toLowerCase()] ?? jiraCategory : jiraCategory;
+}
+// One choice per target status (Jira can offer several transitions to the same status); the current status is not a choice.
+export function statusChoices(transitions: JiraTransition[], currentStatusId: string) {
+  const seen = new Set<string>();
+  return transitions.filter(t => t.to.id !== currentStatusId && !seen.has(t.to.id) && seen.add(t.to.id));
+}
 export function descriptionText(value: unknown): string {
   if (!value || typeof value !== 'object') return '';
   const node = value as { text?: unknown; type?: string; content?: unknown[] };

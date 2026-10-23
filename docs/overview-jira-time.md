@@ -21,3 +21,7 @@ Jira does not provide an atomic conditional transition through this endpoint: a 
 53 isolated tests pass, including service-only enrollment, linked-assignee checks, duplicate timers, verified resume, break exclusion, idempotent End, cross-user denial, status leases and stale result rejection. Production build/typecheck and lint checked. Live Supabase migration success and Overview controls verified. No artificial attendance or task activity was inserted, and no real Jira status was changed during verification. Alex currently needs a personal Jira identity link; employee shifts still need Owner assignment before actual clock-in/timer use.
 
 Endpoint reference: [Atlassian Jira Cloud issue transitions](https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues/#api-rest-api-3-issue-issueidorkey-transitions-post).
+
+## Ending a Jira task (current behaviour)
+
+End on a Jira task opens the status chooser first: every status the issue’s Jira workflow currently allows, plus Keep current status. One button then ends the timer and sends the chosen status to Jira. The timer is saved before Jira is called, so recorded work is never lost; if Jira refuses the status, only the status is retried. Cancel ends nothing. A Jira task counts as closed only when Jira itself says Done (see the status category rule in jira-integration.md); an ended task that is still open in Jira can be started again, and a Done task cannot.

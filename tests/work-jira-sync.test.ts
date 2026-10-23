@@ -2,7 +2,9 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {fetchWorkJiraSnapshot,mergeWorkJiraSnapshot,workIssue,taskDisplayStatus,taskPriorityLabel,type RemoteWorkIssue} from '../src/lib/work-jira-sync';
 import type {TimeTask} from '../src/lib/time-types';
-import {hydrateJiraMetadata,taskClientLabel,taskMatchesClient,parseJiraLabels} from '../src/lib/work-jira-sync';
+import {hydrateJiraMetadata,taskClientLabel,taskMatchesClient,parseJiraLabels,jiraStillOpen} from '../src/lib/work-jira-sync';
+import {statusCategoryFor} from '../src/lib/jira-types';
+import {taskOperationalState} from '../src/lib/task-filters';
 test('exact Jira labels survive caching and filter without fuzzy client matching',()=>{
  const cached=hydrateJiraMetadata({...task,jira_metadata:{labels:['NTT_Textiles','ntt_textiles'],priority_name:'Highest'}});
  assert.equal(taskClientLabel(cached,[]),'NTT_Textiles · ntt_textiles');
@@ -36,4 +38,22 @@ test('delayed Jira search cannot overwrite a newer directly confirmed CRM copy',
 });
 test('missing Jira priority is explicit and never presented as a fabricated Medium',()=>{
  assert.equal(taskPriorityLabel(task),'Priority unavailable');assert.equal(taskDisplayStatus({...task,source:'manual',work_status:'on_hold'}),'On Hold');
+});
+test('an ended Jira task can be started again unless Jira itself says Done',()=>{
+  assert.equal(jiraStillOpen('indeterminate'),true);assert.equal(jiraStillOpen('new'),true);
+  assert.equal(jiraStillOpen('done'),false);assert.equal(jiraStillOpen(undefined),false);assert.equal(jiraStillOpen(''),false);
+});
+test('OCT pipeline statuses get the categories SEP already has, so a Posted task is closed in every month project',()=>{
+  for(const project of ['OCT','SEP','NOV'])for(const name of ['Done','Posted','Client Approved','Design Completed'])assert.equal(statusCategoryFor(project,name,'new'),'done');
+  for(const name of ['Design In Progress','Client Sent','Client Content Approval','Design Hold'])assert.equal(statusCategoryFor('OCT',name,'new'),'indeterminate');
+  for(const name of ['To Do','Design To Do','Shoot Needed'])assert.equal(statusCategoryFor('OCT',name,undefined),'new');
+  assert.equal(statusCategoryFor('OCT','  posted ','new'),'done');
+  assert.equal(statusCategoryFor('OCT','Quality Check','indeterminate'),'indeterminate');
+  assert.equal(statusCategoryFor('SOURCE','Posted','new'),'new');assert.equal(statusCategoryFor('SOURCE','NTT',undefined),undefined);
+  const posted=remote();posted.fields.status={id:'11065',name:'Posted',statusCategory:{key:'new'}};
+  assert.equal(workIssue(posted).status_category,'done');
+  const cached=hydrateJiraMetadata({...task,jira_project:'OCT',jira_status:'Posted',jira_metadata:{status_category:'new'}});
+  assert.equal(cached.jira_status_category,'done');assert.equal(taskOperationalState(cached),'completed');
+  const open=hydrateJiraMetadata({...task,jira_project:'OCT',jira_status:'Design In Progress',jira_metadata:{status_category:'new'}});
+  assert.equal(taskOperationalState(open),'in_progress');
 });

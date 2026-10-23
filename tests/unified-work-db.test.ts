@@ -176,6 +176,22 @@ test('completed manual Start creates a fresh log, retains old time and enforces 
  await db.exec('reset role');await db.query("update public.time_tasks set work_status='cancelled' where id=$1",[id]);await role('authenticated');await assert.rejects(db.query("select public.work_event($1,'start',$2,false)",[org,id]),/Task is closed/);
 });
 
+test('an ended Jira task that Jira still shows open is re-opened for Start; old sessions stay untouched',async()=>{
+ await role('service_role');await db.query('select public.work_import($1,$2,$3)',[org,owner,JSON.stringify([{id:'restart-jira',key:'OCT-77777',project_key:'OCT',summary:'Jira restart',status_id:'7',status_name:'Design In Progress',status_category:'indeterminate',assignee_id:'jira-worker',jira_updated:new Date().toISOString()}])]);
+ const id=(await db.query<{id:string}>("select id from public.time_tasks where jira_key='OCT-77777'")).rows[0].id;
+ await db.query("update public.time_attendance set clock_in=now(),clock_out=null where organization_id=$1 and membership_id=$2 and work_date=(now() at time zone 'Asia/Kolkata')::date",[org,member]);
+ const first=(await db.query<{work_jira_event:string}>("select public.work_jira_event($1,$2,'start',$3,'jira-worker',false,null)",[org,worker,id])).rows[0].work_jira_event;
+ await role('authenticated');await db.query("select public.work_event($1,'end',$2,false)",[org,id]);
+ const original=(await db.query('select * from public.task_work_sessions where log_id=$1',[first])).rows;
+ assert.equal((await db.query<{work_status:string}>('select work_status from public.time_tasks where id=$1',[id])).rows[0].work_status,'completed');
+ await role('service_role');
+ await assert.rejects(db.query("select public.work_jira_event($1,$2,'start',$3,'jira-worker',false,null)",[org,worker,id]),/Task is closed/);
+ // The same guarded update reopenEndedJiraTask runs when the live Jira status is still open.
+ await db.query("update public.time_tasks set work_status='pending',completed_at=null,updated_at=now() where id=$1 and organization_id=$2 and membership_id=$3 and source='jira' and work_status='completed'",[id,org,member]);
+ const next=(await db.query<{work_jira_event:string}>("select public.work_jira_event($1,$2,'start',$3,'jira-worker',false,null)",[org,worker,id])).rows[0].work_jira_event;
+ assert.notEqual(next,first);assert.deepEqual((await db.query('select * from public.task_work_sessions where log_id=$1',[first])).rows,original);
+ assert.deepEqual((await db.query('select work_status,completed_at from public.time_tasks where id=$1',[id])).rows[0],{work_status:'in_progress',completed_at:null});
+});
 test('only Owner may persist automatic fetch; employees read the organization flag and changes are audited',async()=>{
  await role('authenticated',owner);
  await db.query('select public.jira_auto_fetch_save($1,false)',[org]);
